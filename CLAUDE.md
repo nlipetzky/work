@@ -1,0 +1,64 @@
+# Work OS
+
+Nick is building an owned-asset studio with a JV venture arm. Service work funds the building. This directory is his operator OS: roles, workflows, skills, and all three engagement types.
+
+## Structure
+
+- `practices/` -- operator roles and pipelines. Each practice defines a persona, workflow, and artifact conventions. Shared across all engagement types.
+- `capabilities/` -- shared building blocks: skills, schemas, and agents that any practice or engagement can use.
+- `assets/` -- owned properties Nick builds and operates. Audience, lead gen, monetization. Living proof of capability.
+- `ventures/` -- JV partnerships with domain experts. Nick provides agentic infrastructure; the partner provides credentialed expertise. Equity-based, co-owned businesses.
+- `clients/` -- legacy and transitional service engagements that fund the building. Expected to shrink over time.
+
+Practices hold the *how*. Everything else holds the *what*. They compose: launch Claude Code from an asset, venture, or client folder, and the right operator + skills load.
+
+## Studio thesis
+
+Read `reference/studio-thesis.md` before any work that touches the relationship between practices, assets, ventures, or clients. It defines the studio's strategic frame: owned-asset studio with a JV venture arm, the paradigm shift to context-driven agentic systems, and the locked vocabulary (practice, capability, play, asset, venture, client). All structural decisions in this workspace derive from it.
+
+## What this is not
+
+Application code lives in `~/code/aos/`. That repo is a separate product. Do not mix operator system files with application code.
+
+## Rules
+
+- Never bake engagement-specific assumptions into a practice skill or capability.
+- Artifacts are the product. Skills are how artifacts get made.
+- Lock artifact schemas before writing skills.
+- Automate only what has proven itself manually.
+
+# Operator workspace
+
+This directory (`~/code/work/`) is Nick's active operating system for client work. Everything inside is current and authoritative. Everything outside is historical.
+
+## Trust boundary
+
+**Authoritative sources** (read freely, treat as truth):
+- Anything inside `~/code/work/`
+- The client's NotebookLM notebook (Nick queries it; paste-only into `clients/<name>/context/`)
+
+**Historical sources** (do NOT read by default):
+- `~/code/aos/`
+- `~/code/<client-name>/` folders that exist outside `~/code/work/clients/`
+- `~/Archive/`
+- Any other folder under `~/code/` not inside `~/code/work/`
+
+These older folders contain a mix of current and stale material from prior architectural attempts. You cannot tell which is which. Do not crawl them, do not cite them, do not derive context from them. If something seems missing, ask Nick. He will either confirm a gap, paste in what's needed, or point to an authoritative source.
+
+If Nick explicitly asks you to read something outside this boundary ("look at the old aos/teknova folder for X"), do that one read, use it for the immediate task, and do not let it become a source for future decisions.
+
+## How work is shaped here
+
+Practices define roles and workflows. Clients hold engagement-specific context and artifacts. Skills produce artifacts. Artifacts are the deliverables.
+
+When you launch in this directory, orient yourself by reading:
+1. The relevant practice CLAUDE.md (revops, automation, content, agentic-systems, etc.)
+2. The relevant engagement CLAUDE.md (assets/, ventures/, or clients/ subfolder)
+3. The architecture notes at `practices/agentic-systems/reference/architecture-notes.md` if you need broader context
+
+## Working principles
+
+- Do not crawl the filesystem looking for context. Use trusted sources only.
+- If a CLAUDE.md or context file is missing information, ask Nick. Do not infer it from old folders.
+- Propose before executing destructive operations.
+- Artifacts are the product. Skills are the function. Conversations are not the deliverable.

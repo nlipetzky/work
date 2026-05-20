@@ -1,0 +1,413 @@
+{
+  "workflow_id": "bYZ0sAzyUvU60wMZ",
+  "workflow_name": "RevOps — Contact Sourcing + ICP Gate",
+  "source_execution": "80834",
+  "source_execution_started_at": "2026-05-19T21:41:17.753Z",
+  "endpoints": {
+    "fetch_prospects": {
+      "response_path": "Explorium Fetch Prospects -> data[]",
+      "keys": {
+        "business_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "b95e2ed664e5130d6c179ff15535f3bf"
+        },
+        "city": {
+          "types": [
+            "string"
+          ],
+          "sample": "auburndale"
+        },
+        "company_linkedin": {
+          "types": [
+            "string"
+          ],
+          "sample": "linkedin.com/company/solid-biosciences"
+        },
+        "company_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Solid biosciences"
+        },
+        "company_website": {
+          "types": [
+            "string"
+          ],
+          "sample": "solidbio.com"
+        },
+        "country_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "united states"
+        },
+        "experience": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "first_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Jessie"
+        },
+        "full_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Jessie Hanrahan"
+        },
+        "interests": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Cooking",
+            "Electronics",
+            "Home improvement",
+            "Reading",
+            "Gourmet cooking",
+            "Sports",
+            "Home decoration"
+          ]
+        },
+        "job_department": {
+          "types": [
+            "null",
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "job_department_array": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "operations",
+            "public service"
+          ]
+        },
+        "job_department_main": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "Operations"
+        },
+        "job_level_array": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "c-suite"
+          ]
+        },
+        "job_level_main": {
+          "types": [
+            "string"
+          ],
+          "sample": "c-suite"
+        },
+        "job_seniority_level": {
+          "types": [
+            "null",
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "job_title": {
+          "types": [
+            "string"
+          ],
+          "sample": "Chief regulatory and preclinical operations officer"
+        },
+        "last_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Hanrahan"
+        },
+        "linkedin": {
+          "types": [
+            "string"
+          ],
+          "sample": "linkedin.com/in/ACoAAAGdFWABNB9BS5AP3UXQZGHHG1ARdyvCajc"
+        },
+        "linkedin_url_array": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "linkedin.com/in/ACoAAAGdFWABNB9BS5AP3UXQZGHHG1ARdyvCajc",
+            "linkedin.com/in/jessie-hanrahan-6a80969"
+          ]
+        },
+        "professional_email_hashed": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "053e3714963377345794ec3f25c199ee"
+        },
+        "prospect_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "8ed318fbd38155f2887578d042e79939f2b78428"
+        },
+        "region_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "massachusetts"
+        },
+        "skills": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": "(elided)"
+        }
+      }
+    },
+    "profile_enrich": {
+      "response_path": "Explorium Profiles Enrich -> data[].data",
+      "keys": {
+        "age_group": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "31-40"
+        },
+        "city": {
+          "types": [
+            "string"
+          ],
+          "sample": "auburndale"
+        },
+        "company_linkedin": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.linkedin.com/company/solid-biosciences"
+        },
+        "company_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Solid Biosciences"
+        },
+        "company_website": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://solidbio.com"
+        },
+        "country_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "united states"
+        },
+        "education": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "experience": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "first_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Jessie"
+        },
+        "full_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Jessie Hanrahan"
+        },
+        "gender": {
+          "types": [
+            "string"
+          ],
+          "sample": "female"
+        },
+        "interests": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "cooking",
+            "electronics",
+            "home improvement",
+            "reading",
+            "gourmet cooking",
+            "sports",
+            "home decoration"
+          ]
+        },
+        "job_department": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "Operations"
+        },
+        "job_department_array": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "operations",
+            "public service"
+          ]
+        },
+        "job_department_main": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "operations"
+        },
+        "job_level_array": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "c-suite"
+          ]
+        },
+        "job_level_main": {
+          "types": [
+            "string"
+          ],
+          "sample": "c-suite"
+        },
+        "job_seniority_level": {
+          "types": [
+            "string"
+          ],
+          "sample": "cxo"
+        },
+        "job_title": {
+          "types": [
+            "string"
+          ],
+          "sample": "Chief Regulatory And Preclinical Operations Officer"
+        },
+        "last_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "Hanrahan"
+        },
+        "linkedin": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://linkedin.com/in/ACoAAAGdFWABNB9BS5AP3UXQZGHHG1ARdyvCajc"
+        },
+        "linkedin_url_array": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "https://linkedin.com/in/ACoAAAGdFWABNB9BS5AP3UXQZGHHG1ARdyvCajc",
+            "https://linkedin.com/in/jessie-hanrahan-6a80969"
+          ]
+        },
+        "region_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "massachusetts"
+        },
+        "skills": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": "(elided)"
+        }
+      }
+    },
+    "contacts_enrich": {
+      "response_path": "Explorium Contacts Enrich -> data[].data",
+      "keys": {
+        "emails": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": [
+            {
+              "address": "jessienh@hotmail.com",
+              "type": "personal"
+            },
+            {
+              "address": "jhhanrahan@gmail.com",
+              "type": "personal"
+            },
+            {
+              "address": "jhanrahan@solidbio.com",
+              "type": "current_professional"
+            }
+          ]
+        },
+        "mobile_phone": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "+14138249808"
+        },
+        "phone_numbers": {
+          "types": [
+            "array<object>",
+            "null"
+          ],
+          "sample": [
+            {
+              "phone_number": "+16173884093"
+            },
+            {
+              "phone_number": "+14138249808"
+            },
+            {
+              "phone_number": "+16173374682"
+            }
+          ]
+        },
+        "professional_email_status": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "valid"
+        },
+        "professions_email": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "jhanrahan@solidbio.com"
+        }
+      }
+    }
+  }
+}

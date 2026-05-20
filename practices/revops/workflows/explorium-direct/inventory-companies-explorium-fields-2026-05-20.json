@@ -1,0 +1,1567 @@
+{
+  "workflow_id": "Z6RROKx5omdfvhtn",
+  "workflow_name": "Companies Enrichment (Explorium → Airtable)",
+  "source_execution": "72396",
+  "source_execution_started_at": "2026-05-14T17:24:37.084Z",
+  "endpoints": {
+    "match_business": {
+      "response_path": "matched_businesses[0]",
+      "keys": {
+        "business_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "07c1d0106ad873752982c4471734ac7c"
+        },
+        "input": {
+          "types": [
+            "object"
+          ],
+          "sample": {
+            "name": "REGENXBIO Inc.",
+            "domain": null,
+            "url": null,
+            "linkedin_url": null
+          }
+        }
+      }
+    },
+    "enrich_firmographics": {
+      "response_path": "enriched_data[0].data",
+      "keys": {
+        "business_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "business_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "07c1d0106ad873752982c4471734ac7c"
+        },
+        "business_logo": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://media.licdn.com/dms/image/v2/C4E0BAQEfP8EOlXspiQ/company-logo_200_200/company-logo_200_200/0/1630607257929/regenx_logo?e=2147483647&v=beta&t=hslzrkL0mJysOIKOkVOy6Pgc8QlbC651Mh2oi3RCPJo"
+        },
+        "city_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "rockville"
+        },
+        "country_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "united states"
+        },
+        "linkedin_industry_category": {
+          "types": [
+            "string"
+          ],
+          "sample": "biotechnology research"
+        },
+        "linkedin_profile": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.linkedin.com/company/regenx"
+        },
+        "locations_distribution": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": [
+            {
+              "country": "us",
+              "locations": 2
+            }
+          ]
+        },
+        "naics": {
+          "types": [
+            "string"
+          ],
+          "sample": "325414"
+        },
+        "naics_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "Biological Product (except Diagnostic) Manufacturing"
+        },
+        "name": {
+          "types": [
+            "string"
+          ],
+          "sample": "REGENXBIO Inc."
+        },
+        "number_of_employees_range": {
+          "types": [
+            "string"
+          ],
+          "sample": "201-500"
+        },
+        "region_name": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "maryland"
+        },
+        "sic_code": {
+          "types": [
+            "string"
+          ],
+          "sample": "8731"
+        },
+        "sic_code_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "Commercial physical research"
+        },
+        "street": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "9804 medical center drive"
+        },
+        "ticker": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "xnas:rgnx"
+        },
+        "website": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.regenxbio.com"
+        },
+        "yearly_revenue_range": {
+          "types": [
+            "string"
+          ],
+          "sample": "75M-200M"
+        },
+        "zip_code": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "20850"
+        }
+      }
+    },
+    "enrich_deep": {
+      "response_path": "enriched_data[0].data",
+      "keys": {
+        "accession_number": {
+          "types": [
+            "string"
+          ],
+          "sample": "0000950170-25-038770"
+        },
+        "accuracy": {
+          "types": [
+            "number"
+          ],
+          "sample": 1
+        },
+        "acquired_by": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "affiliate_links": {
+          "types": [
+            "boolean"
+          ],
+          "sample": false
+        },
+        "bi_and_analytics": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "Adobe Analytics",
+            "Google Analytics",
+            "Grow.com",
+            "Hotjar",
+            "NetSuite",
+            "New Relic One",
+            "OSIsoft PI",
+            "Optimizely",
+            "SAS Data Management",
+            "SAS/STAT"
+          ]
+        },
+        "bounce_rate": {
+          "types": [
+            "number"
+          ],
+          "sample": 0.7542
+        },
+        "bounced_visits": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "business_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "07c1d0106ad873752982c4471734ac7c"
+        },
+        "categories_to_technologies_tree": {
+          "types": [
+            "object"
+          ],
+          "sample": "(elided)"
+        },
+        "change_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "{\"new\":\"Four-Time Winner of Washington Post’s Top Workplaces (2021-2025)\",\"old\":\"Awarded Washington Post's Top Work Places in 2021, 2022 & 2023\"}"
+        },
+        "change_implication": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_customer_service_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_design_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_education_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_engineering_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_finance_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_health_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": -3
+        },
+        "change_in_hr_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_legal_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_marketing_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_media_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_operations_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_pr_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_real_estate_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_roles_divisor": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": -1
+        },
+        "change_in_sales_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "change_in_trades_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "channel": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "cik": {
+          "types": [
+            "string"
+          ],
+          "sample": "1590877"
+        },
+        "collaboration": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "JIRA Software",
+            "Microsoft",
+            "Microsoft Excel",
+            "Microsoft Office 365",
+            "Microsoft Powerpoint",
+            "Microsoft Project",
+            "Microsoft Word",
+            "NetSuite",
+            "Quip",
+            "Slack",
+            "Smartsheet",
+            "Teamworks",
+            "Zoom"
+          ]
+        },
+        "communications": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "MailChimp",
+            "Microsoft Office 365",
+            "Microsoft Outlook",
+            "Quip",
+            "Slack",
+            "Zoom"
+          ]
+        },
+        "company_city": {
+          "types": [
+            "string"
+          ],
+          "sample": "rockville"
+        },
+        "company_competition": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_country_code": {
+          "types": [
+            "string"
+          ],
+          "sample": "us"
+        },
+        "company_customer_adoption": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_data_security_breach": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_data_security_privacy": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_focus": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_market_saturation": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_marketing_sales": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "regenxbio"
+        },
+        "company_partnerships": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_product_development": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_region": {
+          "types": [
+            "string"
+          ],
+          "sample": "us-md"
+        },
+        "company_score": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "company_street": {
+          "types": [
+            "string"
+          ],
+          "sample": "9804 medical center drive"
+        },
+        "company_url": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.regenxbio.com"
+        },
+        "company_value_proposition": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "company_vertical": {
+          "types": [
+            "string"
+          ],
+          "sample": "Health And Fitness"
+        },
+        "company_website": {
+          "types": [
+            "string"
+          ],
+          "sample": "regenxbio.com"
+        },
+        "company_zip_code": {
+          "types": [
+            "string"
+          ],
+          "sample": "us-20850"
+        },
+        "competitive_differentiation": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "computer_networks": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "Microsoft Azure DNS",
+            "Network Solutions"
+          ]
+        },
+        "created_at": {
+          "types": [
+            "string"
+          ],
+          "sample": "2026-02-14T00:00:00"
+        },
+        "current_advisors": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "customer_management": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Adobe Marketing Cloud",
+            "Gravity Forms",
+            "Kentico Xperience",
+            "NetSuite",
+            "Qualaroo",
+            "Salesforce Forms"
+          ]
+        },
+        "date": {
+          "types": [
+            "string"
+          ],
+          "sample": "2026-01-05T10:07:59.814326"
+        },
+        "date_stamp": {
+          "types": [
+            "string"
+          ],
+          "sample": "20260510"
+        },
+        "days_since_posted": {
+          "types": [
+            "number"
+          ],
+          "sample": 89
+        },
+        "db_indexed": {
+          "types": [
+            "boolean"
+          ],
+          "sample": true
+        },
+        "desktop_share": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "device_type": {
+          "types": [
+            "string"
+          ],
+          "sample": "all"
+        },
+        "devops_and_development": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "direct": {
+          "types": [
+            "number"
+          ],
+          "sample": 1391
+        },
+        "display_ad": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "display_name": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "domain": {
+          "types": [
+            "string"
+          ],
+          "sample": "regenxbio.com"
+        },
+        "earliest_record": {
+          "types": [
+            "string"
+          ],
+          "sample": "2009-08-02T07:00:00"
+        },
+        "ecommerce": {
+          "types": [
+            "boolean"
+          ],
+          "sample": false
+        },
+        "established": {
+          "types": [
+            "boolean"
+          ],
+          "sample": true
+        },
+        "experience_negative": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "experience_neutral": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "experience_positive": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "filed_at": {
+          "types": [
+            "string"
+          ],
+          "sample": "2025-03-13T00:00:00"
+        },
+        "finance_and_accounting": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "NetSuite",
+            "Oracle EPM",
+            "Oracle ERP Cloud",
+            "Oracle Fusion",
+            "Oracle Procurement",
+            "SAP Concur",
+            "SAP Concur Expense"
+          ]
+        },
+        "first_funding_round_date": {
+          "types": [
+            "string"
+          ],
+          "sample": "2013-03-27T00:00:00"
+        },
+        "first_funding_round_type": {
+          "types": [
+            "string"
+          ],
+          "sample": "grant"
+        },
+        "first_funding_round_value_usd": {
+          "types": [
+            "number"
+          ],
+          "sample": 7700000
+        },
+        "form_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "10-K"
+        },
+        "form_type": {
+          "types": [
+            "string"
+          ],
+          "sample": "10-K"
+        },
+        "full_nested_tech_stack": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "full_tech_stack": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "funding_rounds_info": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "health_tech": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Core LIMS"
+          ]
+        },
+        "hr": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "intent_topics": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "investors": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "ipo_date": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "2015-09-08T00:00:00"
+        },
+        "ipo_size_usd": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "138000000.0"
+        },
+        "is_ipo": {
+          "types": [
+            "boolean",
+            "null"
+          ],
+          "sample": true
+        },
+        "it_management": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "JIRA Software",
+            "Microsoft SQL Server",
+            "NetSuite",
+            "New Relic",
+            "OneLogin"
+          ]
+        },
+        "it_security": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "Cookiebot",
+            "Diligent",
+            "OneLogin",
+            "reCAPTCHA",
+            "reCAPTCHA Enterprise"
+          ]
+        },
+        "key_competitors": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "keywords_indicator": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "True"
+        },
+        "known_funding_total_value": {
+          "types": [
+            "number"
+          ],
+          "sample": 928191875
+        },
+        "last_funding_round_date": {
+          "types": [
+            "string"
+          ],
+          "sample": "2025-05-19T00:00:00"
+        },
+        "last_funding_round_type": {
+          "types": [
+            "string"
+          ],
+          "sample": "post-ipo debt"
+        },
+        "last_funding_round_value_usd": {
+          "types": [
+            "string"
+          ],
+          "sample": "150000000.0"
+        },
+        "latest_funding_increase_in_percents": {
+          "types": [
+            "string"
+          ],
+          "sample": "7.1429"
+        },
+        "latest_update": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "level_of_intent": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "link_to_filing_details": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.sec.gov/Archives/edgar/data/1590877/000095017025038770/rgnx-20241231.htm"
+        },
+        "link_to_html": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.sec.gov/Archives/edgar/data/1590877/0000950170-25-038770-index.html"
+        },
+        "live_techs": {
+          "types": [
+            "boolean"
+          ],
+          "sample": true
+        },
+        "lookalike_business_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "a13490f07ca2bfdf690b9f8e03177838"
+        },
+        "lookalike_business_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "freeline therapeutics holdings"
+        },
+        "lookalike_country_location": {
+          "types": [
+            "string",
+            "null"
+          ],
+          "sample": "gb"
+        },
+        "lookalike_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "lookalike_naics_description": {
+          "types": [
+            "string"
+          ],
+          "sample": "Biological Product (except Diagnostic) Manufacturing"
+        },
+        "lookalike_number_of_employees_range": {
+          "types": [
+            "string"
+          ],
+          "sample": "201-500"
+        },
+        "lookalike_revenue_range": {
+          "types": [
+            "string"
+          ],
+          "sample": "75M-200M"
+        },
+        "lookalike_website": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://spurtherapeutics.com"
+        },
+        "mail": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "marketing": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "mobile_bounce_rate": {
+          "types": [
+            "number"
+          ],
+          "sample": 1
+        },
+        "mobile_hits": {
+          "types": [
+            "number"
+          ],
+          "sample": 4851
+        },
+        "mobile_pages_per_visit": {
+          "types": [
+            "number"
+          ],
+          "sample": 1
+        },
+        "mobile_share": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "mobile_users": {
+          "types": [
+            "number"
+          ],
+          "sample": 4851
+        },
+        "mobile_visits": {
+          "types": [
+            "number"
+          ],
+          "sample": 4851
+        },
+        "money_spend_on_website_technologies": {
+          "types": [
+            "number"
+          ],
+          "sample": 5150
+        },
+        "month_period": {
+          "types": [
+            "string"
+          ],
+          "sample": "2026-04"
+        },
+        "num_of_news": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "number_of_advisors": {
+          "types": [
+            "number"
+          ],
+          "sample": 5
+        },
+        "number_of_comments": {
+          "types": [
+            "null",
+            "number"
+          ],
+          "sample": "(elided)"
+        },
+        "number_of_funding_rounds": {
+          "types": [
+            "number"
+          ],
+          "sample": 11
+        },
+        "number_of_investors_for_first_funding_round": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "number_of_investors_for_last_funding_round": {
+          "types": [
+            "null",
+            "number"
+          ],
+          "sample": "(elided)"
+        },
+        "number_of_likes": {
+          "types": [
+            "number"
+          ],
+          "sample": 67
+        },
+        "number_of_pages_on_sitemap": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "number_of_premium_technologies": {
+          "types": [
+            "number"
+          ],
+          "sample": 97
+        },
+        "number_of_social_networks": {
+          "types": [
+            "number"
+          ],
+          "sample": 1
+        },
+        "operations_management": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Quip"
+          ]
+        },
+        "operations_software": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Oracle EBS"
+          ]
+        },
+        "organization_tree": {
+          "types": [
+            "null",
+            "array<object>"
+          ],
+          "sample": "(elided)"
+        },
+        "pages_per_visit": {
+          "types": [
+            "number"
+          ],
+          "sample": 1
+        },
+        "paid": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "parent_company_id": {
+          "types": [
+            "null",
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "parent_company_name": {
+          "types": [
+            "null",
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "parked": {
+          "types": [
+            "boolean"
+          ],
+          "sample": false
+        },
+        "payment_options": {
+          "types": [
+            "boolean"
+          ],
+          "sample": false
+        },
+        "payment_technologies_in_use": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_customer_service_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_design_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_education_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_engineering_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 4
+        },
+        "perc_finance_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 3
+        },
+        "perc_health_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 9
+        },
+        "perc_hr_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 1
+        },
+        "perc_legal_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 2
+        },
+        "perc_marketing_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_media_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_operations_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 10
+        },
+        "perc_pr_roles": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 1
+        },
+        "perc_real_estate_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_sales_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "perc_trades_roles": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "platform_and_storage": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "post_text": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "post_url": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.linkedin.com/feed/update/urn:li:activity:7427746252387221504"
+        },
+        "premium_techs": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "product_and_design": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "Teamwork"
+          ]
+        },
+        "product_count": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "productivity_and_operations": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Adobe Acrobat DC",
+            "Adobe Acrobat Pro",
+            "Microsoft Office",
+            "Oracle SCM Cloud",
+            "Siemens Desigo"
+          ]
+        },
+        "profiles_found_per_quarter": {
+          "types": [
+            "number"
+          ],
+          "sample": 360
+        },
+        "prog_langs_and_frameworks": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": [
+            "ASP.NET",
+            "Apache",
+            "ECMAScript",
+            "Font Awesome",
+            "HTML",
+            "JQuery UI",
+            "Java",
+            "JavaScript",
+            "Microsoft Azure",
+            "Modernizr",
+            "Nginx",
+            "Oracle Database",
+            "PHP",
+            "Polyfill",
+            "jQuery"
+          ]
+        },
+        "q_rank": {
+          "types": [
+            "number"
+          ],
+          "sample": -1
+        },
+        "quarters": {
+          "types": [
+            "string"
+          ],
+          "sample": "2026-04-01T00:00:00"
+        },
+        "rank": {
+          "types": [
+            "number"
+          ],
+          "sample": 1909609
+        },
+        "ratings_all_reviews_count": {
+          "types": [
+            "number"
+          ],
+          "sample": 47
+        },
+        "ratings_business_outlook": {
+          "types": [
+            "number"
+          ],
+          "sample": 0.25999999046325684
+        },
+        "ratings_career_opportunities": {
+          "types": [
+            "number"
+          ],
+          "sample": 3.0999999046325684
+        },
+        "ratings_ceo_approval": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 0.6600000262260437
+        },
+        "ratings_ceo_approval_count": {
+          "types": [
+            "number",
+            "null"
+          ],
+          "sample": 3
+        },
+        "ratings_compensation_benefits": {
+          "types": [
+            "number"
+          ],
+          "sample": 3.700000047683716
+        },
+        "ratings_culture_values": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "ratings_diversity_inclusion": {
+          "types": [
+            "number"
+          ],
+          "sample": 2.9000000953674316
+        },
+        "ratings_overall": {
+          "types": [
+            "number"
+          ],
+          "sample": 3.0999999046325684
+        },
+        "ratings_recommend_to_friend": {
+          "types": [
+            "number"
+          ],
+          "sample": 0.46000000834465027
+        },
+        "ratings_senior_management": {
+          "types": [
+            "number"
+          ],
+          "sample": 2.799999952316284
+        },
+        "ratings_work_life_balance": {
+          "types": [
+            "number"
+          ],
+          "sample": 3
+        },
+        "referral": {
+          "types": [
+            "number"
+          ],
+          "sample": 344
+        },
+        "sales": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "NetSuite",
+            "Quip",
+            "Salesforce CRM"
+          ]
+        },
+        "search": {
+          "types": [
+            "number"
+          ],
+          "sample": 7164
+        },
+        "search_organic": {
+          "types": [
+            "number"
+          ],
+          "sample": 7164
+        },
+        "shopify_apps_in_use": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "similarity_score": {
+          "types": [
+            "string"
+          ],
+          "sample": "High"
+        },
+        "social_paid": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "spend": {
+          "types": [
+            "number"
+          ],
+          "sample": 5150
+        },
+        "status": {
+          "types": [
+            "string"
+          ],
+          "sample": "ok"
+        },
+        "subsidiaries": {
+          "types": [
+            "array<object>"
+          ],
+          "sample": [
+            {
+              "id": "f996246e3090cee9dbcb3009d214bf28",
+              "name": "regenx biosciences"
+            }
+          ]
+        },
+        "target": {
+          "types": [
+            "string"
+          ],
+          "sample": "regenxbio.com"
+        },
+        "target_market": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "technological_disruption": {
+          "types": [
+            "array<string>"
+          ],
+          "sample": "(elided)"
+        },
+        "technologies_categories": {
+          "types": [
+            "string"
+          ],
+          "sample": "Server, Web_Master, Web_Server, ads, analytics, cdn, cdns, cms, docinfo, framework, hosting, javascript, language, link, media, mobile, mx, ns, seo_headers, seo_meta, seo_title, ssl, widgets"
+        },
+        "technologies_sub_categories": {
+          "types": [
+            "string"
+          ],
+          "sample": "Dedicated_Hosting, Root_Authority, US_hosting"
+        },
+        "technologies_used_by_company_website": {
+          "types": [
+            "string"
+          ],
+          "sample": "(elided)"
+        },
+        "testing_and_qa": {
+          "types": [
+            "array<string>",
+            "null"
+          ],
+          "sample": [
+            "Bugzilla",
+            "Optimizely",
+            "Veeva Vault QMS"
+          ]
+        },
+        "text_results": {
+          "types": [
+            "array<object>",
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "ticker": {
+          "types": [
+            "string"
+          ],
+          "sample": "xnas:rgnx"
+        },
+        "time_on_site": {
+          "types": [
+            "number"
+          ],
+          "sample": 128
+        },
+        "topic_count": {
+          "types": [
+            "null"
+          ],
+          "sample": "(elided)"
+        },
+        "total_reviews_count": {
+          "types": [
+            "number"
+          ],
+          "sample": 47
+        },
+        "ultimate_parent_id": {
+          "types": [
+            "string"
+          ],
+          "sample": "07c1d0106ad873752982c4471734ac7c"
+        },
+        "ultimate_parent_name": {
+          "types": [
+            "string"
+          ],
+          "sample": "regenxbio"
+        },
+        "umbrella": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "unknown_channel": {
+          "types": [
+            "number"
+          ],
+          "sample": 0
+        },
+        "url": {
+          "types": [
+            "string"
+          ],
+          "sample": "https://www.regenxbio.com"
+        },
+        "users": {
+          "types": [
+            "number"
+          ],
+          "sample": 7786
+        },
+        "visits": {
+          "types": [
+            "number"
+          ],
+          "sample": 8899
+        }
+      }
+    }
+  }
+}

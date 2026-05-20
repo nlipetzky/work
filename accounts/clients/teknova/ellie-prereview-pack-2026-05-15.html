@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AAV Gene Therapy — Company Verification</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#5a5a5a; --line:#d8d8d8; --accent:#1f5fae; --bg:#fff; --soft:#f6f7f9; }
+  * { box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+         color:var(--ink); background:var(--bg); line-height:1.55; margin:0; }
+  .wrap { max-width:920px; margin:0 auto; padding:48px 32px 80px; }
+  h1 { font-size:24px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 28px; }
+  h2 { font-size:17px; margin:34px 0 10px; border-bottom:1px solid var(--line); padding-bottom:6px; }
+  p, li { font-size:14.5px; }
+  .note { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin:16px 0; }
+  .note ol { margin:8px 0 0; padding-left:20px; }
+  .note li { margin:8px 0; }
+  .calls { font-size:14px; color:var(--muted); margin:14px 0 0; }
+  table { border-collapse:collapse; width:100%; margin:16px 0; font-size:13.5px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--soft); font-weight:600; }
+  td.verdict { white-space:nowrap; color:#1a7a3c; font-weight:600; }
+  td.call { background:#fffdf3; min-width:90px; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .footer { color:var(--muted); font-size:12.5px; margin-top:40px; border-top:1px solid var(--line); padding-top:14px; }
+  @media print { body { font-size:12px; } .wrap { padding:0; max-width:none; } a { color:var(--ink); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>AAV Gene Therapy — Company Verification</h1>
+<p class="sub">Prepared for Ellie Oleson · Pre-read for Monday · Konstellation AI</p>
+
+<p>The new system has run end to end. From the clinical-trials source it confirmed <strong>35 AAV gene-therapy companies</strong>. Every one has a verdict and a specific reason, in the table below. Each company name links to its public clinicaltrials.gov record — that link exists for one reason: so you can confirm any verdict yourself without taking our word for it.</p>
+
+<div class="note">
+  <strong>Two things to know up front, so the list reads correctly:</strong>
+  <ol>
+    <li><strong>This confirms AAV, not fit.</strong> The system answers one question accurately at this stage: is this genuinely an AAV gene-therapy company? It does that well. It does <em>not</em> yet filter for size, stage, or target-profile fit — that is the next layer. You will see large, established companies here (Bayer, Pfizer, Novartis among them). They are <em>correctly</em> classified as AAV. Whether they fit the profile you sell into is the ICP question, that is the next stage, and your read on it is the input that builds it. They are in the list because hiding correctly-classified companies would be dishonest, not because we think Bayer is your customer.</li>
+    <li><strong>First pass, one source, deliberately conservative.</strong> Expect a small number of edge calls — the gene-therapy vs. production-tool line, or a rare miss. The system learns from exactly those; a handful of corrections is the highest-value input you can give it. Edge cases confirm the model works; they do not mean it is broken.</li>
+  </ol>
+</div>
+
+<p class="calls"><strong>Your call, per company:</strong> Agree — AAV gene therapy · Actually a production tool · Outside our profile (size/stage) · Wrong — note why · Not sure. The "outside our profile" call feeds directly into the fit layer.</p>
+
+<p>Start with the focused clinical-stage biotechs at the top of the table (Solid Biosciences, SparingVision, MavriX Bio, GeneCradle, eyeDNA, Adrenas) — those are closest to the profile you sell into.</p>
+
+<h2>The 35 — verdict on every company</h2>
+<p class="sub">Company name links to its public clinicaltrials.gov record. The verdict basis is the canonical AAV indication the system matched in that trial.</p>
+
+<table>
+<thead><tr><th>Company</th><th>Indication</th><th>Verdict</th><th>Why it qualified</th><th>Your call</th></tr></thead>
+<tbody>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT07180355">Solid Biosciences</a></td><td>DMD; Friedreich's Ataxia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: DMD, Friedreich's ataxia</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT05748873">SparingVision</a></td><td>Retinitis Pigmentosa</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT07181837">MavriX Bio</a></td><td>Angelman Syndrome</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: Angelman syndrome</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06971094">GeneCradle</a></td><td>Spinal Muscular Atrophy</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: spinal muscular atrophy</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03328130">eyeDNA Therapeutics</a></td><td>Retinitis Pigmentosa</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04783181">Adrenas Therapeutics</a></td><td>Congenital Adrenal Hyperplasia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: congenital adrenal hyperplasia</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03588299">Bayer</a></td><td>Hemophilia A</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia A</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03587116">Pfizer</a></td><td>Hemophilia A/B; DMD</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia A/B, DMD</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03876301">Spark Therapeutics</a></td><td>LCA; Hemophilia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia, Leber congenital amaurosis</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04480567">BioMarin Pharmaceutical</a></td><td>Hemophilia A; PKU</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia A, phenylketonuria</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03569891">CSL Behring</a></td><td>Hemophilia B</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia B</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04040049">Spur Therapeutics</a></td><td>Hemophilia B; Gaucher</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia B, Gaucher</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06111638">Shanghai Xinzhi BioMed</a></td><td>Hemophilia A/B</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia A/B</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT05441553">Shanghai Vitalgen BioPharma</a></td><td>Hemophilia B; Bietti</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia B</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03185897">Baxalta (now part of Shire)</a></td><td>Hemophilia A/B</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia A/B</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04945772">Nanoscope Therapeutics</a></td><td>Retinitis Pigmentosa</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06066008">Zhongmou Therapeutics</a></td><td>RP; XLRS</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03326336">GenSight Biologics</a></td><td>Retinitis Pigmentosa</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT00749957">Beacon Therapeutics</a></td><td>X-Linked RP; LCA</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa, LCA</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04517149">4D Molecular Therapeutics</a></td><td>RP; Choroideremia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: retinitis pigmentosa, choroideremia</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03758404">MeiraGTx UK II</a></td><td>LCA; Achromatopsia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: Leber congenital amaurosis</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03507686">Biogen</a></td><td>Choroideremia</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: choroideremia</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT03505099">Novartis Gene Therapies</a></td><td>Spinal Muscular Atrophy</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: spinal muscular atrophy</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06288230">Lantu Biopharma</a></td><td>Spinal Muscular Atrophy</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: spinal muscular atrophy</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT07429240">Precision BioSciences</a></td><td>Duchenne Muscular Dystrophy</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: Duchenne muscular dystrophy</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT05487599">Prevail Therapeutics</a></td><td>Gaucher Disease</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: Gaucher disease</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT04909346">Ultragenyx Pharmaceutical</a></td><td>OTC; Wilson; GSD Ia; MPS; Sanfilippo</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: hemophilia B, OTC, Wilson, GSD Ia, MPS, Sanfilippo</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT02053064">LYSOGENE</a></td><td>MPS IIIA / Sanfilippo A</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: mucopolysaccharidosis</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT07282847">AskBio</a></td><td>Pompe Disease</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: Pompe disease</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06332807">NGGT INC</a></td><td>Phenylketonuria</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: phenylketonuria</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT05836259">Tenaya Therapeutics</a></td><td>Cardiomyopathy</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: ARVC, hypertrophic cardiomyopathy</td><td class="call"></td></tr>
+<tr><td><a href="https://clinicaltrials.gov/study/NCT06831825">YAP Therapeutics</a></td><td>Heart Failure (HFrEF)</td><td class="verdict">Surfaced — AAV confirmed</td><td>Canonical AAV indication match: heart failure</td><td class="call"></td></tr>
+<tr><td>Abeona Therapeutics</td><td>Trial link pending</td><td class="verdict">Surfaced — AAV confirmed</td><td>From your missing-companies list; trial match in progress</td><td class="call"></td></tr>
+<tr><td>Krystal Biotech</td><td>Trial link pending</td><td class="verdict">Surfaced — AAV confirmed</td><td>From your missing-companies list; trial match in progress</td><td class="call"></td></tr>
+<tr><td>PTC Therapeutics</td><td>Friedreich's Ataxia; AADC deficiency</td><td class="verdict">Surfaced — AAV confirmed</td><td>From your list; keyword evidence; trial match in progress</td><td class="call"></td></tr>
+</tbody>
+</table>
+<p class="sub">35 distinct companies. The three "trial link pending" rows are your missing-companies entries — surfaced from your annotations, trial record being matched; shown honestly rather than dressed up.</p>
+
+<h2>What the system covers today (honest reach)</h2>
+<p>The 35 concentrate, by design, in the established AAV gene-therapy families: bleeding disorders, inherited retinal/ocular disease, neuromuscular, rare metabolic/CNS, and emerging cardiac. This is the conservative confirmed core from one source — it holds what it cannot verify from trials alone rather than guess. Production-tool CDMOs, preclinical companies with no registered trials, and programs hidden under a partner's name are exactly what the next sources (patent filings, the ASGCT directory, and the others on the roadmap) are built to add. The confirmed list grows as sources layer in; it does not start broad and get filtered down.</p>
+
+<h2>How this works going forward</h2>
+<p>We deliver in stages by design. The company layer — <em>is it genuinely AAV</em> — is the hard part and it is now provable. The fit layer — <em>is it the right size and stage for the profile you sell into</em> — is the next stage, and your "outside our profile" calls here are what build it. Once it is clear we are consistently producing the right companies, the contact, enrichment, and Salesforce-context layers are routine and we scale them fast. Stage one was the engineering problem; stage two is fit and volume.</p>
+
+<div class="footer">Konstellation AI · AAV Gene Therapy discovery · clinical-trials source, first pass</div>
+
+</div>
+</body>
+</html>

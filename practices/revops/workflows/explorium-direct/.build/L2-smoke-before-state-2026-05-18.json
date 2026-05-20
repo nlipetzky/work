@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "purpose": "Immutable BEFORE-state of the 6 L2 smoke-variant assertion rows, captured 2026-05-18 prior to any smoke execution. After-state is diffed against this. Numeric/funding fields must be byte-identical post-smoke; only classification fields may change per the row's expected route.",
+    "base": "appYBYH3aOHhTODAw",
+    "table": "tblnj3YlOI3thjrXp",
+    "field_legend": {
+      "fldr4H5k84ZaK2Htq": "Company Name",
+      "fldirGjP6bjd5GCaL": "Verification Status (singleSelect)",
+      "fldHwdGT2d1QCwXHu": "Verification Verdict (set by Verify, not L2)",
+      "fldXasRij8Y1Q1sna": "Verification Evidence (set by Verify, not L2)",
+      "fld4hBh1bQvo7TTY0": "Verification Checked At (set by Verify, not L2)",
+      "fldD2kbSLk3h0YlSp": "CT.gov NCT IDs",
+      "fld0pkp3ydP0Wxzwi": "CT.gov Indications",
+      "fldrDawYKaVpV757D": "Lead Indication",
+      "fldFhU7drNuaxj17x": "Custom Classification Source",
+      "fldeR34UrAqn94nYW": "Custom Classification",
+      "fldjzarquZ6z8vQed": "Vector Evidence Clause",
+      "fldNzVjp9HX4BPo6l": "Classification Version",
+      "fldm8wtyhmNImTg7d": "Classification Run ID",
+      "fldBBRTBbeHIv9iwN": "Classification Notes",
+      "fldlt7fAcZUJg8RES": "Rejection Reason",
+      "fldyfIr4H4lSIYZdC": "Enrichment Status",
+      "fldSFoOfnURZL5JVy": "Custom Classification Confidence",
+      "fldkmwWej07ZT29QG": "Custom Classification Detected Keywords",
+      "NUMERIC_FUNDING_FIRMOGRAPHIC_must_not_change": {
+        "fld87WcKOimXRx00I": "Amgen-only numeric (value 325412)",
+        "fld3UZDhUdXPtFPf8": "revenue range (Amgen 10B-100B)",
+        "fldFd5qXJ8d01GN17": "headcount band (Amgen 10001+)",
+        "fld0LYxPjPF6AqXcO/fld7ykG3QuIF1DWJ9/fldDriSe5pI5Vnm9Q/fldINucmutJneNFW9/fldL0ZJ0Ufk549MfA/fldMFiJcyhdiL80Qi/fldVQZViFcPrNBzi1/fldYbQczHTZnIETaw/flddHnu4TdDC4BBa7/fldeoCMTRlNjXsxRs/fldlUEhxs1c9UshwF/fldlrP2VoCdiWjfU9/fldo5jm8DcDwaEgoZ/fldqrMaGN2yxwF6GJ/fldtOlF8XvqOSpKxh/fldvS1jwbxXBbrGBG/fldxKlK2HX45CR00u": "numeric metrics, all 0 in before-state"
+      }
+    },
+    "expected_routes": {
+      "recH7j4CLcUI4B140": "CSL Behring -> route 0 surfaced (R5 via NCT03569891 AAV5-hFIXco-Padua)",
+      "rec83lbbxLTPi84zv": "Pfizer -> route 0 surfaced; evidence MUST cite a passing NCT (NCT03362502/04370054/02484092), NOT NCT03587116",
+      "rec0SJcJbRMJIiz3Q": "Nkarta -> route 1 disease_reject rejected (vasculitis)",
+      "recKBQbmpUqiOJkWT": "Amgen -> route 1 disease_reject rejected (vasculitis); carries real numeric/funding fields, must be untouched",
+      "recKF9xxWc57tNCYf": "Prevail Therapeutics -> route 4 needs_review -> THE DEVIATION PATCH (Verification Status=borderline + Enrichment Status=needs_aav_review + Rejection Reason); canonical Gaucher but NCT05487599 fails R5 c3",
+      "rec1o43bPphRJvc0q": "The Clinical Trial Company -> route 5 clean borderline (no indications, no NCT)"
+    }
+  },
+  "rows": {
+    "recH7j4CLcUI4B140": {"Company":"CSL Behring","Verification Status":"surfaced","CT.gov NCT IDs":"NCT03569891","CT.gov Indications":"Hemophilia B","Lead Indication":"Hemophilia B","Custom Classification":"aav","Vector Evidence Clause":"C","Custom Classification Source":"L2:clause_c_canonical_indication","Classification Run ID":"l2_1778889458825","numeric_fields_all":0,"Verification Verdict":"Confirmed (Verify)","Verification Evidence":"Confirmed AAV gene therapy via NCT03569891 ... AAV5-hFIXco-Padua","Verification Checked At":"2026-05-18"},
+    "rec83lbbxLTPi84zv": {"Company":"Pfizer","Verification Status":"surfaced","CT.gov NCT IDs":"NCT05568719, NCT03362502, NCT04370054, NCT02484092, NCT03587116","CT.gov Indications":"Hemophilia A; Hemophilia B; Duchenne Muscular Dystrophy","Lead Indication":"Hemophilia A","Custom Classification":"aav","Vector Evidence Clause":"C","Custom Classification Source":"L2:clause_c_canonical_indication","Classification Run ID":"l2_1778889458825","numeric_fields_all":0,"Verification Verdict":"Confirmed (Verify)","Verification Evidence":"Confirmed AAV gene therapy via NCT03362502 ... PF-06939926 ... (3 cited trials pass R5)","Verification Checked At":"2026-05-18"},
+    "rec0SJcJbRMJIiz3Q": {"Company":"Nkarta, Inc.","Verification Status":"rejected","CT.gov NCT IDs":"NCT06733935","CT.gov Indications":"Systemic Sclerosis; Idiopathic Inflammatory Myopathies; Antineutrophil Cytoplasmic Antibody-Associated Vasculitis","Lead Indication":"Systemic Sclerosis","Custom Classification Source":"L2:disease_aav_exclusion","Rejection Reason":"Antineutrophil Cytoplasmic Antibody-Associated Vasculitis; Antineutrophil Cytoplasmic Antibody Associated Vasculitis","Classification Run ID":"l2_1778889458825","numeric_fields_all":0,"Verification Verdict":null},
+    "recKBQbmpUqiOJkWT": {"Company":"Amgen","Verification Status":"rejected","CT.gov NCT IDs":"NCT06072482, NCT06321601","CT.gov Indications":"Antineutrophil Cytoplasmic Antibody-associated Vasculitis; Vasculitis","Lead Indication":"Antineutrophil Cytoplasmic Antibody-associated Vasculitis","Custom Classification Source":"L2:disease_aav_exclusion","Rejection Reason":"Antineutrophil Cytoplasmic Antibody-Associated Vasculitis; Antineutrophil Cytoplasmic Antibody Associated Vasculitis","Enrichment Status":"rerouted_wrong_modality","Classification Run ID":"l2_1778889458825","fld87WcKOimXRx00I":"325412","fld3UZDhUdXPtFPf8":"10B-100B","fldFd5qXJ8d01GN17":"10001+","other_numeric_fields":0,"firmographics":"amgen.com / thousand oaks / california / Commercial-Approved","Verification Verdict":null},
+    "recKF9xxWc57tNCYf": {"Company":"Prevail Therapeutics","Verification Status":"surfaced","CT.gov NCT IDs":"NCT05487599","CT.gov Indications":"Gaucher Disease; Gaucher Disease, Type 1","Lead Indication":"Gaucher Disease","Custom Classification":"aav","Vector Evidence Clause":"C","Custom Classification Source":"L2:clause_c_canonical_indication","Enrichment Status":"disqualified","Classification Run ID":"l2_1778889458825","numeric_fields_all":0,"Verification Verdict":"Not confirmed (Verify)","Verification Evidence":"No cited trial passes the R5 3-clause gate. NCT05487599: FAIL c3","Verification Checked At":"2026-05-18"},
+    "rec1o43bPphRJvc0q": {"Company":"The Clinical Trial Company","Verification Status":"borderline","CT.gov NCT IDs":null,"CT.gov Indications":null,"Lead Indication":null,"Classification Run ID":"l2_1778889458825","numeric_fields_all":0,"Verification Verdict":null}
+  }
+}

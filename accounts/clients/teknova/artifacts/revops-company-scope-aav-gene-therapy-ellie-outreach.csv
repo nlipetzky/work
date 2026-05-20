@@ -1,0 +1,47 @@
+company_name,clinical_stage_ordinal,clinical_stage,employee_count,country,in_scope,reason
+4D Molecular Therapeutics,2,Clinical Research Phase 2,214,US,yes,All seven criteria met (modality AAV biotech; phase II; 50-2000; US; active opp indicates active program; not closed-won; persona check pending)
+Aavantibio Inc,0,Pre-Clinical Research,5,US,uncertain,Criterion 3: 5 employees is below the 50 floor; persona unlikely at this size (Process Dev / Mfg / CMC role almost certainly absent)
+Adverum Biotechnologies,2,Clinical Research Phase 2,134,US,yes,All criteria met; biotech AAV at Phase II with 134 employees
+Affinia Therapeutics Inc,1.5,Clinical Research Phase 1/2,36,US,uncertain,Criterion 3: 36 employees is below the 50 floor; persona check needed
+Akouos,1.5,Clinical Research Phase 1/2,53,US,yes,At the 50-employee threshold; otherwise meets all criteria
+American Gene Technologies® International Inc,1,Clinical Research Phase 1,24,US,uncertain,Criterion 3: 24 employees is below the 50 floor
+Andelyn Biosciences,,Not Applicable,278,US,yes,CDMO serving AAV vector manufacturing; clinical_stage N/A is correct for CDMO; criterion 2 phase rule does not apply to CDMOs
+Applied Genetics Technologies Corp,3,Clinical Research Phase 3,132,US,no,Criterion 2: Phase 3 exceeds the preclinical-through-Phase-II window; offer explicitly out-of-scope for past Phase II
+AskBio Inc,2,Clinical Research Phase 2,503,US,uncertain,Criterion 3: 503 employees just over 500 trips the large-biopharma secondary filter (US/CA + tenure >=5y + publications) which requires contact-level verification
+Astellas Gene Therapies,2,Clinical Research Phase 2,201,US,uncertain,Criterion 4: subsidiary of Japanese parent Astellas; HQ field shows US but procurement decision-making locus needs verification
+Audentes Therapeutics Inc,1,Clinical Research Phase 1,207,US,yes,All criteria met; Phase 1 biotech in band
+AveXis Inc,4,Commercial/Approved,1745,US,no,Criterion 2: Commercial/Approved exceeds Phase II window; offer's why-now (60-120 days pre-IND) does not apply
+Beacon Therapeutics,3,Clinical Research Phase 3,97,US,no,Criterion 2: Phase 3 exceeds preclinical-through-Phase-II window
+BridgeBio Gene Therapy LLC,4,Commercial/Approved,910,US,no,Criterion 2: Commercial/Approved exceeds window; criterion 3: 910 employees also trips large-biopharma filter
+Capsida Biotherapeutics,0,Pre-Clinical Research,57,US,no,Criterion 6: sf_has_closed_won=true indicates current customer; expansion motion runs separately from this play
+Dyno Therapeutics,0,Pre-Clinical Research,91,US,uncertain,Criterion 1: v2_company_type=Platform/Tools rather than Biotech; offer targets vector-touching reagent buyers and platform/tools companies may not own that procurement
+ElevateBio,0,Pre-Clinical Research,491,US,no,Criterion 6: sf_has_closed_won=true indicates current customer
+Encoded Therapeutics-RTP,1,Clinical Research Phase 1,168,US,yes,All criteria met
+Expression Therapeutics LLC,1,Clinical Research Phase 1,23,US,uncertain,Criterion 3: 23 employees below the 50 floor
+Forge Biologics,1,Clinical Research Phase 1,429,US,yes,All criteria met; CDMO/biotech hybrid in scope
+Genezen Laboratories,0,Pre-Clinical Research,262,US,yes,CDMO serving AAV; preclinical-stage manufacturing partner; in scope
+Grace Science LLC,1,Clinical Research Phase 1,15,US,uncertain,Criterion 3: 15 employees below the 50 floor
+Homology Medicines Inc,1,Clinical Research Phase 1,71,US,yes,All criteria met
+Jaguar Gene Therapy,1,Clinical Research Phase 1,49,US,uncertain,Criterion 3: 49 employees just below the 50 floor; edge case
+Kriya,1,Clinical Research Phase 1,188,US,no,Criterion 6: sf_has_closed_won=true indicates current customer
+Lacerta Therapeutics Inc,0,Pre-Clinical Research,13,US,uncertain,Criterion 3: 13 employees below the 50 floor
+Locanabio Inc,0,Pre-Clinical Research,7,US,uncertain,Criterion 3: 7 employees below the 50 floor
+Neurogene Inc,1.5,Clinical Research Phase 1/2,122,US,yes,All criteria met; active opp indicates engaged
+Odylia Therapeutics,0,Pre-Clinical Research,11,US,uncertain,Criterion 3: 11 employees below the 50 floor
+Opus Genetics,1,Clinical Research Phase 1,35,US,uncertain,Criterion 3: 35 employees below the 50 floor
+Prevail Therapeutics,1,Clinical Research Phase 1,17,US,uncertain,Criterion 3: 17 employees below the 50 floor
+REGENXBIO Inc,3,Clinical Research Phase 3,399,US,no,Criterion 2: Phase 3 exceeds preclinical-through-Phase-II window
+Rejuvenate Bio,0,Pre-Clinical Research,15,US,uncertain,Criterion 3: 15 employees below the 50 floor
+Rocket Pharmaceuticals,1.5,Clinical Research Phase 1/2,223,US,yes,All criteria met
+Sarepta Therapeutics Inc,2,Clinical Research Phase 2,1142,US,uncertain,Criterion 3: 1142 employees trips large-biopharma secondary filter (US/CA + tenure >=5y + publications) requiring contact-level verification
+Shape Therapeutics Inc,0,Pre-Clinical Research,33,US,uncertain,Criterion 3: 33 employees below the 50 floor
+Sio Gene Therapies Inc,1,Clinical Research Phase 1,14,US,uncertain,Criterion 3: 14 employees below the 50 floor
+Solid Biosciences,1.5,Clinical Research Phase 1/2,152,US,yes,All criteria met
+Spark Therapeutics Inc,3,Clinical Research Phase 3,501,US,no,Criterion 2: Phase 3 exceeds preclinical-through-Phase-II window
+Stridebio Inc,0,Pre-Clinical Research,4,US,uncertain,Criterion 3: 4 employees below the 50 floor; criterion 1: v2_primary_modality=Unknown reduces confidence on AAV match
+Taysha Gene Therapies,1,Clinical Research Phase 1,126,US,yes,All criteria met
+Tenaya Therapeutics Inc,1,Clinical Research Phase 1,100,US,yes,All criteria met
+Ultragenyx Pharmaceutical Inc.,4,Commercial/Approved,1535,US,no,Criterion 2: Commercial/Approved exceeds window; criterion 6: sf_has_closed_won=true also indicates current customer
+Virovek,0,Pre-Clinical Research,14,US,uncertain,Criterion 3: 14 employees below the 50 floor; CDMO at this size is unusual
+Voyager Therapeutics Inc,1.5,Clinical Research Phase 1/2,169,US,yes,All criteria met
+XyloCor,1,Clinical Research Phase 1,16,US,uncertain,Criterion 3: 16 employees below the 50 floor

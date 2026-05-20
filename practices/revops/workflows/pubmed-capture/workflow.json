@@ -1,0 +1,445 @@
+{
+  "name": "PubMed Publication Capture",
+  "nodes": [
+    {
+      "id": "aaa00001-0000-0000-0000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 300],
+      "parameters": {}
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000002",
+      "name": "Monthly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 500],
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "0 6 1 * *"}]
+        }
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000003",
+      "name": "Co List Companies",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 3,
+      "position": [300, 100],
+      "parameters": {
+        "operation": "list",
+        "base": {"value": "appYBYH3aOHhTODAw", "mode": "id"},
+        "table": {"value": "tblnj3YlOI3thjrXp", "mode": "id"},
+        "filterByFormula": "NOT({Company Name} = '')",
+        "fields": ["Company Name", "Ultimate Parent"],
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000004",
+      "name": "Co Split Companies",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [600, 100],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000005",
+      "name": "Co Build Company Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 100],
+      "parameters": {
+        "jsCode": "// Rate limit: 400ms pause to stay under NCBI's 3 req/sec without API key\nawait new Promise(r => setTimeout(r, 400));\n\nconst item = $input.first().json;\nconst companyName = (item['Company Name'] || '').trim();\nconst ultimateParent = (item['Ultimate Parent'] || '').trim();\nconst recordId = item.id;\n\nif (!companyName) {\n  return [{ json: { skip: true, record_id: recordId, company_name: '', search_term: '' } }];\n}\n\nconst terms = [`\"${companyName}\"[Affiliation]`];\nif (ultimateParent && ultimateParent.toLowerCase() !== companyName.toLowerCase()) {\n  terms.push(`\"${ultimateParent}\"[Affiliation]`);\n}\n\nreturn [{\n  json: {\n    record_id: recordId,\n    company_name: companyName,\n    search_term: terms.join(' OR '),\n    skip: false\n  }\n}];"
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000006",
+      "name": "Co PubMed Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 100],
+      "parameters": {
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "method": "GET",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "db", "value": "pubmed"},
+            {"name": "term", "value": "={{ $json.search_term }}"},
+            {"name": "retmode", "value": "json"},
+            {"name": "retmax", "value": "100"},
+            {"name": "sort", "value": "pub date"}
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000007",
+      "name": "Co Has Publications?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1500, 100],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "co-count-check",
+              "leftValue": "={{ parseInt($json.esearchresult.count) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000008",
+      "name": "Co Fetch Publication XML",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1800, 100],
+      "parameters": {
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+        "method": "GET",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "db", "value": "pubmed"},
+            {"name": "id", "value": "={{ $json.esearchresult.idlist.join(',') }}"},
+            {"name": "retmode", "value": "xml"},
+            {"name": "rettype", "value": "abstract"}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000009",
+      "name": "Co Parse & Build Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2100, 100],
+      "parameters": {
+        "jsCode": "const xmlText = $input.first().json.body || '';\nconst queryNode = $('Co Build Company Query').item.json;\nconst recordId = queryNode.record_id;\nconst companyName = queryNode.company_name;\n\nfunction parseArticles(xml) {\n  const articles = [];\n  const articleRe = /<PubmedArticle>([\\s\\S]*?)<\\/PubmedArticle>/g;\n  let m;\n  while ((m = articleRe.exec(xml)) !== null) {\n    const a = m[1];\n\n    const pmidM = a.match(/<PMID[^>]*>(\\d+)<\\/PMID>/);\n    const pmid = pmidM ? pmidM[1] : '';\n    if (!pmid) continue;\n\n    const titleM = a.match(/<ArticleTitle>([\\s\\S]*?)<\\/ArticleTitle>/);\n    const title = titleM ? titleM[1].replace(/<[^>]+>/g, '').trim() : '';\n\n    const abstractParts = [];\n    const abstractRe = /<AbstractText[^>]*>([\\s\\S]*?)<\\/AbstractText>/g;\n    let am;\n    while ((am = abstractRe.exec(a)) !== null) {\n      abstractParts.push(am[1].replace(/<[^>]+>/g, '').trim());\n    }\n    const detail = abstractParts.join('\\n').substring(0, 8000);\n\n    const authorNames = [];\n    const authorRe = /<Author[^>]*>([\\s\\S]*?)<\\/Author>/g;\n    let authM;\n    while ((authM = authorRe.exec(a)) !== null) {\n      const aXml = authM[1];\n      const lnM = aXml.match(/<LastName>(.*?)<\\/LastName>/);\n      const fnM = aXml.match(/<ForeName>(.*?)<\\/ForeName>/);\n      const iM = aXml.match(/<Initials>(.*?)<\\/Initials>/);\n      if (lnM) {\n        const fn = fnM ? fnM[1] : (iM ? iM[1] : '');\n        authorNames.push(fn ? `${lnM[1]}, ${fn}` : lnM[1]);\n      }\n    }\n\n    let pubDate = '';\n    const yearM = a.match(/<PubDate>[\\s\\S]*?<Year>(\\d{4})<\\/Year>/);\n    if (yearM) {\n      const year = yearM[1];\n      const monthM = a.match(/<PubDate>[\\s\\S]*?<Month>(\\w+)<\\/Month>/);\n      const dayM = a.match(/<PubDate>[\\s\\S]*?<Day>(\\d+)<\\/Day>/);\n      const monthMap = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};\n      let monthNum = '01';\n      if (monthM) {\n        const mn = monthM[1];\n        monthNum = monthMap[mn] || (mn.length <= 2 ? mn.padStart(2, '0') : '01');\n      }\n      const day = dayM ? dayM[1].padStart(2, '0') : '01';\n      pubDate = `${year}-${monthNum}-${day}`;\n    } else {\n      const medM = a.match(/<MedlineDate>(\\d{4})[\\s\\S]*?<\\/MedlineDate>/);\n      if (medM) pubDate = `${medM[1]}-01-01`;\n    }\n\n    const meshTerms = [];\n    const meshRe = /<DescriptorName[^>]*>(.*?)<\\/DescriptorName>/g;\n    let meshM;\n    while ((meshM = meshRe.exec(a)) !== null) {\n      meshTerms.push(meshM[1].replace(/<[^>]+>/g, '').trim());\n    }\n\n    const rawPayload = m[0].substring(0, 95000);\n    const today = new Date().toISOString().split('T')[0];\n\n    articles.push({\n      event_id: `${companyName} — publication — ${pmid}`,\n      pmid,\n      title,\n      detail,\n      authors: authorNames.join('\\n'),\n      pub_date: pubDate,\n      mesh_terms: meshTerms.join('\\n'),\n      raw_payload: rawPayload,\n      source_url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,\n      record_id: recordId,\n      detected_at: today\n    });\n  }\n  return articles;\n}\n\nconst articles = parseArticles(xmlText);\nif (articles.length === 0) return [];\nreturn articles.map(a => ({ json: a }));"
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000010",
+      "name": "Co Create Company Events",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 3,
+      "position": [2400, 100],
+      "parameters": {
+        "operation": "create",
+        "base": {"value": "appYBYH3aOHhTODAw", "mode": "id"},
+        "table": {"value": "tblnzX2b2kqNGzW6r", "mode": "id"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Event ID": "={{ $json.event_id }}",
+            "Event Type": "publication",
+            "Event Date": "={{ $json.pub_date }}",
+            "Provider": "pubmed",
+            "Company": "={{ [$json.record_id] }}",
+            "Title": "={{ $json.title }}",
+            "Names": "={{ $json.authors }}",
+            "Categories / Tags": "={{ $json.mesh_terms }}",
+            "Detail": "={{ $json.detail }}",
+            "Source URL": "={{ $json.source_url }}",
+            "External ID": "={{ $json.pmid }}",
+            "Raw Reference": "=pubmed:{{ $json.pmid }}",
+            "Vitality": "active",
+            "Confidence": "high",
+            "Detected At": "={{ $json.detected_at }}",
+            "Is Latest": true,
+            "Raw Payload": "={{ $json.raw_payload }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "typecast": true
+        }
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000011",
+      "name": "Ct List Contacts",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 3,
+      "position": [300, 500],
+      "parameters": {
+        "operation": "list",
+        "base": {"value": "appYBYH3aOHhTODAw", "mode": "id"},
+        "table": {"value": "tblWJksRL1yKSUgrm", "mode": "id"},
+        "filterByFormula": "NOT({Last Name} = '')",
+        "fields": ["Full Name", "First Name", "Last Name", "Company Name", "LinkedIn URL"],
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000012",
+      "name": "Ct Split Contacts",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [600, 500],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000013",
+      "name": "Ct Build Author Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 500],
+      "parameters": {
+        "jsCode": "// Rate limit: 400ms pause\nawait new Promise(r => setTimeout(r, 400));\n\nconst item = $input.first().json;\nconst lastName = (item['Last Name'] || '').trim();\nconst firstName = (item['First Name'] || '').trim();\nconst companyName = (item['Company Name'] || '').trim();\nconst linkedIn = (item['LinkedIn URL'] || '').trim();\nconst recordId = item.id;\n\nif (!lastName) {\n  return [{ json: { skip: true, record_id: recordId } }];\n}\n\n// Author search: LastName FI[Author]\nconst firstInitial = firstName ? firstName[0] : '';\nconst authorTerm = firstInitial\n  ? `${lastName} ${firstInitial}[Author]`\n  : `${lastName}[Author]`;\n\nreturn [{\n  json: {\n    record_id: recordId,\n    last_name: lastName,\n    first_name: firstName,\n    company_name: companyName,\n    linkedin_url: linkedIn,\n    search_term: authorTerm,\n    skip: false\n  }\n}];"
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000014",
+      "name": "Ct PubMed Author Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 500],
+      "parameters": {
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        "method": "GET",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "db", "value": "pubmed"},
+            {"name": "term", "value": "={{ $json.search_term }}"},
+            {"name": "retmode", "value": "json"},
+            {"name": "retmax", "value": "50"},
+            {"name": "sort", "value": "pub date"}
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000015",
+      "name": "Ct Has Author Publications?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1500, 500],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "ct-count-check",
+              "leftValue": "={{ parseInt($json.esearchresult.count) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000016",
+      "name": "Ct Fetch Author XML",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1800, 500],
+      "parameters": {
+        "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+        "method": "GET",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "db", "value": "pubmed"},
+            {"name": "id", "value": "={{ $json.esearchresult.idlist.join(',') }}"},
+            {"name": "retmode", "value": "xml"},
+            {"name": "rettype", "value": "abstract"}
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000017",
+      "name": "Ct Parse & Disambiguate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2100, 500],
+      "parameters": {
+        "jsCode": "const xmlText = $input.first().json.body || '';\nconst contactNode = $('Ct Build Author Query').item.json;\nconst recordId = contactNode.record_id;\nconst lastName = contactNode.last_name || '';\nconst firstName = contactNode.first_name || '';\nconst companyName = (contactNode.company_name || '').toLowerCase();\n\n// Strip common legal suffixes for fuzzy affiliation matching\nconst companyCore = companyName\n  .replace(/\\b(inc|llc|ltd|corp|therapeutics|biosciences|bio|pharma|pharmaceuticals|sciences|health|medical|gene therapy|genomics|company|co)\\b/gi, '')\n  .trim();\n\nfunction parseArticles(xml) {\n  const articles = [];\n  const articleRe = /<PubmedArticle>([\\s\\S]*?)<\\/PubmedArticle>/g;\n  let m;\n  while ((m = articleRe.exec(xml)) !== null) {\n    const a = m[1];\n\n    const pmidM = a.match(/<PMID[^>]*>(\\d+)<\\/PMID>/);\n    const pmid = pmidM ? pmidM[1] : '';\n    if (!pmid) continue;\n\n    const titleM = a.match(/<ArticleTitle>([\\s\\S]*?)<\\/ArticleTitle>/);\n    const title = titleM ? titleM[1].replace(/<[^>]+>/g, '').trim() : '';\n\n    const abstractParts = [];\n    const abstractRe = /<AbstractText[^>]*>([\\s\\S]*?)<\\/AbstractText>/g;\n    let am;\n    while ((am = abstractRe.exec(a)) !== null) {\n      abstractParts.push(am[1].replace(/<[^>]+>/g, '').trim());\n    }\n    const detail = abstractParts.join('\\n').substring(0, 8000);\n\n    // Authors + affiliations for disambiguation\n    const authorNames = [];\n    const affiliations = [];\n    const authorRe = /<Author[^>]*>([\\s\\S]*?)<\\/Author>/g;\n    let authM;\n    while ((authM = authorRe.exec(a)) !== null) {\n      const aXml = authM[1];\n      const lnM = aXml.match(/<LastName>(.*?)<\\/LastName>/);\n      const fnM = aXml.match(/<ForeName>(.*?)<\\/ForeName>/);\n      const iM = aXml.match(/<Initials>(.*?)<\\/Initials>/);\n      if (lnM) {\n        const fn = fnM ? fnM[1] : (iM ? iM[1] : '');\n        authorNames.push(fn ? `${lnM[1]}, ${fn}` : lnM[1]);\n      }\n      const affRe = /<Affiliation>([\\s\\S]*?)<\\/Affiliation>/g;\n      let affM;\n      while ((affM = affRe.exec(aXml)) !== null) {\n        affiliations.push(affM[1].replace(/<[^>]+>/g, '').trim());\n      }\n    }\n\n    // Disambiguation by affiliation\n    const affiliationText = affiliations.join(' ').toLowerCase();\n    let confidence = 'low';\n    let signalState = 'needs_dq_review';\n\n    if (companyCore && companyCore.length > 2) {\n      if (affiliationText.includes(companyCore) || affiliationText.includes(companyName)) {\n        confidence = 'high';\n        signalState = '';\n      }\n      // else: company present in DB but affiliation doesn't match → flag\n    } else if (!companyName) {\n      // No company data — can't disambiguate\n      confidence = 'low';\n      signalState = 'needs_dq_review';\n    }\n\n    let pubDate = '';\n    const yearM = a.match(/<PubDate>[\\s\\S]*?<Year>(\\d{4})<\\/Year>/);\n    if (yearM) {\n      const year = yearM[1];\n      const monthM = a.match(/<PubDate>[\\s\\S]*?<Month>(\\w+)<\\/Month>/);\n      const dayM = a.match(/<PubDate>[\\s\\S]*?<Day>(\\d+)<\\/Day>/);\n      const monthMap = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};\n      let monthNum = '01';\n      if (monthM) {\n        const mn = monthM[1];\n        monthNum = monthMap[mn] || (mn.length <= 2 ? mn.padStart(2, '0') : '01');\n      }\n      const day = dayM ? dayM[1].padStart(2, '0') : '01';\n      pubDate = `${year}-${monthNum}-${day}`;\n    } else {\n      const medM = a.match(/<MedlineDate>(\\d{4})[\\s\\S]*?<\\/MedlineDate>/);\n      if (medM) pubDate = `${medM[1]}-01-01`;\n    }\n\n    const meshTerms = [];\n    const meshRe = /<DescriptorName[^>]*>(.*?)<\\/DescriptorName>/g;\n    let meshM;\n    while ((meshM = meshRe.exec(a)) !== null) {\n      meshTerms.push(meshM[1].replace(/<[^>]+>/g, '').trim());\n    }\n\n    const rawPayload = m[0].substring(0, 95000);\n    const today = new Date().toISOString().split('T')[0];\n    const fullName = firstName ? `${lastName}, ${firstName}` : lastName;\n\n    articles.push({\n      event_id: `${fullName} — publication — ${pmid}`,\n      pmid,\n      title,\n      detail,\n      authors: authorNames.join('\\n'),\n      pub_date: pubDate,\n      mesh_terms: meshTerms.join('\\n'),\n      raw_payload: rawPayload,\n      source_url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,\n      record_id: recordId,\n      confidence,\n      signal_state: signalState,\n      detected_at: today\n    });\n  }\n  return articles;\n}\n\nconst articles = parseArticles(xmlText);\nif (articles.length === 0) return [];\nreturn articles.map(a => ({ json: a }));"
+      }
+    },
+    {
+      "id": "aaa00001-0000-0000-0000-000000000018",
+      "name": "Ct Create Contact Events",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 3,
+      "position": [2400, 500],
+      "parameters": {
+        "operation": "create",
+        "base": {"value": "appYBYH3aOHhTODAw", "mode": "id"},
+        "table": {"value": "tblDYItHaNcT2gnwi", "mode": "id"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Event ID": "={{ $json.event_id }}",
+            "Event Type": "publication",
+            "Event Date": "={{ $json.pub_date }}",
+            "Provider": "pubmed",
+            "Contact": "={{ [$json.record_id] }}",
+            "Title": "={{ $json.title }}",
+            "Names": "={{ $json.authors }}",
+            "Categories / Tags": "={{ $json.mesh_terms }}",
+            "Detail": "={{ $json.detail }}",
+            "Source URL": "={{ $json.source_url }}",
+            "External ID": "={{ $json.pmid }}",
+            "Raw Reference": "=pubmed:{{ $json.pmid }}",
+            "Vitality": "active",
+            "Confidence": "={{ $json.confidence }}",
+            "Signal State (raw)": "={{ $json.signal_state }}",
+            "Detected At": "={{ $json.detected_at }}",
+            "Is Latest": true,
+            "Raw Payload": "={{ $json.raw_payload }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "typecast": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {"node": "Co List Companies", "type": "main", "index": 0},
+          {"node": "Ct List Contacts", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Monthly Schedule": {
+      "main": [
+        [
+          {"node": "Co List Companies", "type": "main", "index": 0},
+          {"node": "Ct List Contacts", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Co List Companies": {
+      "main": [
+        [{"node": "Co Split Companies", "type": "main", "index": 0}]
+      ]
+    },
+    "Co Split Companies": {
+      "main": [
+        [{"node": "Co Build Company Query", "type": "main", "index": 0}]
+      ]
+    },
+    "Co Build Company Query": {
+      "main": [
+        [{"node": "Co PubMed Search", "type": "main", "index": 0}]
+      ]
+    },
+    "Co PubMed Search": {
+      "main": [
+        [{"node": "Co Has Publications?", "type": "main", "index": 0}]
+      ]
+    },
+    "Co Has Publications?": {
+      "main": [
+        [{"node": "Co Fetch Publication XML", "type": "main", "index": 0}],
+        []
+      ]
+    },
+    "Co Fetch Publication XML": {
+      "main": [
+        [{"node": "Co Parse & Build Events", "type": "main", "index": 0}]
+      ]
+    },
+    "Co Parse & Build Events": {
+      "main": [
+        [{"node": "Co Create Company Events", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct List Contacts": {
+      "main": [
+        [{"node": "Ct Split Contacts", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct Split Contacts": {
+      "main": [
+        [{"node": "Ct Build Author Query", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct Build Author Query": {
+      "main": [
+        [{"node": "Ct PubMed Author Search", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct PubMed Author Search": {
+      "main": [
+        [{"node": "Ct Has Author Publications?", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct Has Author Publications?": {
+      "main": [
+        [{"node": "Ct Fetch Author XML", "type": "main", "index": 0}],
+        []
+      ]
+    },
+    "Ct Fetch Author XML": {
+      "main": [
+        [{"node": "Ct Parse & Disambiguate", "type": "main", "index": 0}]
+      ]
+    },
+    "Ct Parse & Disambiguate": {
+      "main": [
+        [{"node": "Ct Create Contact Events", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

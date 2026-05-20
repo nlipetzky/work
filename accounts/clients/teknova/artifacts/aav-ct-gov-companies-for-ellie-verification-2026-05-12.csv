@@ -1,0 +1,28 @@
+shortened feedback notes,detailed feedback,Company,Active Trials,Phases,Trial Statuses,Indications,Sample Intervention,US Trial Sites,Canada Trial Sites,Collaborators,NCT IDs,Nick Pre-flag Notes
+,,4D Molecular Therapeutics,3,"PHASE1, PHASE2","ACTIVE_NOT_RECRUITING, RECRUITING",Cystic Fibrosis Lung; Diabetic Macular Edema; Diabetic Retinopathy; Neovascular (Wet) Age-Related Macular Degeneration,4D-150 IVT,Y,N,,"NCT05248230, NCT05930561, NCT05197270",Already in your Apr 17 list
+,,Ultragenyx Pharmaceutical Inc,3,"PHASE1, PHASE2, PHASE3","ACTIVE_NOT_RECRUITING, ENROLLING_BY_INVITATION",MPS IIIA; Mucopolysaccharidosis IIIA; OTC Deficiency; Sanfilippo A; Sanfilippo Syndrome; Wilson Disease,Adjuvant Immunomodulatory (IM) Therapy,Y,Y,,"NCT05345171, NCT04884815, NCT04360265",
+,,"Adverum Biotechnologies, Inc.",2,PHASE3,"ACTIVE_NOT_RECRUITING, RECRUITING",Diabetic Macular Edema; Diabetic Retinopathy; Neovascular Age-Related Macular Degeneration (nAMD); Wet AMD,ADVM-022,Y,N,,"NCT05607810, NCT07482176",
+,,Beacon Therapeutics,2,"PHASE1, PHASE2","ACTIVE_NOT_RECRUITING, ENROLLING_BY_INVITATION",X-Linked Retinitis Pigmentosa,AGTC-501 (high dose and modified corticosteroid regimen),Y,N,,"NCT06275620, NCT03316560",Already in your Apr 17 list
+,,BioMarin Pharmaceutical,2,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,HAE; Hereditary Angioedema; Phenylketonuria (PKU),BMN 307,Y,N,,"NCT05121376, NCT04480567",Large pharma ... likely excluded by >2k headcount rule
+,,"Chengdu Origen Biotechnology Co., Ltd.",2,PHASE1,ACTIVE_NOT_RECRUITING,Age-Related Macular Degeneration,KH631,Y,N,,"NCT06825858, NCT05657301",China HQ
+,,Solid Biosciences Inc.,2,"PHASE1, PHASE3",RECRUITING,Duchenne Muscular Dystrophy; Friedreich's Ataxia (FA),Placebo,Y,Y,,"NCT07180355, NCT07160634",
+,,Tenaya Therapeutics,2,"PHASE1, PHASE2",RECRUITING,Arrhythmogenic Right Ventricular Cardiomyopathy; Hypertrophic Cardiomyopathy,TN-201,Y,N,,"NCT06228924, NCT05836259",
+,,Adrenas Therapeutics Inc,1,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,Congenital Adrenal Hyperplasia,AAV BBP-631,Y,N,,NCT04783181,
+,,"Alpine Immune Sciences, Inc.",1,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,Anti-Neutrophil Cytoplasmic Antibody-Associated Vasculitis; Immunoglobulin A Nephropathy; Lupus Nephritis; Membranous Nephropathy,Povetacicept,Y,N,,NCT05732402,"Protein/Ig fusion therapeutics, verify AAV exposure"
+,,Amgen,1,PHASE4,RECRUITING,Antineutrophil Cytoplasmic Antibody-associated Vasculitis,Avacopan,Y,N,,NCT06072482,Large pharma ... likely excluded by >2k headcount rule
+,,"Ascidian Therapeutics, Inc",1,"PHASE1, PHASE2",RECRUITING,Cone Rod Dystrophy; Juvenile Macular Degeneration; Stargardt Disease; Stargardt Disease 1,ACDN-01,Y,N,,NCT06467344,"RNA exon editing ... AAV delivery vehicle, verify modality fit | Already in your Apr 17 list"
+,,AskBio Inc,1,"PHASE1, PHASE2",RECRUITING,LOPD; Pompe Disease (Late-onset); Pompe Disease Late-Onset,AB-1009 (GAA Gene),Y,N,Bayer,NCT07282847,Already in your Apr 17 list
+,,Bayer,1,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,Hemophilia A,BAY2599023 (DTX201),Y,N,Ultragenix pharmaceutical,NCT03588299,Large pharma ... likely excluded by >2k headcount rule
+,,Cartesian Therapeutics,1,"PHASE1, PHASE2",RECRUITING,ANCA-Associated Vasculitis (AAV); Childhood-onset Systemic Lupus Erythematous; Juvenile Dermatomyositis; Juvenile Myasthenia Gravis,Descartes-08,Y,N,,NCT07089121,RNA / cell therapy platform ... verify
+,,Elpida Therapeutics SPC,1,"PHASE1, PHASE2",RECRUITING,"Growth Retardation; Intellectual Deficiency; Microcephaly; SPG50; Spastic Paraplegia; Spasticity, Muscle",MELPIDA,Y,N,University of Texas Southwestern Medical Center,NCT05518188,Cayman SPC ... verify operating geography
+,,Life Biosciences Inc.,1,PHASE1,RECRUITING,NAION( Non-arteritic Anterior Ischemic Optic Neuropathy); Open Angle Glaucoma (OAG),ER-100 epigenetic therapy,Y,N,,NCT07290244,
+,,"MavriX Bio, LLC",1,"PHASE1, PHASE2",RECRUITING,Angelman Syndrome,MVX-220,Y,N,,NCT07181837,
+,,"Nkarta, Inc.",1,"PHASE1, PHASE2",RECRUITING,Antineutrophil Cytoplasmic Antibody-Associated Vasculitis; Idiopathic Inflammatory Myopathies; Systemic Sclerosis,Cyclophosphamide,Y,N,,NCT06733935,NK-cell therapy ... verify AAV intersection
+,,Pfizer,1,PHASE3,RECRUITING,Hemophilia A; Hemophilia B,Testing of hepatic AAV Vector integration,Y,N,,NCT05568719,Large pharma ... likely excluded by >2k headcount rule
+,,"Precision BioSciences, Inc.",1,"PHASE1, PHASE2",RECRUITING,Duchenne Muscular Dystrophy With Mutations Amenable to PBGENE-DMD,PBGENE-DMD (IV),Y,N,,NCT07429240,"ARCUS gene editing platform (CRISPR-like), not classical AAV ... verify"
+,,Rocket Pharmaceuticals Inc.,1,PHASE1,RECRUITING,Dilated Cardiomyopathy (DCM),"RP-A701 is a recombinant viral vector composed of an AAV serotype rh.74 (AAVrh.74) capsid encapsulating the transgene, BCL2-associated Athanogene 3 (BAG3)",Y,N,,NCT07137338,
+,,Spur Therapeutics,1,PHASE3,RECRUITING,Gaucher Disease Type 1,FLT201,Y,N,,NCT07223944,
+,,Trogenix ltd,1,"PHASE1, PHASE2",RECRUITING,Glioblastoma (GBM); High Grade Gliomas; Newly Diagnosed Glioblastoma; Recurrent Glioblastoma,TGX-007,Y,N,,NCT07346144,UK HQ
+,,UniQure Biopharma B.V.,1,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,Huntington's Disease,Imitation (sham) surgery,Y,N,,NCT04120493,Netherlands HQ ... US operations
+,,Vivet Therapeutics SAS,1,"PHASE1, PHASE2",ACTIVE_NOT_RECRUITING,Wilson's Disease,VTX-801,Y,N,,NCT04537377,France HQ
+,,"YAP Therapeutics, Inc.",1,PHASE1,RECRUITING,Heart Failure With Reduced Ejection Fraction,YAP101 (AAV9-Sav-shRNA),Y,N,,NCT06831825,

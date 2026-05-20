@@ -1,0 +1,25 @@
+{
+  "when": "2026-05-18T18:19:28Z deployed versionId b87fee3c",
+  "root_cause": "n8n UI save during credential attach re-blanked Airtable resource-locator values; cachedResultName/Url hardening survives MCP create/update but NOT a UI save",
+  "blanked_nodes": {
+    "Read Classification Rules": {
+      "base_value": "",
+      "table_value": "",
+      "expected_base": "appYBYH3aOHhTODAw",
+      "expected_table": "tbl1HFYzezFYs5C3k"
+    },
+    "Read Candidates": {
+      "base_value": "",
+      "table_value": "",
+      "expected_base": "appYBYH3aOHhTODAw",
+      "expected_table": "tblnj3YlOI3thjrXp"
+    },
+    "Write Run Log": {
+      "base_value": "",
+      "table_value": "",
+      "expected_base": "appYBYH3aOHhTODAw",
+      "expected_table": "tblEVSEqetmu4ScHe"
+    }
+  },
+  "fix": "Convert the 3 Airtable-typed nodes to httpRequest (Airtable REST API, base/table in URL string). No resource-locator anywhere -> immune to builder AND UI-save blanking. Apply Rules + 7 PATCH unchanged/byte-identical."
+}

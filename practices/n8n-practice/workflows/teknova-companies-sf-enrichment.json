@@ -1,0 +1,289 @@
+{
+  "name": "Teknova — Companies SF Enrichment",
+  "nodes": [
+    {
+      "id": "trig-manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-200, 0],
+      "parameters": {}
+    },
+    {
+      "id": "trig-schedule",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-200, 200],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "list-accounts",
+      "name": "List Accounts",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [0, 100],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app5wdHwgM1SPNxcx",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUgxKdATinoBMcR",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pJ4oVKlLQLrvp3Z9",
+          "name": "All Teknova Konstellation Bases"
+        }
+      }
+    },
+    {
+      "id": "agg-accounts",
+      "name": "Aggregate Accounts",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [200, 100],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      }
+    },
+    {
+      "id": "list-opps",
+      "name": "List Opportunities",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [400, 100],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app5wdHwgM1SPNxcx",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbli8VKcXxc5qF7US",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pJ4oVKlLQLrvp3Z9",
+          "name": "All Teknova Konstellation Bases"
+        }
+      }
+    },
+    {
+      "id": "agg-opps",
+      "name": "Aggregate Opportunities",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [600, 100],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      }
+    },
+    {
+      "id": "list-contacts",
+      "name": "List Contacts",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [800, 100],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app5wdHwgM1SPNxcx",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl8cXYsBzWtCSnw3",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pJ4oVKlLQLrvp3Z9",
+          "name": "All Teknova Konstellation Bases"
+        }
+      }
+    },
+    {
+      "id": "agg-contacts",
+      "name": "Aggregate Contacts",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1000, 100],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      }
+    },
+    {
+      "id": "list-companies",
+      "name": "List Companies",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [1200, 100],
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appFoLY6hjroyA2KW",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblmd04rMsw3GE3pK",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pJ4oVKlLQLrvp3Z9",
+          "name": "All Teknova Konstellation Bases"
+        }
+      }
+    },
+    {
+      "id": "build-updates",
+      "name": "Build Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 100],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Build SF enrichment updates for every Company.\n// Reads ME_Account_Mirror, ME_Opportunity_Mirror, ME_Contact_Mirror laterally\n// from upstream Airtable list nodes. Emits one update item per Company.\n\nfunction bareDomain(url) {\n  if (!url) return null;\n  return String(url).toLowerCase()\n    .replace(/^https?:\\/\\//, '')\n    .replace(/^www\\./, '')\n    .replace(/\\/.*$/, '')\n    .trim() || null;\n}\n\nfunction stageName(stage) {\n  if (!stage) return null;\n  if (typeof stage === 'string') return stage;\n  if (typeof stage === 'object' && stage.name) return stage.name;\n  return null;\n}\n\nconst companies = $input.all().map(i => i.json);\nconst accounts = $('List Accounts').all().map(i => i.json);\nconst opps = $('List Opportunities').all().map(i => i.json);\nconst contacts = $('List Contacts').all().map(i => i.json);\n\n// Build lookup maps over the SF mirrors.\nconst accountByDomain = new Map();\nconst accountByName = new Map();\nconst accountById = new Map();\nfor (const a of accounts) {\n  const sfId = a['Account ID'];\n  if (!sfId) continue;\n  accountById.set(sfId, a);\n  const dom = bareDomain(a['Website']);\n  if (dom) {\n    if (!accountByDomain.has(dom)) accountByDomain.set(dom, []);\n    accountByDomain.get(dom).push(a);\n  }\n  const nm = (a['Account Name'] || '').trim().toLowerCase();\n  if (nm) {\n    if (!accountByName.has(nm)) accountByName.set(nm, []);\n    accountByName.get(nm).push(a);\n  }\n}\n\nconst oppsByAccount = new Map();\nfor (const o of opps) {\n  const aid = o['Account ID'];\n  if (!aid) continue;\n  if (!oppsByAccount.has(aid)) oppsByAccount.set(aid, []);\n  oppsByAccount.get(aid).push(o);\n}\n\nconst contactsByAccount = new Map();\nfor (const c of contacts) {\n  const aid = c['Account ID'];\n  if (!aid) continue;\n  if (!contactsByAccount.has(aid)) contactsByAccount.set(aid, []);\n  contactsByAccount.get(aid).push(c);\n}\n\nconst now = DateTime.now();\nconst out = [];\nconst noMatchLog = [];\n\nfor (const company of companies) {\n  const recordId = company.id;\n  const fields = company; // company has fields at top level under cellValuesByFieldId-style flattening; n8n Airtable v2 returns cleaner shape.\n  const companyName = (fields['Company Name'] || '').trim();\n  const dom = bareDomain(fields['Website Domain']);\n\n  // Match: domain first, then exact name. Skip ambiguous (multi-match).\n  let match = null;\n  if (dom && accountByDomain.has(dom)) {\n    const candidates = accountByDomain.get(dom);\n    if (candidates.length === 1) match = candidates[0];\n  }\n  if (!match) {\n    const nm = companyName.toLowerCase();\n    if (nm && accountByName.has(nm)) {\n      const candidates = accountByName.get(nm);\n      if (candidates.length === 1) match = candidates[0];\n    }\n  }\n\n  if (!match) {\n    noMatchLog.push({ recordId, companyName, dom });\n    out.push({\n      json: {\n        id: recordId,\n        'SF Record ID': '',\n        'Salesforce Account ID': '',\n        'Last Contacted Date': null,\n        'DNC / Opt-Out': false,\n        'Active SF Opportunity': false,\n        'SF Opportunity Stage': '',\n        'Customer Status': 'Never Customer',\n        'Active BD Engagement': 'None',\n        '_matched': false,\n      }\n    });\n    continue;\n  }\n\n  const sfId = match['Account ID'];\n  const oppList = oppsByAccount.get(sfId) || [];\n  const contactList = contactsByAccount.get(sfId) || [];\n\n  const lastActivityRaw = match['Last Activity'];\n  const lastActivity = lastActivityRaw ? DateTime.fromISO(lastActivityRaw) : null;\n  const daysSinceActivity = lastActivity ? now.diff(lastActivity, 'days').days : null;\n\n  const openOpps = oppList.filter(o => o['Closed'] !== true);\n  const wonOpps = oppList.filter(o => stageName(o['Stage']) === 'Closed Won');\n  let latestWonClose = null;\n  for (const o of wonOpps) {\n    if (!o['Close Date']) continue;\n    const d = DateTime.fromISO(o['Close Date']);\n    if (!latestWonClose || d > latestWonClose) latestWonClose = d;\n  }\n\n  // Customer Status\n  let customerStatus = 'Never Customer';\n  if (latestWonClose) {\n    customerStatus = now.diff(latestWonClose, 'months').months <= 12\n      ? 'Current Customer' : 'Historical Customer';\n  }\n\n  // Active BD Engagement\n  let bdEngagement = 'None';\n  if (openOpps.length > 0 || (daysSinceActivity !== null && daysSinceActivity <= 30)) {\n    bdEngagement = 'Active';\n  } else if (oppList.length > 0 || lastActivity) {\n    bdEngagement = 'Past';\n  }\n\n  // DNC / Opt-Out: any contact at this account has Do Not Call OR Email Opt Out\n  const dnc = contactList.some(c => c['Do Not Call'] === true || c['Email Opt Out'] === true);\n\n  // Active SF Opportunity + Stage\n  const activeOpp = openOpps.length > 0;\n  let stage = '';\n  if (activeOpp) {\n    const sortedOpen = openOpps.slice().sort((a, b) =>\n      new Date(b['Last Modified Date'] || 0) - new Date(a['Last Modified Date'] || 0));\n    stage = stageName(sortedOpen[0]['Stage']) || '';\n  }\n\n  out.push({\n    json: {\n      id: recordId,\n      'SF Record ID': sfId,\n      'Salesforce Account ID': sfId,\n      'Last Contacted Date': lastActivityRaw || null,\n      'DNC / Opt-Out': dnc,\n      'Active SF Opportunity': activeOpp,\n      'SF Opportunity Stage': stage,\n      'Customer Status': customerStatus,\n      'Active BD Engagement': bdEngagement,\n      '_matched': true,\n    }\n  });\n}\n\nif (noMatchLog.length) {\n  console.log(`No SF match for ${noMatchLog.length} companies:`, JSON.stringify(noMatchLog, null, 2));\n}\nconsole.log(`Built ${out.length} updates (${out.filter(x => x.json._matched).length} matched).`);\nreturn out;\n"
+      }
+    },
+    {
+      "id": "loop-batches",
+      "name": "Loop Over Companies",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1600, 100],
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      }
+    },
+    {
+      "id": "update-company",
+      "name": "Update Company",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [1800, 200],
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appFoLY6hjroyA2KW",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblmd04rMsw3GE3pK",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "SF Record ID": "={{ $json[\"SF Record ID\"] }}",
+            "Salesforce Account ID": "={{ $json[\"Salesforce Account ID\"] }}",
+            "Last Contacted Date": "={{ $json[\"Last Contacted Date\"] }}",
+            "DNC / Opt-Out": "={{ $json[\"DNC / Opt-Out\"] }}",
+            "Active SF Opportunity": "={{ $json[\"Active SF Opportunity\"] }}",
+            "SF Opportunity Stage": "={{ $json[\"SF Opportunity Stage\"] }}",
+            "Customer Status": "={{ $json[\"Customer Status\"] }}",
+            "Active BD Engagement": "={{ $json[\"Active BD Engagement\"] }}"
+          },
+          "matchingColumns": ["id"]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pJ4oVKlLQLrvp3Z9",
+          "name": "All Teknova Konstellation Bases"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{"node": "List Accounts", "type": "main", "index": 0}]]
+    },
+    "Schedule Trigger": {
+      "main": [[{"node": "List Accounts", "type": "main", "index": 0}]]
+    },
+    "List Accounts": {
+      "main": [[{"node": "Aggregate Accounts", "type": "main", "index": 0}]]
+    },
+    "Aggregate Accounts": {
+      "main": [[{"node": "List Opportunities", "type": "main", "index": 0}]]
+    },
+    "List Opportunities": {
+      "main": [[{"node": "Aggregate Opportunities", "type": "main", "index": 0}]]
+    },
+    "Aggregate Opportunities": {
+      "main": [[{"node": "List Contacts", "type": "main", "index": 0}]]
+    },
+    "List Contacts": {
+      "main": [[{"node": "Aggregate Contacts", "type": "main", "index": 0}]]
+    },
+    "Aggregate Contacts": {
+      "main": [[{"node": "List Companies", "type": "main", "index": 0}]]
+    },
+    "List Companies": {
+      "main": [[{"node": "Build Updates", "type": "main", "index": 0}]]
+    },
+    "Build Updates": {
+      "main": [[{"node": "Loop Over Companies", "type": "main", "index": 0}]]
+    },
+    "Loop Over Companies": {
+      "main": [
+        [],
+        [{"node": "Update Company", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Company": {
+      "main": [[{"node": "Loop Over Companies", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Chicago",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  }
+}

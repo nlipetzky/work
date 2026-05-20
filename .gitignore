@@ -1,0 +1,15 @@
+# Credentials
+**/.mcp.json
+.env
+.env.*
+*.pem
+*.key
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Build artifacts
+node_modules/
+__pycache__/
+*.pyc
