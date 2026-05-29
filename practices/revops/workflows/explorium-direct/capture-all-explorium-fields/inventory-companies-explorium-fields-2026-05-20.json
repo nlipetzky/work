@@ -1,0 +1,1138 @@
+{
+  "generated": "2026-05-20",
+  "workflow": "Z6RROKx5omdfvhtn",
+  "source_execution": "72396",
+  "total_keys": 226,
+  "fields": [
+    {
+      "column": "explorium_accession_number",
+      "raw_key": "accession_number",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_accuracy",
+      "raw_key": "accuracy",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_acquired_by",
+      "raw_key": "acquired_by",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_affiliate_links",
+      "raw_key": "affiliate_links",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_bi_and_analytics",
+      "raw_key": "bi_and_analytics",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_bounce_rate",
+      "raw_key": "bounce_rate",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_bounced_visits",
+      "raw_key": "bounced_visits",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_business_description",
+      "raw_key": "business_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_business_id",
+      "raw_key": "business_id",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_business_logo",
+      "raw_key": "business_logo",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_categories_to_technologies_tree",
+      "raw_key": "categories_to_technologies_tree",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_change_description",
+      "raw_key": "change_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_change_implication",
+      "raw_key": "change_implication",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_change_in_customer_service_roles",
+      "raw_key": "change_in_customer_service_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_design_roles",
+      "raw_key": "change_in_design_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_education_roles",
+      "raw_key": "change_in_education_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_engineering_roles",
+      "raw_key": "change_in_engineering_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_finance_roles",
+      "raw_key": "change_in_finance_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_health_roles",
+      "raw_key": "change_in_health_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_change_in_hr_roles",
+      "raw_key": "change_in_hr_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_legal_roles",
+      "raw_key": "change_in_legal_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_marketing_roles",
+      "raw_key": "change_in_marketing_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_media_roles",
+      "raw_key": "change_in_media_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_operations_roles",
+      "raw_key": "change_in_operations_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_pr_roles",
+      "raw_key": "change_in_pr_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_real_estate_roles",
+      "raw_key": "change_in_real_estate_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_roles_divisor",
+      "raw_key": "change_in_roles_divisor",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_change_in_sales_roles",
+      "raw_key": "change_in_sales_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_change_in_trades_roles",
+      "raw_key": "change_in_trades_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_channel",
+      "raw_key": "channel",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_cik",
+      "raw_key": "cik",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_city_name",
+      "raw_key": "city_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_collaboration",
+      "raw_key": "collaboration",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_communications",
+      "raw_key": "communications",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_city",
+      "raw_key": "company_city",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_competition",
+      "raw_key": "company_competition",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_country_code",
+      "raw_key": "company_country_code",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_customer_adoption",
+      "raw_key": "company_customer_adoption",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_data_security_breach",
+      "raw_key": "company_data_security_breach",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_data_security_privacy",
+      "raw_key": "company_data_security_privacy",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_focus",
+      "raw_key": "company_focus",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_market_saturation",
+      "raw_key": "company_market_saturation",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_marketing_sales",
+      "raw_key": "company_marketing_sales",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_name",
+      "raw_key": "company_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_partnerships",
+      "raw_key": "company_partnerships",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_product_development",
+      "raw_key": "company_product_development",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_region",
+      "raw_key": "company_region",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_score",
+      "raw_key": "company_score",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_company_street",
+      "raw_key": "company_street",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_url",
+      "raw_key": "company_url",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_value_proposition",
+      "raw_key": "company_value_proposition",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_vertical",
+      "raw_key": "company_vertical",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_website",
+      "raw_key": "company_website",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_company_zip_code",
+      "raw_key": "company_zip_code",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_computer_networks",
+      "raw_key": "computer_networks",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_country_name",
+      "raw_key": "country_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_created_at",
+      "raw_key": "created_at",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_current_advisors",
+      "raw_key": "current_advisors",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_customer_management",
+      "raw_key": "customer_management",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_date",
+      "raw_key": "date",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_date_stamp",
+      "raw_key": "date_stamp",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_days_since_posted",
+      "raw_key": "days_since_posted",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_db_indexed",
+      "raw_key": "db_indexed",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_desktop_share",
+      "raw_key": "desktop_share",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_device_type",
+      "raw_key": "device_type",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_devops_and_development",
+      "raw_key": "devops_and_development",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_direct",
+      "raw_key": "direct",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_display_ad",
+      "raw_key": "display_ad",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_display_name",
+      "raw_key": "display_name",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_domain",
+      "raw_key": "domain",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_earliest_record",
+      "raw_key": "earliest_record",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_ecommerce",
+      "raw_key": "ecommerce",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_established",
+      "raw_key": "established",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_experience_negative",
+      "raw_key": "experience_negative",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_experience_neutral",
+      "raw_key": "experience_neutral",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_experience_positive",
+      "raw_key": "experience_positive",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_filed_at",
+      "raw_key": "filed_at",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_finance_and_accounting",
+      "raw_key": "finance_and_accounting",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_first_funding_round_date",
+      "raw_key": "first_funding_round_date",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_first_funding_round_type",
+      "raw_key": "first_funding_round_type",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_first_funding_round_value_usd",
+      "raw_key": "first_funding_round_value_usd",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_form_description",
+      "raw_key": "form_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_form_type",
+      "raw_key": "form_type",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_full_nested_tech_stack",
+      "raw_key": "full_nested_tech_stack",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_full_tech_stack",
+      "raw_key": "full_tech_stack",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_funding_rounds_info",
+      "raw_key": "funding_rounds_info",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_health_tech",
+      "raw_key": "health_tech",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_hr",
+      "raw_key": "hr",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_intent_topics",
+      "raw_key": "intent_topics",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_investors",
+      "raw_key": "investors",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_ipo_date",
+      "raw_key": "ipo_date",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_ipo_size_usd",
+      "raw_key": "ipo_size_usd",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_is_ipo",
+      "raw_key": "is_ipo",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_it_management",
+      "raw_key": "it_management",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_it_security",
+      "raw_key": "it_security",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_keywords_indicator",
+      "raw_key": "keywords_indicator",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_known_funding_total_value",
+      "raw_key": "known_funding_total_value",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_last_funding_round_date",
+      "raw_key": "last_funding_round_date",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_last_funding_round_type",
+      "raw_key": "last_funding_round_type",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_last_funding_round_value_usd",
+      "raw_key": "last_funding_round_value_usd",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_latest_funding_increase_in_percents",
+      "raw_key": "latest_funding_increase_in_percents",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_latest_update",
+      "raw_key": "latest_update",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_level_of_intent",
+      "raw_key": "level_of_intent",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_link_to_filing_details",
+      "raw_key": "link_to_filing_details",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_link_to_html",
+      "raw_key": "link_to_html",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_linkedin_industry_category",
+      "raw_key": "linkedin_industry_category",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_linkedin_profile",
+      "raw_key": "linkedin_profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_live_techs",
+      "raw_key": "live_techs",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_locations_distribution",
+      "raw_key": "locations_distribution",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_business_id",
+      "raw_key": "lookalike_business_id",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_business_name",
+      "raw_key": "lookalike_business_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_country_location",
+      "raw_key": "lookalike_country_location",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_description",
+      "raw_key": "lookalike_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_naics_description",
+      "raw_key": "lookalike_naics_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_number_of_employees_range",
+      "raw_key": "lookalike_number_of_employees_range",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_revenue_range",
+      "raw_key": "lookalike_revenue_range",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_lookalike_website",
+      "raw_key": "lookalike_website",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_mail",
+      "raw_key": "mail",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_marketing",
+      "raw_key": "marketing",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_mobile_bounce_rate",
+      "raw_key": "mobile_bounce_rate",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_mobile_hits",
+      "raw_key": "mobile_hits",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_mobile_pages_per_visit",
+      "raw_key": "mobile_pages_per_visit",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_mobile_share",
+      "raw_key": "mobile_share",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_mobile_users",
+      "raw_key": "mobile_users",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_mobile_visits",
+      "raw_key": "mobile_visits",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_money_spend_on_website_technologies",
+      "raw_key": "money_spend_on_website_technologies",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_month_period",
+      "raw_key": "month_period",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_naics",
+      "raw_key": "naics",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_naics_description",
+      "raw_key": "naics_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_name",
+      "raw_key": "name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_num_of_news",
+      "raw_key": "num_of_news",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_number_of_advisors",
+      "raw_key": "number_of_advisors",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_number_of_comments",
+      "raw_key": "number_of_comments",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_number_of_employees_range",
+      "raw_key": "number_of_employees_range",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_number_of_funding_rounds",
+      "raw_key": "number_of_funding_rounds",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_number_of_investors_for_first_funding_round",
+      "raw_key": "number_of_investors_for_first_funding_round",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_number_of_investors_for_last_funding_round",
+      "raw_key": "number_of_investors_for_last_funding_round",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_number_of_likes",
+      "raw_key": "number_of_likes",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_number_of_pages_on_sitemap",
+      "raw_key": "number_of_pages_on_sitemap",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_number_of_premium_technologies",
+      "raw_key": "number_of_premium_technologies",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_number_of_social_networks",
+      "raw_key": "number_of_social_networks",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_operations_management",
+      "raw_key": "operations_management",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_operations_software",
+      "raw_key": "operations_software",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_organization_tree",
+      "raw_key": "organization_tree",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_pages_per_visit",
+      "raw_key": "pages_per_visit",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_paid",
+      "raw_key": "paid",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_parent_company_id",
+      "raw_key": "parent_company_id",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_parent_company_name",
+      "raw_key": "parent_company_name",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_parked",
+      "raw_key": "parked",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_payment_options",
+      "raw_key": "payment_options",
+      "observed_type": "boolean"
+    },
+    {
+      "column": "explorium_payment_technologies_in_use",
+      "raw_key": "payment_technologies_in_use",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_customer_service_roles",
+      "raw_key": "perc_customer_service_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_design_roles",
+      "raw_key": "perc_design_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_education_roles",
+      "raw_key": "perc_education_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_engineering_roles",
+      "raw_key": "perc_engineering_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_finance_roles",
+      "raw_key": "perc_finance_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_health_roles",
+      "raw_key": "perc_health_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_hr_roles",
+      "raw_key": "perc_hr_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_legal_roles",
+      "raw_key": "perc_legal_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_marketing_roles",
+      "raw_key": "perc_marketing_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_media_roles",
+      "raw_key": "perc_media_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_operations_roles",
+      "raw_key": "perc_operations_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_pr_roles",
+      "raw_key": "perc_pr_roles",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_perc_real_estate_roles",
+      "raw_key": "perc_real_estate_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_sales_roles",
+      "raw_key": "perc_sales_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_perc_trades_roles",
+      "raw_key": "perc_trades_roles",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_platform_and_storage",
+      "raw_key": "platform_and_storage",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_post_text",
+      "raw_key": "post_text",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_post_url",
+      "raw_key": "post_url",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_premium_techs",
+      "raw_key": "premium_techs",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_product_and_design",
+      "raw_key": "product_and_design",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_product_count",
+      "raw_key": "product_count",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_productivity_and_operations",
+      "raw_key": "productivity_and_operations",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profiles_found_per_quarter",
+      "raw_key": "profiles_found_per_quarter",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_prog_langs_and_frameworks",
+      "raw_key": "prog_langs_and_frameworks",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_q_rank",
+      "raw_key": "q_rank",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_quarters",
+      "raw_key": "quarters",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_rank",
+      "raw_key": "rank",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_all_reviews_count",
+      "raw_key": "ratings_all_reviews_count",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_business_outlook",
+      "raw_key": "ratings_business_outlook",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_career_opportunities",
+      "raw_key": "ratings_career_opportunities",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_ceo_approval",
+      "raw_key": "ratings_ceo_approval",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_ceo_approval_count",
+      "raw_key": "ratings_ceo_approval_count",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_compensation_benefits",
+      "raw_key": "ratings_compensation_benefits",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_culture_values",
+      "raw_key": "ratings_culture_values",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_ratings_diversity_inclusion",
+      "raw_key": "ratings_diversity_inclusion",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_overall",
+      "raw_key": "ratings_overall",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_recommend_to_friend",
+      "raw_key": "ratings_recommend_to_friend",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_senior_management",
+      "raw_key": "ratings_senior_management",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ratings_work_life_balance",
+      "raw_key": "ratings_work_life_balance",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_referral",
+      "raw_key": "referral",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_region_name",
+      "raw_key": "region_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_sales",
+      "raw_key": "sales",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_search",
+      "raw_key": "search",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_search_organic",
+      "raw_key": "search_organic",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_shopify_apps_in_use",
+      "raw_key": "shopify_apps_in_use",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_sic_code",
+      "raw_key": "sic_code",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_sic_code_description",
+      "raw_key": "sic_code_description",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_similarity_score",
+      "raw_key": "similarity_score",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_social_paid",
+      "raw_key": "social_paid",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_spend",
+      "raw_key": "spend",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_status",
+      "raw_key": "status",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_street",
+      "raw_key": "street",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_subsidiaries",
+      "raw_key": "subsidiaries",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_target",
+      "raw_key": "target",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_target_market",
+      "raw_key": "target_market",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_technological_disruption",
+      "raw_key": "technological_disruption",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_technologies_categories",
+      "raw_key": "technologies_categories",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_technologies_sub_categories",
+      "raw_key": "technologies_sub_categories",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_technologies_used_by_company_website",
+      "raw_key": "technologies_used_by_company_website",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_testing_and_qa",
+      "raw_key": "testing_and_qa",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_text_results",
+      "raw_key": "text_results",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_ticker",
+      "raw_key": "ticker",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_time_on_site",
+      "raw_key": "time_on_site",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_topic_count",
+      "raw_key": "topic_count",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_total_reviews_count",
+      "raw_key": "total_reviews_count",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_ultimate_parent_id",
+      "raw_key": "ultimate_parent_id",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_ultimate_parent_name",
+      "raw_key": "ultimate_parent_name",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_umbrella",
+      "raw_key": "umbrella",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_unknown_channel",
+      "raw_key": "unknown_channel",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_url",
+      "raw_key": "url",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_users",
+      "raw_key": "users",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_visits",
+      "raw_key": "visits",
+      "observed_type": "number"
+    },
+    {
+      "column": "explorium_website",
+      "raw_key": "website",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_yearly_revenue_range",
+      "raw_key": "yearly_revenue_range",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_zip_code",
+      "raw_key": "zip_code",
+      "observed_type": "string"
+    }
+  ]
+}

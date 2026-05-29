@@ -97,7 +97,7 @@ Pipeline is composable. A play can stop at any stage if that's all Nick needs.
 ## Client folder structure
 
 ```
-clients/<client>/
+accounts/clients/<client>/
   CLAUDE.md          ← client-level context (practice-agnostic)
   sources/           ← ingested context (provenance: external)
   artifacts/         ← produced context (provenance: capability output)
@@ -150,7 +150,7 @@ Claude Code walks up the directory tree from launch directory, loading every CLA
 **Layer rules:**
 - **Global** (`~/.claude/CLAUDE.md`) = output constraints only. Currently 22 lines: format rules, voice, defaults. No philosophy, no role definition.
 - **Project** (`~/code/work/CLAUDE.md` and `~/code/work/practices/<practice>/CLAUDE.md`) = role definition. Operator persona, workflow, pipeline.
-- **Client** (`~/code/work/clients/<client>/CLAUDE.md`) = client-specific context. Tone, exclusions, named accounts, pointer to NotebookLM source.
+- **Client** (`~/code/work/accounts/clients/<client>/CLAUDE.md`) = client-specific context. Tone, exclusions, named accounts, pointer to NotebookLM source.
 - **Conversation** = the actual task at hand.
 
 **Do not put project-specific rules at higher levels.** A file at `~/CLAUDE.md` that contains MCP routing rules for a specific tool will load into every session anywhere in the home directory and pollute unrelated work. Same for putting a manifesto at the global level when it should be a practice CLAUDE.md.
@@ -166,7 +166,7 @@ Claude Code walks up the directory tree from launch directory, loading every CLA
 2. Produce a migration inventory: every folder in the old layout gets a port / archive / delete decision.
 3. Separate application code from operator system. The aos application (api, functions, supabase, etc.) is its own product and lives in its own repo. The operator system goes in `~/code/work/`.
 4. Port lean: do not copy old skills wholesale. Open each, decide if you want it, rewrite from scratch against the new meta-template. Most old skills are 80% noise.
-5. Move active client context into `~/code/work/clients/<client>/context/`. Move shipped artifacts into `artifacts/`. Fill in each client's CLAUDE.md.
+5. Move active client context into `~/code/work/accounts/clients/<client>/context/`. Move shipped artifacts into `artifacts/`. Fill in each client's CLAUDE.md.
 6. Archive the rest. Move old folders to `~/Archive/` with a date. Delete after 60 days of not touching it.
 7. Validate by running one real campaign for one real client end-to-end through the new structure. Build skills as needed, against real work.
 

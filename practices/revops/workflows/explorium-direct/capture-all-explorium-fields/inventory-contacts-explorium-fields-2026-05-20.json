@@ -1,0 +1,326 @@
+{
+  "generated": "2026-05-20",
+  "workflow": "bYZ0sAzyUvU60wMZ",
+  "source_execution": "80834",
+  "total_keys": 53,
+  "fields": [
+    {
+      "column": "explorium_contacts_emails",
+      "raw_key": "emails",
+      "sub_object": "contacts",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_contacts_mobile_phone",
+      "raw_key": "mobile_phone",
+      "sub_object": "contacts",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_contacts_phone_numbers",
+      "raw_key": "phone_numbers",
+      "sub_object": "contacts",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_contacts_professional_email_status",
+      "raw_key": "professional_email_status",
+      "sub_object": "contacts",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_contacts_professions_email",
+      "raw_key": "professions_email",
+      "sub_object": "contacts",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_business_id",
+      "raw_key": "business_id",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_city",
+      "raw_key": "city",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_company_linkedin",
+      "raw_key": "company_linkedin",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_company_name",
+      "raw_key": "company_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_company_website",
+      "raw_key": "company_website",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_country_name",
+      "raw_key": "country_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_experience",
+      "raw_key": "experience",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_first_name",
+      "raw_key": "first_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_full_name",
+      "raw_key": "full_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_interests",
+      "raw_key": "interests",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_job_department",
+      "raw_key": "job_department",
+      "sub_object": "fetched",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_fetched_job_department_array",
+      "raw_key": "job_department_array",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_job_department_main",
+      "raw_key": "job_department_main",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_job_level_array",
+      "raw_key": "job_level_array",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_job_level_main",
+      "raw_key": "job_level_main",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_job_seniority_level",
+      "raw_key": "job_seniority_level",
+      "sub_object": "fetched",
+      "observed_type": "null"
+    },
+    {
+      "column": "explorium_fetched_job_title",
+      "raw_key": "job_title",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_last_name",
+      "raw_key": "last_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_linkedin",
+      "raw_key": "linkedin",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_linkedin_url_array",
+      "raw_key": "linkedin_url_array",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_professional_email_hashed",
+      "raw_key": "professional_email_hashed",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_prospect_id",
+      "raw_key": "prospect_id",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_region_name",
+      "raw_key": "region_name",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_fetched_skills",
+      "raw_key": "skills",
+      "sub_object": "fetched",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_age_group",
+      "raw_key": "age_group",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_city",
+      "raw_key": "city",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_company_linkedin",
+      "raw_key": "company_linkedin",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_company_name",
+      "raw_key": "company_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_company_website",
+      "raw_key": "company_website",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_country_name",
+      "raw_key": "country_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_education",
+      "raw_key": "education",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_experience",
+      "raw_key": "experience",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_first_name",
+      "raw_key": "first_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_full_name",
+      "raw_key": "full_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_gender",
+      "raw_key": "gender",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_interests",
+      "raw_key": "interests",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_department",
+      "raw_key": "job_department",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_department_array",
+      "raw_key": "job_department_array",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_department_main",
+      "raw_key": "job_department_main",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_level_array",
+      "raw_key": "job_level_array",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_level_main",
+      "raw_key": "job_level_main",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_seniority_level",
+      "raw_key": "job_seniority_level",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_job_title",
+      "raw_key": "job_title",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_last_name",
+      "raw_key": "last_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_linkedin",
+      "raw_key": "linkedin",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_linkedin_url_array",
+      "raw_key": "linkedin_url_array",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_region_name",
+      "raw_key": "region_name",
+      "sub_object": "profile",
+      "observed_type": "string"
+    },
+    {
+      "column": "explorium_profile_skills",
+      "raw_key": "skills",
+      "sub_object": "profile",
+      "observed_type": "string"
+    }
+  ]
+}

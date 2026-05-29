@@ -491,7 +491,7 @@ Artifacts are named `<stage>-<campaign-slug>.md`. Campaign slugs are short, lowe
 Not for: writing the database queries themselves, building Clay/Apollo workflows, managing the CRM, building the email sending infrastructure. That's downstream of what skills here produce.
 About 45 lines. Defines the role, the pipeline, the I/O conventions, and the boundary.
 
-~/code/work/clients/_template/CLAUDE.md
+~/code/work/accounts/clients/_template/CLAUDE.md
 
 markdown
 # Client: <Client Name>
@@ -597,7 +597,7 @@ Step four. Port lean, not faithful.
 Once you have your inventory and ~/code/work/ is standing up:
 
 Do not copy the old skills/ folder over. Open each old skill, decide if you want it in the new system, and rewrite it from scratch against the meta-template. This is faster than you think. Most old skills are 80% noise.
-Move active client context into ~/code/work/clients/<client>/context/. Move shipped artifacts into ~/code/work/clients/<client>/artifacts/. Fill in each client's CLAUDE.md.
+Move active client context into ~/code/work/accounts/clients/<client>/context/. Move shipped artifacts into ~/code/work/accounts/clients/<client>/artifacts/. Fill in each client's CLAUDE.md.
 Reference material that's truly evergreen goes into the relevant domain's reference/ folder. If you can't articulate why a doc is worth keeping in one sentence, delete it.
 Step five. Archive the old, don't delete.
 
@@ -607,7 +607,7 @@ After 60 days of not touching the archive, you can delete it for real. By then y
 
 Step six. Start using the new system on one real client.
 
-Pick one active client. Stand them up properly in ~/code/work/clients/<them>/. Run a real campaign through the (still partially-built) pipeline. The skills will get built as you need them, against real work. This is the only validation that matters.
+Pick one active client. Stand them up properly in ~/code/work/accounts/clients/<them>/. Run a real campaign through the (still partially-built) pipeline. The skills will get built as you need them, against real work. This is the only validation that matters.
 
 What to resist
 Resist building all the skills before doing real work in the new structure. You've been doing this. It's the trap. Skills get refined by use, not by foresight.
@@ -637,10 +637,10 @@ Right call on the OS-first approach. Validate the workflow with you in the loop,
 Now the CLAUDE.md question. This is a good one and most people get it wrong.
 
 How CLAUDE.md actually loads
-Claude Code walks up the directory tree from where you launch it, loading every CLAUDE.md it finds along the way. So if you launch Claude Code from ~/code/work/clients/acme/ it will load:
+Claude Code walks up the directory tree from where you launch it, loading every CLAUDE.md it finds along the way. So if you launch Claude Code from ~/code/work/accounts/clients/acme/ it will load:
 
-~/code/work/clients/acme/CLAUDE.md
-~/code/work/clients/CLAUDE.md (if it exists)
+~/code/work/accounts/clients/acme/CLAUDE.md
+~/code/work/accounts/clients/CLAUDE.md (if it exists)
 ~/code/work/CLAUDE.md
 ~/code/CLAUDE.md ← this is your problem
 ~/CLAUDE.md (if it exists)
@@ -843,7 +843,7 @@ This is real engineering. It's also... not generic. It only applies when you're 
 The problem
 You've put a project-specific operational ruleset at the home-directory level, where it loads for everything. Including the new clean ~/code/work/ you're about to build. Including any client folder, any code project, any session that has nothing to do with context-mode.
 
-If you launch Claude Code in ~/code/work/clients/acme/ to do a RevOps task, this file loads. Claude is told that curl is BLOCKED, that WebFetch is denied, that it must use ctx_fetch_and_index... when you don't have those MCP tools available in that session at all. Claude will either ignore the instructions (best case) or get confused trying to call tools that don't exist (worst case).
+If you launch Claude Code in ~/code/work/accounts/clients/acme/ to do a RevOps task, this file loads. Claude is told that curl is BLOCKED, that WebFetch is denied, that it must use ctx_fetch_and_index... when you don't have those MCP tools available in that session at all. Claude will either ignore the instructions (best case) or get confused trying to call tools that don't exist (worst case).
 
 This is the contamination I warned you about, just at a different layer than I expected.
 
@@ -1114,7 +1114,7 @@ Claude Code walks up the directory tree from launch directory, loading every CLA
 **Layer rules:**
 - **Global** (`~/.claude/CLAUDE.md`) = output constraints only. Currently 22 lines: format rules, voice, defaults. No philosophy, no role definition.
 - **Project** (`~/code/work/CLAUDE.md` and `~/code/work/domains/<domain>/CLAUDE.md`) = role definition. Operator persona, workflow, pipeline.
-- **Client** (`~/code/work/clients/<client>/CLAUDE.md`) = client-specific context. Tone, exclusions, named accounts, pointer to NotebookLM source.
+- **Client** (`~/code/work/accounts/clients/<client>/CLAUDE.md`) = client-specific context. Tone, exclusions, named accounts, pointer to NotebookLM source.
 - **Conversation** = the actual task at hand.
 
 **Do not put project-specific rules at higher levels.** A file at `~/CLAUDE.md` that contains MCP routing rules for a specific tool will load into every session anywhere in the home directory and pollute unrelated work. Same for putting a manifesto at the global level when it should be a domain CLAUDE.md.
@@ -1130,7 +1130,7 @@ Claude Code walks up the directory tree from launch directory, loading every CLA
 2. Produce a migration inventory: every folder in the old layout gets a port / archive / delete decision.
 3. Separate application code from operator system. The aos application (api, functions, supabase, etc.) is its own product and lives in its own repo. The operator system goes in `~/code/work/`.
 4. Port lean: do not copy old skills wholesale. Open each, decide if you want it, rewrite from scratch against the new meta-template. Most old skills are 80% noise.
-5. Move active client context into `~/code/work/clients/<client>/context/`. Move shipped artifacts into `artifacts/`. Fill in each client's CLAUDE.md.
+5. Move active client context into `~/code/work/accounts/clients/<client>/context/`. Move shipped artifacts into `artifacts/`. Fill in each client's CLAUDE.md.
 6. Archive the rest. Move old folders to `~/Archive/` with a date. Delete after 60 days of not touching it.
 7. Validate by running one real campaign for one real client end-to-end through the new structure. Build skills as needed, against real work.
 
@@ -1336,7 +1336,7 @@ The problem isn't that the coach found context. The problem is you don't yet kno
 What to do, right now
 Step one. Read the file the coach just wrote.
 
-Open ~/code/work/clients/teknova/CLAUDE.md. Read every line. For each claim:
+Open ~/code/work/accounts/clients/teknova/CLAUDE.md. Read every line. For each claim:
 
 Is this still true today? (ICPs drift, scopes change, stakeholders rotate.)
 Did this come from a current source, or from something I retired?
@@ -1360,8 +1360,8 @@ When you need Teknova context, pull from these only:
 
 Do NOT pull context from:
 - `~/code/aos/` ... legacy operator-system attempts. Archived.
-- `~/code/teknova/` (if it exists outside `~/code/work/clients/teknova/`) ... pre-migration material; treat as historical only.
-- Any folder outside `~/code/work/clients/teknova/`.
+- `~/code/teknova/` (if it exists outside `~/code/work/accounts/clients/teknova/`) ... pre-migration material; treat as historical only.
+- Any folder outside `~/code/work/accounts/clients/teknova/`.
 
 If you don't find what you need in trusted sources, ask Nick. Do not improvise from old folders.
 This is the same principle as the CLAUDE.md inheritance discussion. Bound the context surface intentionally. The coach should not have free run of the disk.
@@ -1370,7 +1370,7 @@ Step three. Re-derive the client CLAUDE.md from a clean source.
 
 Don't try to clean up what the coach wrote. It's faster to start fresh.
 
-Here's the move: open NotebookLM (which is your current source of truth for Teknova context, by your own design), run a few queries to surface the engagement essentials... scope, ICP, exclusions, stakeholders, tone, active campaigns... and paste those answers into ~/code/work/clients/teknova/context/engagement-overview.md.
+Here's the move: open NotebookLM (which is your current source of truth for Teknova context, by your own design), run a few queries to surface the engagement essentials... scope, ICP, exclusions, stakeholders, tone, active campaigns... and paste those answers into ~/code/work/accounts/clients/teknova/context/engagement-overview.md.
 
 Then tell the coach: "Read context/engagement-overview.md and rewrite CLAUDE.md from that. Ignore anything else on disk."
 
@@ -1381,7 +1381,7 @@ Step four. Decide what to do with the legacy ~/code/teknova/ folder.
 This is the structural fix. As long as that folder exists outside ~/code/work/, the coach can crawl it. Two options:
 
 Move it to archive. mv ~/code/teknova ~/Archive/teknova-pre-migration-2026-05-06. Out of the active workspace. Coach can't reach it. If you need something from it, you go get it deliberately.
-Triage it. Pull the genuinely current pieces (active transcripts, recent emails, current artifacts) into ~/code/work/clients/teknova/context/ and artifacts/. Archive the rest.
+Triage it. Pull the genuinely current pieces (active transcripts, recent emails, current artifacts) into ~/code/work/accounts/clients/teknova/context/ and artifacts/. Archive the rest.
 I'd start with option one and then triage from the archive as you actually need things. Most of what's in the old folder you'll never touch again.
 
 The deeper principle
@@ -1451,7 +1451,7 @@ This directory (`~/code/work/`) is Nick's active operating system for client wor
 
 **Historical sources** (do NOT read by default):
 - `~/code/aos/`
-- `~/code/<client-name>/` folders that exist outside `~/code/work/clients/`
+- `~/code/<client-name>/` folders that exist outside `~/code/work/accounts/clients/`
 - `~/Archive/`
 - Any other folder under `~/code/` not inside `~/code/work/`
 
@@ -1488,7 +1488,7 @@ See `~/code/work/CLAUDE.md` for the full boundary definition.
 Six lines. Reinforces the rule in the persona file so the coach internalizes it as part of how it operates, not just as inherited guidance.
 
 What this fixes
-Next time the coach is asked to set up a client folder, it will not crawl ~/code/aos/ or ~/code/teknova/ for material. It will look in ~/code/work/clients/<name>/context/, find it empty or thin, and ask you to populate it from NotebookLM. That's the correct workflow.
+Next time the coach is asked to set up a client folder, it will not crawl ~/code/aos/ or ~/code/teknova/ for material. It will look in ~/code/work/accounts/clients/<name>/context/, find it empty or thin, and ask you to populate it from NotebookLM. That's the correct workflow.
 
 You also don't have to clean the existing Teknova CLAUDE.md the coach already wrote. Once the boundary is in place, the next time you touch that file with the coach, it'll respect the new rule. The contamination is bounded to that one file. Edit it manually as you planned, and from here on the coach behaves correctly.
 
@@ -1522,7 +1522,7 @@ Three scenarios cover everything you'll do.
 
 Scenario 1: Working on a specific client's work.
 
-Launch from ~/code/work/clients/<client>/.
+Launch from ~/code/work/accounts/clients/<client>/.
 
 Loads: global constraints → top-level work CLAUDE.md → client CLAUDE.md.
 
@@ -1547,9 +1547,9 @@ Rare. Reserved for things like producing the migration inventory, working across
 For your immediate question
 You said: "I want to work on Teknova RevOps data and have the coach create an artifact describing the criteria for the campaign we're building."
 
-Launch from ~/code/work/clients/teknova/.
+Launch from ~/code/work/accounts/clients/teknova/.
 
-That's a client work session. The Teknova CLAUDE.md loads. The coach knows it's working on Teknova specifically. When it produces the criteria artifact, it writes it to ~/code/work/clients/teknova/artifacts/segment-<campaign>.md (or wherever your schema dictates).
+That's a client work session. The Teknova CLAUDE.md loads. The coach knows it's working on Teknova specifically. When it produces the criteria artifact, it writes it to ~/code/work/accounts/clients/teknova/artifacts/segment-<campaign>.md (or wherever your schema dictates).
 
 The trap to avoid
 Don't launch from ~/code/work/ and then say "let's work on Teknova." It'll work, but you're now relying on the coach to remember which client throughout the session, and the Teknova CLAUDE.md isn't in context. You'll get fuzzier output and you won't know why.
@@ -1563,7 +1563,7 @@ That might be fine for client work. The coach voice is useful when you're design
 
 But if you want Boris-the-coach to be your voice everywhere, that's a different design choice and we'd put the persona in the top-level CLAUDE.md instead of the coach domain. Worth thinking about. My current recommendation is to keep them separate: Boris coaches the system design, the operator persona executes the work. Different jobs, different tones.
 
-Tell me if you want to revisit that. Otherwise: launch from ~/code/work/clients/teknova/ and go.
+Tell me if you want to revisit that. Otherwise: launch from ~/code/work/accounts/clients/teknova/ and go.
 
 You said: I want to do RevOps work on a specific client.
 I want to do RevOps work on a specific client. From what your output here tells me, I should go to the client folder and work from there, but it won't have any of the RevOps context. The RevOps folder is not in the file or folder path.
@@ -1572,11 +1572,11 @@ I want to do RevOps work on a specific client. From what your output here tells 
 Claude responded: Sharp catch.
 Sharp catch. You're right and I glossed over it.
 
-The CLAUDE.md inheritance chain only walks up the directory tree. It does not load sibling folders. So launching from ~/code/work/clients/teknova/ loads:
+The CLAUDE.md inheritance chain only walks up the directory tree. It does not load sibling folders. So launching from ~/code/work/accounts/clients/teknova/ loads:
 
 ~/.claude/CLAUDE.md
 ~/code/work/CLAUDE.md
-~/code/work/clients/teknova/CLAUDE.md
+~/code/work/accounts/clients/teknova/CLAUDE.md
 It does not load ~/code/work/domains/revops/CLAUDE.md. The revops domain is a sibling of clients/, not an ancestor. You're correct that the RevOps operator role and pipeline definition never enters context.
 
 This is a real structural problem in what I designed. Let me give you the fix.
@@ -1584,7 +1584,7 @@ This is a real structural problem in what I designed. Let me give you the fix.
 Three options
 Option A: Reference the domain explicitly from the client CLAUDE.md.
 
-In ~/code/work/clients/teknova/CLAUDE.md, add a section near the top:
+In ~/code/work/accounts/clients/teknova/CLAUDE.md, add a section near the top:
 
 markdown
 ## Domain
@@ -1635,7 +1635,7 @@ Option B is tempting because it eliminates the indirection, but it forces every 
 
 What to do right now
 Add the domain-routing instruction to ~/code/work/CLAUDE.md (the top-level file you just wrote).
-Add the explicit domain declaration to ~/code/work/clients/teknova/CLAUDE.md.
+Add the explicit domain declaration to ~/code/work/accounts/clients/teknova/CLAUDE.md.
 Make sure ~/code/work/domains/revops/CLAUDE.md actually exists and contains the RevOps operator role and pipeline. If it doesn't yet, that's the next thing to write before you do real RevOps work in the new structure.
 That last point is important. You haven't actually written the revops domain CLAUDE.md yet, have you? We drafted it in this chat session but I don't think it's on disk. If it's not there, your client work will load a pointer to a file that doesn't exist, and the coach will be confused.
 
@@ -1691,7 +1691,7 @@ This is the simplest. Costs you one sentence per session. Works.
 
 Approach 2: Subdirectory per work type within the client folder.
 
-~/code/work/clients/teknova/
+~/code/work/accounts/clients/teknova/
 ├── CLAUDE.md              ← engagement context, domain-agnostic
 ├── revops/
 │   ├── CLAUDE.md          ← short: "load domains/revops/CLAUDE.md"
@@ -1703,7 +1703,7 @@ Approach 2: Subdirectory per work type within the client folder.
     ├── context/
     ├── artifacts/
     └── builds/
-Launch from ~/code/work/clients/teknova/revops/ for RevOps work. The intermediate CLAUDE.md just instructs the coach to load the revops domain file. Launch from ~/code/work/clients/teknova/automation/ for automation work.
+Launch from ~/code/work/accounts/clients/teknova/revops/ for RevOps work. The intermediate CLAUDE.md just instructs the coach to load the revops domain file. Launch from ~/code/work/accounts/clients/teknova/automation/ for automation work.
 
 This is what I'd actually do. Concrete, no ambiguity, the directory you're in tells the coach what kind of work you're doing.
 
@@ -1714,7 +1714,7 @@ You set a session marker before launching. The top-level CLAUDE.md reads it and 
 My recommendation
 Go with approach 2. Here's the new client folder shape:
 
-~/code/work/clients/teknova/
+~/code/work/accounts/clients/teknova/
 ├── CLAUDE.md                      ← engagement context only
 │   (scope, ICP, stakeholders, NotebookLM source, etc.)
 │   (no mention of "this is RevOps")
@@ -1746,7 +1746,7 @@ When you start automation work for Teknova, you launch from clients/teknova/auto
 What to clean up
 Two things:
 
-One. Strip the "this is a RevOps engagement" language out of ~/code/work/clients/teknova/CLAUDE.md. That file should be domain-agnostic. It describes Teknova as a client, not as a RevOps client.
+One. Strip the "this is a RevOps engagement" language out of ~/code/work/accounts/clients/teknova/CLAUDE.md. That file should be domain-agnostic. It describes Teknova as a client, not as a RevOps client.
 
 Two. Add the two subdirectories: revops/ and automation/. Each gets a short CLAUDE.md that says "this session is doing X-domain work, load ~/code/work/domains/X/CLAUDE.md."
 
@@ -2355,7 +2355,7 @@ Make these directories if they don't exist:
 ~/code/work/primitives/schemas/
 ~/code/work/primitives/agents/
 ~/code/work/assets/_template/
-~/code/work/ventures/_template/
+~/code/work/accounts/ventures/_template/
 Task 2: Write the content domain CLAUDE.md.
 
 Create ~/code/work/domains/content/CLAUDE.md. Mark it as a placeholder for now, with a short note that it will hold the content-creation operator role and pipeline once Nick begins building owned-asset content systems. Don't try to define the full domain yet; he'll iterate on it when he starts building his first asset.
@@ -2386,7 +2386,7 @@ Building / growing / mature / sunset.
 How often Nick touches this asset. What's automated vs manual.
 Task 4: Write the ventures template.
 
-Create ~/code/work/ventures/_template/CLAUDE.md:
+Create ~/code/work/accounts/ventures/_template/CLAUDE.md:
 
 markdown
 # Venture: <Name>
@@ -2416,13 +2416,13 @@ Domain expertise, credentialing, liability, client-facing work.
 Current concrete commitments and next steps.
 Task 5: Restructure the Teknova folder.
 
-Currently ~/code/work/clients/teknova/ has context/ and artifacts/ directly under it, with a CLAUDE.md that may still reference RevOps as the engagement type. Update as follows:
+Currently ~/code/work/accounts/clients/teknova/ has context/ and artifacts/ directly under it, with a CLAUDE.md that may still reference RevOps as the engagement type. Update as follows:
 
 a. The Teknova root CLAUDE.md should describe the engagement domain-agnostically: scope, ICP, stakeholders, tone, exclusions, NotebookLM source, active campaigns. No mention of "this is a RevOps engagement." Strip that language.
 
-b. Create ~/code/work/clients/teknova/revops/ with subdirectories context/, artifacts/, and campaigns/. Move existing RevOps-related context and artifacts into here.
+b. Create ~/code/work/accounts/clients/teknova/revops/ with subdirectories context/, artifacts/, and campaigns/. Move existing RevOps-related context and artifacts into here.
 
-c. Create ~/code/work/clients/teknova/automation/ with subdirectories context/, artifacts/, and builds/. Empty for now; Nick will populate when automation work begins.
+c. Create ~/code/work/accounts/clients/teknova/automation/ with subdirectories context/, artifacts/, and builds/. Empty for now; Nick will populate when automation work begins.
 
 d. Write a short CLAUDE.md in clients/teknova/revops/:
 
@@ -2566,7 +2566,7 @@ Once you've done that, you'll know where the roadmap goes. Most likely you want 
 
 ~/code/work/roadmap.md ... studio-level. Which assets, which ventures, which domains, in what order.
 ~/code/work/domains/revops/reference/roadmap.md ... domain-level. Which RevOps capabilities to build out, which skills to formalize, which automations to encode.
-~/code/work/clients/teknova/roadmap.md ... engagement-level. Specific Teknova milestones.
+~/code/work/accounts/clients/teknova/roadmap.md ... engagement-level. Specific Teknova milestones.
 Three roadmaps, three different scopes, three different update cadences. Don't try to put all of this in one file.
 
 The lesson buried in your question

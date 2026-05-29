@@ -1,5 +1,9 @@
 # Client: [Client Name]
 
+## READ STATE.md FIRST
+
+Before producing ANY client-facing artifact (email draft, status update, meeting brief, scope note, list, plan), read `STATE.md` in this folder. The active commitments, hard rules, and read-list there override default behavior. STATE.md is the session-bootstrapping file. If STATE.md does not exist yet, that itself is a signal: the engagement does not have an active Trajectory or operating protocol locked, and the first move is to draft one (route through Polaris / engagement-governance practice).
+
 ## Practice(s)
 
 <!-- Which operator role(s) are active for this engagement -->
@@ -42,6 +46,15 @@ clients/<this-client>/
 ## Exclusions
 
 <!-- People, companies, or segments that must never appear in outreach -->
+
+## Expert and sponsor interactions route through their respective practices
+
+<!-- Any operator working in this engagement defers human-facing interaction to the appropriate practice. Do not draft approval asks, choose channels, or send artifacts directly to the client's people from inside this folder.
+
+- **Expert-side asks** (criteria, persona, ICP, classification rules, domain judgment) route through Hermes: `/Users/nplmini/code/work/practices/expert-liaison/CLAUDE.md`.
+- **Sponsor-side asks** (engagement scope, Trajectory, weekly cadence, scope-change conversations) route through Polaris: `/Users/nplmini/code/work/practices/engagement-governance/CLAUDE.md`.
+
+Name in "Named accounts" who fills the expert role and who fills the sponsor role for this engagement. -->
 
 ## Notes
 

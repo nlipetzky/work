@@ -1,0 +1,4386 @@
+{
+  "name": "Explorium Enrich Company by Record ID",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "f21df0be-f7c6-4e11-ab8b-ec6c167784ce",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        304
+      ],
+      "id": "4f3fdca1-d168-4310-acfc-a63af75bdbc9",
+      "name": "Webhook",
+      "webhookId": "1c1b397c-2693-4fd7-b640-7a3b841d99aa"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appYBYH3aOHhTODAw"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblnj3YlOI3thjrXp"
+        },
+        "id": "={{ $json.query.recordId }}",
+        "options": {}
+      },
+      "id": "e1000002-0000-0000-0000-000000000002",
+      "name": "Get Company by ID",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        304
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.exa.ai/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "470e14ee-bbe8-49cc-ad5d-8c8008bd7d05"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query: $json.fields[\"Company Name\"] + \" official corporate website\", numResults: 5, type: \"keyword\" }) }}",
+        "options": {}
+      },
+      "id": "g1000001-0000-0000-0000-000000000001",
+      "name": "Resolve Domain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rec = $('Get Company by ID').item.json;\nconst exa = $('Resolve Domain').item.json || {};\n\nconst DIRECTORY_DOMAINS = [\n  'linkedin.com', 'crunchbase.com', 'sec.gov', 'wikipedia.org', 'wikidata.org',\n  'patsnap.com', 'synapse.patsnap.com', 'orpha.net', 'acnnewswire.com',\n  'cgtlive.com', 'fiercebiotech.com', 'fiercepharma.com', 'biospace.com',\n  'bloomberg.com', 'reuters.com', 'pitchbook.com', 'zoominfo.com',\n  'glassdoor.com', 'indeed.com', 'youtube.com', 'facebook.com',\n  'twitter.com', 'x.com', 'medium.com', 'prnewswire.com',\n  'businesswire.com', 'newswire.com', 'globenewswire.com', 'pressrelease.com',\n  'tracxn.com', 'rocketreach.co', 'apollo.io', 'biopharmadive.com',\n  'firstwordpharma.com', 'cirm.ca.gov', 'forbion.com',\n  'company-information.service.gov.uk', 'navigator.reaganudall.org',\n  'clinicaltrials.gov'\n];\n\nfunction hostname(url) {\n  if (typeof url !== 'string' || !url) return '';\n  let s = url.replace(/^https?:\\/\\//i, '');\n  s = s.split('/')[0].split('?')[0].split('#')[0];\n  s = s.replace(/^.*@/, '').split(':')[0];\n  s = s.replace(/^www\\./i, '');\n  return s.toLowerCase().trim();\n}\nfunction isDirectory(host) {\n  return DIRECTORY_DOMAINS.some(d => host === d || host.endsWith('.' + d));\n}\n\nconst results = Array.isArray(exa.results) ? exa.results : [];\nlet resolved = '';\nconst debugUrls = [];\nfor (const r of results) {\n  const u = r && r.url;\n  const h = hostname(u);\n  const dir = h ? isDirectory(h) : false;\n  debugUrls.push({ url: u, host: h, directory: dir });\n  if (!h) continue;\n  if (dir) continue;\n  resolved = h;\n  break;\n}\n\nconst isUsable = !!resolved && resolved.includes('.') && !/\\s/.test(resolved);\nconst original = rec.fields && rec.fields.Domain ? rec.fields.Domain : '';\nconst newDomain = isUsable ? resolved : original;\n\nreturn { json: {\n  ...rec,\n  fields: { ...rec.fields, Domain: newDomain },\n  _resolvedDomain: resolved || null,\n  _domainResolutionUsed: isUsable,\n  _originalDomain: original || null,\n  _resolverSource: isUsable ? 'exa' : (original ? 'original' : 'none'),\n  _exaResultCount: results.length,\n  _exaDebug: debugUrls\n} };"
+      },
+      "id": "g1000002-0000-0000-0000-000000000002",
+      "name": "Apply Resolved Domain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "match",
+        "useJsonInput": true,
+        "jsonInput": "={{ {\n  \"businesses_to_match\": [{\n    \"name\": $json.fields[\"Company Name\"],\n    \"domain\": ($json.fields.Domain || \"\").toString().replace(/^https?:\\/\\//,'').replace(/^www\\./,'').split('/')[0].split('?')[0]\n  }]\n} }}"
+      },
+      "id": "f1000001-0000-0000-0000-000000000001",
+      "name": "Explorium Match Business",
+      "type": "@exploriumai/n8n-nodes-explorium-ai.exploriumApiNode",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        304
+      ],
+      "credentials": {
+        "exploriumApi": {
+          "id": "2hCOPHr2VEpraeAH",
+          "name": "Explorium account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "enrich",
+        "enrichment": [
+          "firmographics",
+          "technographics",
+          "company_ratings",
+          "financial_metrics",
+          "funding_and_acquisitions",
+          "challenges",
+          "competitive_landscape",
+          "strategic_insights",
+          "workforce_trends",
+          "linkedin_posts",
+          "website_changes",
+          "lookalike_companies",
+          "company_webstack",
+          "company_hierarchy"
+        ],
+        "useJsonInput": true,
+        "jsonInput": "={{ {\n  \"business_ids\": [\n    $json.business_id || $json.business_ids?.[0] || $json.matched_businesses?.[0]?.business_id || $json.businesses?.[0]?.business_id\n  ]\n} }}"
+      },
+      "id": "f1000002-0000-0000-0000-000000000002",
+      "name": "Explorium Enrich Business",
+      "type": "@exploriumai/n8n-nodes-explorium-ai.exploriumApiNode",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        304
+      ],
+      "credentials": {
+        "exploriumApi": {
+          "id": "2hCOPHr2VEpraeAH",
+          "name": "Explorium account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const SAFE = new Set([\"explorium_business_id\",\"explorium_business_description\",\"explorium_business_logo\",\"explorium_city_name\",\"explorium_country_name\",\"explorium_linkedin_industry_category\",\"explorium_linkedin_profile\",\"explorium_locations_distribution\",\"explorium_naics\",\"explorium_naics_description\",\"explorium_name\",\"explorium_number_of_employees_range\",\"explorium_region_name\",\"explorium_sic_code\",\"explorium_sic_code_description\",\"explorium_street\",\"explorium_ticker\",\"explorium_website\",\"explorium_yearly_revenue_range\",\"explorium_zip_code\",\"explorium_accession_number\",\"explorium_accuracy\",\"explorium_bi_and_analytics\",\"explorium_bounce_rate\",\"explorium_categories_to_technologies_tree\",\"explorium_change_description\",\"explorium_change_implication\",\"explorium_change_in_customer_service_roles\",\"explorium_change_in_design_roles\",\"explorium_change_in_education_roles\",\"explorium_change_in_engineering_roles\",\"explorium_change_in_finance_roles\",\"explorium_change_in_health_roles\",\"explorium_change_in_hr_roles\",\"explorium_change_in_marketing_roles\",\"explorium_change_in_media_roles\",\"explorium_change_in_operations_roles\",\"explorium_change_in_pr_roles\",\"explorium_change_in_roles_divisor\",\"explorium_change_in_sales_roles\",\"explorium_change_in_trades_roles\",\"explorium_cik\",\"explorium_collaboration\",\"explorium_communications\",\"explorium_company_city\",\"explorium_company_competition\",\"explorium_company_country_code\",\"explorium_company_customer_adoption\",\"explorium_company_data_security_breach\",\"explorium_company_data_security_privacy\",\"explorium_company_focus\",\"explorium_company_market_saturation\",\"explorium_company_marketing_sales\",\"explorium_company_name\",\"explorium_company_partnerships\",\"explorium_company_product_development\",\"explorium_company_region\",\"explorium_company_street\",\"explorium_company_url\",\"explorium_company_value_proposition\",\"explorium_company_vertical\",\"explorium_company_website\",\"explorium_company_zip_code\",\"explorium_competitive_differentiation\",\"explorium_computer_networks\",\"explorium_created_at\",\"explorium_current_advisors\",\"explorium_customer_management\",\"explorium_date\",\"explorium_date_stamp\",\"explorium_days_since_posted\",\"explorium_db_indexed\",\"explorium_desktop_share\",\"explorium_device_type\",\"explorium_devops_and_development\",\"explorium_direct\",\"explorium_display_ad\",\"explorium_domain\",\"explorium_earliest_record\",\"explorium_ecommerce\",\"explorium_established\",\"explorium_filed_at\",\"explorium_finance_and_accounting\",\"explorium_first_funding_round_date\",\"explorium_first_funding_round_type\",\"explorium_first_funding_round_value_usd\",\"explorium_form_description\",\"explorium_form_type\",\"explorium_full_nested_tech_stack\",\"explorium_full_tech_stack\",\"explorium_funding_rounds_info\",\"explorium_health_tech\",\"explorium_hr\",\"explorium_intent_topics\",\"explorium_investors\",\"explorium_ipo_date\",\"explorium_ipo_size_usd\",\"explorium_is_ipo\",\"explorium_it_management\",\"explorium_it_security\",\"explorium_key_competitors\",\"explorium_keywords_indicator\",\"explorium_known_funding_total_value\",\"explorium_last_funding_round_date\",\"explorium_last_funding_round_type\",\"explorium_last_funding_round_value_usd\",\"explorium_latest_funding_increase_in_percents\",\"explorium_link_to_filing_details\",\"explorium_link_to_html\",\"explorium_live_techs\",\"explorium_lookalike_business_id\",\"explorium_lookalike_business_name\",\"explorium_lookalike_country_location\",\"explorium_lookalike_description\",\"explorium_lookalike_naics_description\",\"explorium_lookalike_number_of_employees_range\",\"explorium_lookalike_revenue_range\",\"explorium_lookalike_website\",\"explorium_mail\",\"explorium_marketing\",\"explorium_mobile_bounce_rate\",\"explorium_mobile_hits\",\"explorium_mobile_pages_per_visit\",\"explorium_mobile_share\",\"explorium_mobile_users\",\"explorium_mobile_visits\",\"explorium_money_spend_on_website_technologies\",\"explorium_month_period\",\"explorium_number_of_advisors\",\"explorium_number_of_comments\",\"explorium_number_of_funding_rounds\",\"explorium_number_of_investors_for_first_funding_round\",\"explorium_number_of_investors_for_last_funding_round\",\"explorium_number_of_likes\",\"explorium_number_of_pages_on_sitemap\",\"explorium_number_of_premium_technologies\",\"explorium_number_of_social_networks\",\"explorium_operations_management\",\"explorium_operations_software\",\"explorium_organization_tree\",\"explorium_pages_per_visit\",\"explorium_paid\",\"explorium_parent_company_id\",\"explorium_parent_company_name\",\"explorium_payment_options\",\"explorium_payment_technologies_in_use\",\"explorium_perc_customer_service_roles\",\"explorium_perc_education_roles\",\"explorium_perc_engineering_roles\",\"explorium_perc_finance_roles\",\"explorium_perc_health_roles\",\"explorium_perc_hr_roles\",\"explorium_perc_legal_roles\",\"explorium_perc_marketing_roles\",\"explorium_perc_operations_roles\",\"explorium_perc_pr_roles\",\"explorium_perc_sales_roles\",\"explorium_perc_trades_roles\",\"explorium_platform_and_storage\",\"explorium_post_text\",\"explorium_post_url\",\"explorium_premium_techs\",\"explorium_product_and_design\",\"explorium_product_count\",\"explorium_productivity_and_operations\",\"explorium_profiles_found_per_quarter\",\"explorium_prog_langs_and_frameworks\",\"explorium_q_rank\",\"explorium_quarters\",\"explorium_rank\",\"explorium_ratings_all_reviews_count\",\"explorium_ratings_business_outlook\",\"explorium_ratings_career_opportunities\",\"explorium_ratings_ceo_approval\",\"explorium_ratings_ceo_approval_count\",\"explorium_ratings_compensation_benefits\",\"explorium_ratings_diversity_inclusion\",\"explorium_ratings_overall\",\"explorium_ratings_recommend_to_friend\",\"explorium_ratings_senior_management\",\"explorium_ratings_work_life_balance\",\"explorium_referral\",\"explorium_sales\",\"explorium_search\",\"explorium_search_organic\",\"explorium_similarity_score\",\"explorium_social_paid\",\"explorium_spend\",\"explorium_status\",\"explorium_subsidiaries\",\"explorium_target\",\"explorium_target_market\",\"explorium_technological_disruption\",\"explorium_technologies_categories\",\"explorium_technologies_sub_categories\",\"explorium_technologies_used_by_company_website\",\"explorium_testing_and_qa\",\"explorium_text_results\",\"explorium_time_on_site\",\"explorium_total_reviews_count\",\"explorium_ultimate_parent_id\",\"explorium_ultimate_parent_name\",\"explorium_umbrella\",\"explorium_unknown_channel\",\"explorium_url\",\"explorium_users\",\"explorium_visits\",\"explorium_payload_truncated\"]);\n\n// Explorium native node outputs: { enrichmentsResponse: [...], enriched_data: [ {business_id, data: {<flat firmographics+tech+...>}} ] }\nfunction pickEnrichRoot(j) {\n  if (!j || typeof j !== 'object') return null;\n  // Native Explorium API node shape\n  if (Array.isArray(j.enriched_data) && j.enriched_data[0]) {\n    const e = j.enriched_data[0];\n    // .data is the merged enrichment payload; lift business_id alongside.\n    return { business_id: e.business_id, ...(e.data || {}) };\n  }\n  // Fallback shapes (MCP / raw REST)\n  if (Array.isArray(j.data) && j.data[0]) return j.data[0];\n  if (j.response && Array.isArray(j.response.data) && j.response.data[0]) return j.response.data[0];\n  if (j.business_id || j.firmographics) return j;\n  return null;\n}\n\nconst root = pickEnrichRoot($json);\nconst flat = {};\nif (root && typeof root === 'object') {\n  for (const [k, v] of Object.entries(root)) {\n    if (v && typeof v === 'object' && !Array.isArray(v)) {\n      // Section objects (firmographics: {...}) — pull keys up to top level\n      for (const [sk, sv] of Object.entries(v)) flat[sk] = sv;\n    } else {\n      flat[k] = v;\n    }\n  }\n}\n\nconst src = $('Get Company by ID').first().json;\nconst businessId = flat.business_id || root?.business_id || null;\nconst matched = !!businessId;\nconst toCellValue = (v) => {\n  if (v === null || v === undefined || v === '') return null;\n  if (typeof v === 'object') return JSON.stringify(v);\n  return v;\n};\nconst parseNum = (v) => {\n  if (v === null || v === undefined || v === '') return null;\n  const n = Number(String(v).replace(/[^0-9.\\-]/g, ''));\n  return Number.isFinite(n) ? n : null;\n};\n\nconst fields = {\n  id: src.id,\n  'Trigger': 'Done',\n  'Enrichment Status':         matched ? 'enrichment_complete' : 'enrichment_incomplete',\n  'Industry':                  flat.naics_description || null,\n  'Revenue Range':             flat.yearly_revenue_range || null,\n  'HQ Country':                flat.country_name || flat.country || null,\n  'HQ State':                  flat.region_name || flat.state || null,\n  'HQ City':                   flat.city_name || flat.city || null,\n  'Company LinkedIn URL':      flat.linkedin_url || flat.linkedin_profile || null,\n  'Employee Range':            flat.number_of_employees_range || null,\n  'NAICS Code':                flat.naics || null,\n  'Explorium Business ID':     businessId,\n  'Stock Ticker':              flat.ticker || null,\n  'Founded Year':              parseNum(flat.year_founded || flat.founded_year || flat.founded),\n  'Last Funding Amount USD':   parseNum(flat.last_funding_round_value_usd),\n  'Last Funding Date':         flat.last_funding_round_date || null,\n  'Total Known Funding USD':   parseNum(flat.known_funding_total_value),\n  'Number of Funding Rounds':  parseNum(flat.number_of_funding_rounds)\n};\n\nfor (const [k, v] of Object.entries(flat)) {\n  const col = 'explorium_' + k;\n  if (!SAFE.has(col)) continue;\n  if (v === null || v === undefined || v === '') continue;\n  let cell;\n  if (typeof v === 'object') cell = JSON.stringify(v);\n  else if (typeof v === 'boolean') cell = v ? 'true' : 'false';\n  else cell = String(v);\n  fields[col] = cell;\n}\n\n// Write the Exa-resolved domain back to Airtable, but only if Exa actually produced one\n// (otherwise keep the existing Domain field untouched).\ntry {\n  const applied = $('Apply Resolved Domain').first().json;\n  if (applied && applied._domainResolutionUsed && applied._resolvedDomain) {\n    fields['Domain'] = 'https://' + applied._resolvedDomain;\n  }\n} catch (e) { /* node not in path, skip */ }\n\n\n// === Pretty top-level synthesis fields (multilineText) ===\nfunction toMultilineBullets(v) {\n  if (v === null || v === undefined || v === '') return null;\n  if (Array.isArray(v)) {\n    const items = v.filter(x => x !== null && x !== undefined && x !== '');\n    if (items.length === 0) return null;\n    return items.map(x => '- ' + (typeof x === 'string' ? x : JSON.stringify(x))).join('\\n');\n  }\n  if (typeof v === 'object') return JSON.stringify(v);\n  return String(v);\n}\nconst kc = toMultilineBullets(flat.key_competitors);\nif (kc) fields['Key Competitors'] = kc;\nconst cf = toMultilineBullets(flat.company_focus);\nif (cf) fields['Company Focus'] = cf;\n\nconst STRATEGIC_SECTIONS = [\n  ['competitive_differentiation', 'Competitive Differentiation'],\n  ['company_value_proposition',   'Value Proposition'],\n  ['target_market',               'Target Market'],\n  ['technological_disruption',    'Technological Disruption'],\n  ['company_market_saturation',   'Market Saturation'],\n  ['company_partnerships',        'Partnerships'],\n  ['company_product_development', 'Product Development'],\n  ['company_marketing_sales',     'Marketing & Sales'],\n  ['company_customer_adoption',   'Customer Adoption'],\n  ['company_data_security_breach','Data Security Risk'],\n  ['company_data_security_privacy','Data Privacy Compliance'],\n  ['change_description',          'Recent Change'],\n  ['change_implication',          'Change Implication']\n];\nconst strategicParts = [];\nfor (const [k, label] of STRATEGIC_SECTIONS) {\n  const v = flat[k];\n  if (v === null || v === undefined || v === '') continue;\n  let body;\n  if (Array.isArray(v)) {\n    const items = v.filter(x => x !== null && x !== undefined && x !== '');\n    if (items.length === 0) continue;\n    body = items.map(x => '- ' + (typeof x === 'string' ? x : JSON.stringify(x))).join('\\n');\n  } else if (typeof v === 'object') {\n    body = JSON.stringify(v);\n  } else {\n    body = String(v);\n  }\n  strategicParts.push('## ' + label + '\\n' + body);\n}\nif (strategicParts.length > 0) fields['Strategic Notes'] = strategicParts.join('\\n\\n');\n\nfor (const k of Object.keys(fields)) {\n  if (fields[k] === null || fields[k] === undefined) delete fields[k];\n}\nreturn { json: fields };"
+      },
+      "id": "e1000006-0000-0000-0000-000000000006",
+      "name": "Map to Airtable Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appYBYH3aOHhTODAw"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblnj3YlOI3thjrXp"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "Outreach Eligible": false,
+            "Current Customer": false,
+            "SF Has Open Opp": false,
+            "SF Has Closed Won": false,
+            "Active Recruiting": false,
+            "explorium_db_indexed": false,
+            "explorium_ecommerce": false,
+            "explorium_established": false,
+            "explorium_is_ipo": false,
+            "explorium_live_techs": false,
+            "explorium_payment_options": false,
+            "explorium_payload_truncated": false
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enrichment Status",
+              "displayName": "Enrichment Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "enrichment_complete",
+                  "value": "enrichment_complete"
+                },
+                {
+                  "name": "enrichment_incomplete",
+                  "value": "enrichment_incomplete"
+                },
+                {
+                  "name": "disqualified",
+                  "value": "disqualified"
+                },
+                {
+                  "name": "held_for_review",
+                  "value": "held_for_review"
+                },
+                {
+                  "name": "cadence_ready",
+                  "value": "cadence_ready"
+                },
+                {
+                  "name": "disqualified_non_biotech",
+                  "value": "disqualified_non_biotech"
+                },
+                {
+                  "name": "rerouted_wrong_modality",
+                  "value": "rerouted_wrong_modality"
+                },
+                {
+                  "name": "archived_out_of_industry",
+                  "value": "archived_out_of_industry"
+                },
+                {
+                  "name": "needs_aav_review",
+                  "value": "needs_aav_review"
+                },
+                {
+                  "name": "needs_data_quality_review",
+                  "value": "needs_data_quality_review"
+                },
+                {
+                  "name": "running",
+                  "value": "running"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Discovery Sources",
+              "displayName": "Discovery Sources",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "clinicaltrials_gov",
+                  "value": "clinicaltrials_gov"
+                },
+                {
+                  "name": "uspto_patents",
+                  "value": "uspto_patents"
+                },
+                {
+                  "name": "salesforce_existing",
+                  "value": "salesforce_existing"
+                },
+                {
+                  "name": "pubmed",
+                  "value": "pubmed"
+                },
+                {
+                  "name": "arm_directory",
+                  "value": "arm_directory"
+                },
+                {
+                  "name": "asgct_exhibitor",
+                  "value": "asgct_exhibitor"
+                },
+                {
+                  "name": "exa_search",
+                  "value": "exa_search"
+                },
+                {
+                  "name": "manual",
+                  "value": "manual"
+                },
+                {
+                  "name": "manual_ellie_feedback",
+                  "value": "manual_ellie_feedback"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Domain",
+              "displayName": "Domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "HQ State",
+              "displayName": "HQ State",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Employee Count",
+              "displayName": "Employee Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Score",
+              "displayName": "Company Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Enriched At",
+              "displayName": "Last Enriched At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Supabase ID",
+              "displayName": "Supabase ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Funding Stage",
+              "displayName": "Funding Stage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Revenue Range",
+              "displayName": "Revenue Range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fit Score",
+              "displayName": "Fit Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Playbook Fit Score",
+              "displayName": "Playbook Fit Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company LinkedIn URL",
+              "displayName": "Company LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Employee Range",
+              "displayName": "Employee Range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last modified time",
+              "displayName": "Last modified time",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "NAICS Code",
+              "displayName": "NAICS Code",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Explorium Business ID",
+              "displayName": "Explorium Business ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Custom Classification Source",
+              "displayName": "Custom Classification Source",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Classification Run ID",
+              "displayName": "Classification Run ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "HQ City",
+              "displayName": "HQ City",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Classification Notes",
+              "displayName": "Classification Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Discovery Confidence",
+              "displayName": "Discovery Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Canonical Status",
+              "displayName": "Canonical Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "canonical",
+                  "value": "canonical"
+                },
+                {
+                  "name": "candidate",
+                  "value": "candidate"
+                },
+                {
+                  "name": "archived",
+                  "value": "archived"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "First Discovered",
+              "displayName": "First Discovered",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Verified",
+              "displayName": "Last Verified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Trial Count",
+              "displayName": "Trial Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Most Advanced Phase",
+              "displayName": "Most Advanced Phase",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Preclinical",
+                  "value": "Preclinical"
+                },
+                {
+                  "name": "Phase 1",
+                  "value": "Phase 1"
+                },
+                {
+                  "name": "Phase 1/2",
+                  "value": "Phase 1/2"
+                },
+                {
+                  "name": "Phase 2",
+                  "value": "Phase 2"
+                },
+                {
+                  "name": "Phase 2/3",
+                  "value": "Phase 2/3"
+                },
+                {
+                  "name": "Phase 3",
+                  "value": "Phase 3"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Phase 3+",
+                  "value": "Phase 3+"
+                },
+                {
+                  "name": "Clinical",
+                  "value": "Clinical"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Patent Count",
+              "displayName": "Patent Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lead Indication",
+              "displayName": "Lead Indication",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Delivery Vehicle",
+              "displayName": "Delivery Vehicle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "AAV",
+                  "value": "AAV"
+                },
+                {
+                  "name": "Lentiviral",
+                  "value": "Lentiviral"
+                },
+                {
+                  "name": "Adenovirus",
+                  "value": "Adenovirus"
+                },
+                {
+                  "name": "LNP",
+                  "value": "LNP"
+                },
+                {
+                  "name": "Electroporation",
+                  "value": "Electroporation"
+                },
+                {
+                  "name": "Naked / Direct",
+                  "value": "Naked / Direct"
+                },
+                {
+                  "name": "Other Viral",
+                  "value": "Other Viral"
+                },
+                {
+                  "name": "Non-viral",
+                  "value": "Non-viral"
+                },
+                {
+                  "name": "Unknown",
+                  "value": "Unknown"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CT.gov NCT IDs",
+              "displayName": "CT.gov NCT IDs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "CT.gov Indications",
+              "displayName": "CT.gov Indications",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Vector Evidence Clause",
+              "displayName": "Vector Evidence Clause",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "A",
+                  "value": "A"
+                },
+                {
+                  "name": "B",
+                  "value": "B"
+                },
+                {
+                  "name": "C",
+                  "value": "C"
+                },
+                {
+                  "name": "none",
+                  "value": "none"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                },
+                {
+                  "name": "R5",
+                  "value": "R5"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Verification Status",
+              "displayName": "Verification Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "surfaced",
+                  "value": "surfaced"
+                },
+                {
+                  "name": "borderline",
+                  "value": "borderline"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "needs_verification",
+                  "value": "needs_verification"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Rejection Reason",
+              "displayName": "Rejection Reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Classification Version",
+              "displayName": "Classification Version",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Classification Run Date",
+              "displayName": "Classification Run Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Segment Score",
+              "displayName": "Segment Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Eligible",
+              "displayName": "Outreach Eligible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Publicly Traded",
+              "displayName": "Publicly Traded",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "private",
+                  "value": "private"
+                },
+                {
+                  "name": "public-domestic",
+                  "value": "public-domestic"
+                },
+                {
+                  "name": "public-foreign",
+                  "value": "public-foreign"
+                },
+                {
+                  "name": "private-with-public-parent",
+                  "value": "private-with-public-parent"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Press Mentions 12mo Count",
+              "displayName": "Press Mentions 12mo Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Conference Attendance 12mo Count",
+              "displayName": "Conference Attendance 12mo Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Events",
+              "displayName": "Company Events",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Parent Company",
+              "displayName": "Parent Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Subsidiary Status",
+              "displayName": "Subsidiary Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "independent",
+                  "value": "independent"
+                },
+                {
+                  "name": "subsidiary",
+                  "value": "subsidiary"
+                },
+                {
+                  "name": "division",
+                  "value": "division"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Founded Year",
+              "displayName": "Founded Year",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Active Signals Count",
+              "displayName": "Active Signals Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contacts",
+              "displayName": "Contacts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Current Customer",
+              "displayName": "Current Customer",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Has Open Opp",
+              "displayName": "SF Has Open Opp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Has Closed Won",
+              "displayName": "SF Has Closed Won",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Sync Timestamp",
+              "displayName": "SF Sync Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Stock Ticker",
+              "displayName": "Stock Ticker",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Funding Date",
+              "displayName": "Last Funding Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Funding Amount USD",
+              "displayName": "Last Funding Amount USD",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Total Known Funding USD",
+              "displayName": "Total Known Funding USD",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Number of Funding Rounds",
+              "displayName": "Number of Funding Rounds",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ultimate Parent",
+              "displayName": "Ultimate Parent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SEC CIK",
+              "displayName": "SEC CIK",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Key Competitors",
+              "displayName": "Key Competitors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Focus",
+              "displayName": "Company Focus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Strategic Notes",
+              "displayName": "Strategic Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Deep Enrichment Raw",
+              "displayName": "Deep Enrichment Raw",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AAV Segment",
+              "displayName": "AAV Segment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "gene_therapy",
+                  "value": "gene_therapy"
+                },
+                {
+                  "name": "production_tool",
+                  "value": "production_tool"
+                },
+                {
+                  "name": "both",
+                  "value": "both"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ellie Segment Override",
+              "displayName": "Ellie Segment Override",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Gene Therapy",
+                  "value": "Gene Therapy"
+                },
+                {
+                  "name": "Production Tool",
+                  "value": "Production Tool"
+                },
+                {
+                  "name": "Both",
+                  "value": "Both"
+                },
+                {
+                  "name": "Not AAV",
+                  "value": "Not AAV"
+                },
+                {
+                  "name": "Not Sure",
+                  "value": "Not Sure"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ellie Note",
+              "displayName": "Ellie Note",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "HQ Country",
+              "displayName": "HQ Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Most Recent Trial Date",
+              "displayName": "Most Recent Trial Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Active Recruiting",
+              "displayName": "Active Recruiting",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Verification Verdict",
+              "displayName": "Verification Verdict",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Confirmed",
+                  "value": "Confirmed"
+                },
+                {
+                  "name": "Not confirmed",
+                  "value": "Not confirmed"
+                },
+                {
+                  "name": "Needs review",
+                  "value": "Needs review"
+                },
+                {
+                  "name": "Not yet verified",
+                  "value": "Not yet verified"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Verification Checked At",
+              "displayName": "Verification Checked At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Account Ownership",
+              "displayName": "SF Account Ownership",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Account Status Summary",
+              "displayName": "SF Account Status Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lifecycle State",
+              "displayName": "Lifecycle State",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "raw",
+                  "value": "raw"
+                },
+                {
+                  "name": "enriched",
+                  "value": "enriched"
+                },
+                {
+                  "name": "classified",
+                  "value": "classified"
+                },
+                {
+                  "name": "icp_validated",
+                  "value": "icp_validated"
+                },
+                {
+                  "name": "expert_ready",
+                  "value": "expert_ready"
+                },
+                {
+                  "name": "excluded",
+                  "value": "excluded"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_business_id",
+              "displayName": "explorium_business_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_business_description",
+              "displayName": "explorium_business_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_business_logo",
+              "displayName": "explorium_business_logo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_city_name",
+              "displayName": "explorium_city_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_country_name",
+              "displayName": "explorium_country_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_linkedin_industry_category",
+              "displayName": "explorium_linkedin_industry_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_linkedin_profile",
+              "displayName": "explorium_linkedin_profile",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_locations_distribution",
+              "displayName": "explorium_locations_distribution",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_naics",
+              "displayName": "explorium_naics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_naics_description",
+              "displayName": "explorium_naics_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_name",
+              "displayName": "explorium_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_employees_range",
+              "displayName": "explorium_number_of_employees_range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_region_name",
+              "displayName": "explorium_region_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_sic_code",
+              "displayName": "explorium_sic_code",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_sic_code_description",
+              "displayName": "explorium_sic_code_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_street",
+              "displayName": "explorium_street",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ticker",
+              "displayName": "explorium_ticker",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_website",
+              "displayName": "explorium_website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_yearly_revenue_range",
+              "displayName": "explorium_yearly_revenue_range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_zip_code",
+              "displayName": "explorium_zip_code",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_accession_number",
+              "displayName": "explorium_accession_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_accuracy",
+              "displayName": "explorium_accuracy",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_bi_and_analytics",
+              "displayName": "explorium_bi_and_analytics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_bounce_rate",
+              "displayName": "explorium_bounce_rate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_categories_to_technologies_tree",
+              "displayName": "explorium_categories_to_technologies_tree",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_description",
+              "displayName": "explorium_change_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_implication",
+              "displayName": "explorium_change_implication",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_customer_service_roles",
+              "displayName": "explorium_change_in_customer_service_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_design_roles",
+              "displayName": "explorium_change_in_design_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_education_roles",
+              "displayName": "explorium_change_in_education_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_engineering_roles",
+              "displayName": "explorium_change_in_engineering_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_finance_roles",
+              "displayName": "explorium_change_in_finance_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_health_roles",
+              "displayName": "explorium_change_in_health_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_hr_roles",
+              "displayName": "explorium_change_in_hr_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_marketing_roles",
+              "displayName": "explorium_change_in_marketing_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_media_roles",
+              "displayName": "explorium_change_in_media_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_operations_roles",
+              "displayName": "explorium_change_in_operations_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_pr_roles",
+              "displayName": "explorium_change_in_pr_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_roles_divisor",
+              "displayName": "explorium_change_in_roles_divisor",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_sales_roles",
+              "displayName": "explorium_change_in_sales_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_change_in_trades_roles",
+              "displayName": "explorium_change_in_trades_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_cik",
+              "displayName": "explorium_cik",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_collaboration",
+              "displayName": "explorium_collaboration",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_communications",
+              "displayName": "explorium_communications",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_city",
+              "displayName": "explorium_company_city",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_competition",
+              "displayName": "explorium_company_competition",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_country_code",
+              "displayName": "explorium_company_country_code",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_customer_adoption",
+              "displayName": "explorium_company_customer_adoption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_data_security_breach",
+              "displayName": "explorium_company_data_security_breach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_data_security_privacy",
+              "displayName": "explorium_company_data_security_privacy",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_focus",
+              "displayName": "explorium_company_focus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_market_saturation",
+              "displayName": "explorium_company_market_saturation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_marketing_sales",
+              "displayName": "explorium_company_marketing_sales",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_name",
+              "displayName": "explorium_company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_partnerships",
+              "displayName": "explorium_company_partnerships",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_product_development",
+              "displayName": "explorium_company_product_development",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_region",
+              "displayName": "explorium_company_region",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_street",
+              "displayName": "explorium_company_street",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_url",
+              "displayName": "explorium_company_url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_value_proposition",
+              "displayName": "explorium_company_value_proposition",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_vertical",
+              "displayName": "explorium_company_vertical",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_website",
+              "displayName": "explorium_company_website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_company_zip_code",
+              "displayName": "explorium_company_zip_code",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_competitive_differentiation",
+              "displayName": "explorium_competitive_differentiation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_computer_networks",
+              "displayName": "explorium_computer_networks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_created_at",
+              "displayName": "explorium_created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_current_advisors",
+              "displayName": "explorium_current_advisors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_customer_management",
+              "displayName": "explorium_customer_management",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_date",
+              "displayName": "explorium_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_date_stamp",
+              "displayName": "explorium_date_stamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_days_since_posted",
+              "displayName": "explorium_days_since_posted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_db_indexed",
+              "displayName": "explorium_db_indexed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_desktop_share",
+              "displayName": "explorium_desktop_share",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_device_type",
+              "displayName": "explorium_device_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_devops_and_development",
+              "displayName": "explorium_devops_and_development",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_direct",
+              "displayName": "explorium_direct",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_display_ad",
+              "displayName": "explorium_display_ad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_domain",
+              "displayName": "explorium_domain",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_earliest_record",
+              "displayName": "explorium_earliest_record",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ecommerce",
+              "displayName": "explorium_ecommerce",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_established",
+              "displayName": "explorium_established",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_filed_at",
+              "displayName": "explorium_filed_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_finance_and_accounting",
+              "displayName": "explorium_finance_and_accounting",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_first_funding_round_date",
+              "displayName": "explorium_first_funding_round_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_first_funding_round_type",
+              "displayName": "explorium_first_funding_round_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_first_funding_round_value_usd",
+              "displayName": "explorium_first_funding_round_value_usd",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_form_description",
+              "displayName": "explorium_form_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_form_type",
+              "displayName": "explorium_form_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_full_nested_tech_stack",
+              "displayName": "explorium_full_nested_tech_stack",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_full_tech_stack",
+              "displayName": "explorium_full_tech_stack",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_funding_rounds_info",
+              "displayName": "explorium_funding_rounds_info",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_health_tech",
+              "displayName": "explorium_health_tech",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_hr",
+              "displayName": "explorium_hr",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_intent_topics",
+              "displayName": "explorium_intent_topics",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_investors",
+              "displayName": "explorium_investors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ipo_date",
+              "displayName": "explorium_ipo_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ipo_size_usd",
+              "displayName": "explorium_ipo_size_usd",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_is_ipo",
+              "displayName": "explorium_is_ipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_it_management",
+              "displayName": "explorium_it_management",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_it_security",
+              "displayName": "explorium_it_security",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_key_competitors",
+              "displayName": "explorium_key_competitors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_keywords_indicator",
+              "displayName": "explorium_keywords_indicator",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_known_funding_total_value",
+              "displayName": "explorium_known_funding_total_value",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_last_funding_round_date",
+              "displayName": "explorium_last_funding_round_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_last_funding_round_type",
+              "displayName": "explorium_last_funding_round_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_last_funding_round_value_usd",
+              "displayName": "explorium_last_funding_round_value_usd",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_latest_funding_increase_in_percents",
+              "displayName": "explorium_latest_funding_increase_in_percents",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_link_to_filing_details",
+              "displayName": "explorium_link_to_filing_details",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_link_to_html",
+              "displayName": "explorium_link_to_html",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_live_techs",
+              "displayName": "explorium_live_techs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_business_id",
+              "displayName": "explorium_lookalike_business_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_business_name",
+              "displayName": "explorium_lookalike_business_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_country_location",
+              "displayName": "explorium_lookalike_country_location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_description",
+              "displayName": "explorium_lookalike_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_naics_description",
+              "displayName": "explorium_lookalike_naics_description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_number_of_employees_range",
+              "displayName": "explorium_lookalike_number_of_employees_range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_revenue_range",
+              "displayName": "explorium_lookalike_revenue_range",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_lookalike_website",
+              "displayName": "explorium_lookalike_website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mail",
+              "displayName": "explorium_mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_marketing",
+              "displayName": "explorium_marketing",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_bounce_rate",
+              "displayName": "explorium_mobile_bounce_rate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_hits",
+              "displayName": "explorium_mobile_hits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_pages_per_visit",
+              "displayName": "explorium_mobile_pages_per_visit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_share",
+              "displayName": "explorium_mobile_share",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_users",
+              "displayName": "explorium_mobile_users",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_mobile_visits",
+              "displayName": "explorium_mobile_visits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_money_spend_on_website_technologies",
+              "displayName": "explorium_money_spend_on_website_technologies",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_month_period",
+              "displayName": "explorium_month_period",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_advisors",
+              "displayName": "explorium_number_of_advisors",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_comments",
+              "displayName": "explorium_number_of_comments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_funding_rounds",
+              "displayName": "explorium_number_of_funding_rounds",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_investors_for_first_funding_round",
+              "displayName": "explorium_number_of_investors_for_first_funding_round",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_investors_for_last_funding_round",
+              "displayName": "explorium_number_of_investors_for_last_funding_round",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_likes",
+              "displayName": "explorium_number_of_likes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_pages_on_sitemap",
+              "displayName": "explorium_number_of_pages_on_sitemap",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_premium_technologies",
+              "displayName": "explorium_number_of_premium_technologies",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_number_of_social_networks",
+              "displayName": "explorium_number_of_social_networks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_operations_management",
+              "displayName": "explorium_operations_management",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_operations_software",
+              "displayName": "explorium_operations_software",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_organization_tree",
+              "displayName": "explorium_organization_tree",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_pages_per_visit",
+              "displayName": "explorium_pages_per_visit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_paid",
+              "displayName": "explorium_paid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_parent_company_id",
+              "displayName": "explorium_parent_company_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_parent_company_name",
+              "displayName": "explorium_parent_company_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_payment_options",
+              "displayName": "explorium_payment_options",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_payment_technologies_in_use",
+              "displayName": "explorium_payment_technologies_in_use",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_customer_service_roles",
+              "displayName": "explorium_perc_customer_service_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_education_roles",
+              "displayName": "explorium_perc_education_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_engineering_roles",
+              "displayName": "explorium_perc_engineering_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_finance_roles",
+              "displayName": "explorium_perc_finance_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_health_roles",
+              "displayName": "explorium_perc_health_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_hr_roles",
+              "displayName": "explorium_perc_hr_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_legal_roles",
+              "displayName": "explorium_perc_legal_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_marketing_roles",
+              "displayName": "explorium_perc_marketing_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_operations_roles",
+              "displayName": "explorium_perc_operations_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_pr_roles",
+              "displayName": "explorium_perc_pr_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_sales_roles",
+              "displayName": "explorium_perc_sales_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_perc_trades_roles",
+              "displayName": "explorium_perc_trades_roles",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_platform_and_storage",
+              "displayName": "explorium_platform_and_storage",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_post_text",
+              "displayName": "explorium_post_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_post_url",
+              "displayName": "explorium_post_url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_premium_techs",
+              "displayName": "explorium_premium_techs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_product_and_design",
+              "displayName": "explorium_product_and_design",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_product_count",
+              "displayName": "explorium_product_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_productivity_and_operations",
+              "displayName": "explorium_productivity_and_operations",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_profiles_found_per_quarter",
+              "displayName": "explorium_profiles_found_per_quarter",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_prog_langs_and_frameworks",
+              "displayName": "explorium_prog_langs_and_frameworks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_q_rank",
+              "displayName": "explorium_q_rank",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_quarters",
+              "displayName": "explorium_quarters",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_rank",
+              "displayName": "explorium_rank",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_all_reviews_count",
+              "displayName": "explorium_ratings_all_reviews_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_business_outlook",
+              "displayName": "explorium_ratings_business_outlook",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_career_opportunities",
+              "displayName": "explorium_ratings_career_opportunities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_ceo_approval",
+              "displayName": "explorium_ratings_ceo_approval",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_ceo_approval_count",
+              "displayName": "explorium_ratings_ceo_approval_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_compensation_benefits",
+              "displayName": "explorium_ratings_compensation_benefits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_diversity_inclusion",
+              "displayName": "explorium_ratings_diversity_inclusion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_overall",
+              "displayName": "explorium_ratings_overall",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_recommend_to_friend",
+              "displayName": "explorium_ratings_recommend_to_friend",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_senior_management",
+              "displayName": "explorium_ratings_senior_management",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ratings_work_life_balance",
+              "displayName": "explorium_ratings_work_life_balance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_referral",
+              "displayName": "explorium_referral",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_sales",
+              "displayName": "explorium_sales",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_search",
+              "displayName": "explorium_search",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_search_organic",
+              "displayName": "explorium_search_organic",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_similarity_score",
+              "displayName": "explorium_similarity_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_social_paid",
+              "displayName": "explorium_social_paid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_spend",
+              "displayName": "explorium_spend",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_status",
+              "displayName": "explorium_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_subsidiaries",
+              "displayName": "explorium_subsidiaries",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_target",
+              "displayName": "explorium_target",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_target_market",
+              "displayName": "explorium_target_market",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_technological_disruption",
+              "displayName": "explorium_technological_disruption",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_technologies_categories",
+              "displayName": "explorium_technologies_categories",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_technologies_sub_categories",
+              "displayName": "explorium_technologies_sub_categories",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_technologies_used_by_company_website",
+              "displayName": "explorium_technologies_used_by_company_website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_testing_and_qa",
+              "displayName": "explorium_testing_and_qa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_text_results",
+              "displayName": "explorium_text_results",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_time_on_site",
+              "displayName": "explorium_time_on_site",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_total_reviews_count",
+              "displayName": "explorium_total_reviews_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ultimate_parent_id",
+              "displayName": "explorium_ultimate_parent_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_ultimate_parent_name",
+              "displayName": "explorium_ultimate_parent_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_umbrella",
+              "displayName": "explorium_umbrella",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_unknown_channel",
+              "displayName": "explorium_unknown_channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_url",
+              "displayName": "explorium_url",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_users",
+              "displayName": "explorium_users",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_visits",
+              "displayName": "explorium_visits",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explorium_payload_truncated",
+              "displayName": "explorium_payload_truncated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enrichment Provider",
+              "displayName": "Enrichment Provider",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "explorium",
+                  "value": "explorium"
+                },
+                {
+                  "name": "apollo",
+                  "value": "apollo"
+                },
+                {
+                  "name": "hunter",
+                  "value": "hunter"
+                },
+                {
+                  "name": "apify_linkedin",
+                  "value": "apify_linkedin"
+                },
+                {
+                  "name": "clay",
+                  "value": "clay"
+                },
+                {
+                  "name": "crunchbase",
+                  "value": "crunchbase"
+                },
+                {
+                  "name": "clinicaltrials_gov",
+                  "value": "clinicaltrials_gov"
+                },
+                {
+                  "name": "salesforce",
+                  "value": "salesforce"
+                },
+                {
+                  "name": "perplexity",
+                  "value": "perplexity"
+                },
+                {
+                  "name": "exa",
+                  "value": "exa"
+                },
+                {
+                  "name": "leadmagic",
+                  "value": "leadmagic"
+                },
+                {
+                  "name": "manual",
+                  "value": "manual"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AAV Event Count",
+              "displayName": "AAV Event Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "AAV Active Event Count",
+              "displayName": "AAV Active Event Count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Latest AAV Event Date",
+              "displayName": "Latest AAV Event Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "AAV Status (derived)",
+              "displayName": "AAV Status (derived)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Signal Drafts",
+              "displayName": "Signal Drafts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Translated Body (from Signal Drafts)",
+              "displayName": "Translated Body (from Signal Drafts)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Trigger",
+              "displayName": "Trigger",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Get Contacts",
+                  "value": "Get Contacts"
+                },
+                {
+                  "name": "Run SF Import",
+                  "value": "Run SF Import"
+                },
+                {
+                  "name": "Run Explorium",
+                  "value": "Run Explorium"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "SF Account ID",
+              "displayName": "SF Account ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enrichment Runs",
+              "displayName": "Enrichment Runs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "e1000007-0000-0000-0000-000000000007",
+      "name": "Update Company Record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        304
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Build Enrichment Run payload for the Enrichment Runs table.\nconst company  = ($('Get Company by ID').first()?.json) || {};\nconst fieldsIn = company.fields || {};\nconst companyName = fieldsIn['Company Name'] || '';\nconst play       = fieldsIn['Play'] || '';\n\nconst mapped = ($('Map to Airtable Fields').first()?.json) || {};\nconst matched = mapped['Enrichment Status'] === 'enrichment_complete';\n\nconst recordsIn  = 1;\nconst recordsOut = matched ? 1 : 0;\n\nconst eid = (typeof $execution !== 'undefined' && $execution && $execution.id)\n  || (typeof $executionId !== 'undefined' ? $executionId : '');\nconst today  = new Date().toISOString().slice(0, 10);\nconst nowIso = new Date().toISOString();\n\nreturn {\n  json: {\n    Name: `Explorium Enrichment - ${companyName || 'unknown'} - ${today}`,\n    Status: 'Done',\n    'Run Date': nowIso,\n    Play: play || '',\n    'Gate Version': 'explorium-enrichment-v1',\n    'Companies Evaluated': 1,\n    'Records In': recordsIn,\n    'Records Out': recordsOut,\n    'Run Type': 'enrichment',\n    'Run Mode': 'incremental',\n    'Rules Version': 'explorium-enrichment-v1',\n    'Workflow ID': 'LqYwYcastjKq0IJ5',\n    'Execution ID': String(eid),\n    Providers: ['explorium', 'anthropic'],\n    Companies: company.id ? [company.id] : [],\n    Notes: matched\n      ? `Explorium enrichment for ${companyName}. Matched business_id ${mapped['Explorium Business ID']} (NAICS ${mapped['NAICS Code'] || 'n/a'}).`\n      : `Explorium enrichment for ${companyName}. No matching Explorium business found.`,\n  }\n};"
+      },
+      "id": "e1000008-0000-0000-0000-000000000008",
+      "name": "Build Enrichment Run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appYBYH3aOHhTODAw"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblEVSEqetmu4ScHe"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Run Date",
+              "displayName": "Run Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Play",
+              "displayName": "Play",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Gate Version",
+              "displayName": "Gate Version",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Companies Evaluated",
+              "displayName": "Companies Evaluated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Passed (AAV)",
+              "displayName": "Passed (AAV)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Re-routed",
+              "displayName": "Re-routed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Archived",
+              "displayName": "Archived",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Markdown Report",
+              "displayName": "Markdown Report",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Run Type",
+              "displayName": "Run Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "L1_capture",
+                  "value": "L1_capture"
+                },
+                {
+                  "name": "L2_classify",
+                  "value": "L2_classify"
+                },
+                {
+                  "name": "L3_filter",
+                  "value": "L3_filter"
+                },
+                {
+                  "name": "gate_legacy",
+                  "value": "gate_legacy"
+                },
+                {
+                  "name": "enrichment",
+                  "value": "enrichment"
+                },
+                {
+                  "name": "verify",
+                  "value": "verify"
+                },
+                {
+                  "name": "smoke",
+                  "value": "smoke"
+                },
+                {
+                  "name": "contact_sourcing",
+                  "value": "contact_sourcing"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Run Mode",
+              "displayName": "Run Mode",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "incremental",
+                  "value": "incremental"
+                },
+                {
+                  "name": "full_rerun",
+                  "value": "full_rerun"
+                },
+                {
+                  "name": "full",
+                  "value": "full"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Rules Version",
+              "displayName": "Rules Version",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Workflow ID",
+              "displayName": "Workflow ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Execution ID",
+              "displayName": "Execution ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Records In",
+              "displayName": "Records In",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Records Out",
+              "displayName": "Records Out",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Play Steps",
+              "displayName": "Play Steps",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Providers",
+              "displayName": "Providers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "explorium",
+                  "value": "explorium"
+                },
+                {
+                  "name": "apollo",
+                  "value": "apollo"
+                },
+                {
+                  "name": "hunter",
+                  "value": "hunter"
+                },
+                {
+                  "name": "apify_linkedin",
+                  "value": "apify_linkedin"
+                },
+                {
+                  "name": "clay",
+                  "value": "clay"
+                },
+                {
+                  "name": "crunchbase",
+                  "value": "crunchbase"
+                },
+                {
+                  "name": "clinicaltrials_gov",
+                  "value": "clinicaltrials_gov"
+                },
+                {
+                  "name": "salesforce",
+                  "value": "salesforce"
+                },
+                {
+                  "name": "perplexity",
+                  "value": "perplexity"
+                },
+                {
+                  "name": "exa",
+                  "value": "exa"
+                },
+                {
+                  "name": "leadmagic",
+                  "value": "leadmagic"
+                },
+                {
+                  "name": "manual",
+                  "value": "manual"
+                },
+                {
+                  "name": "anthropic",
+                  "value": "anthropic"
+                },
+                {
+                  "name": "apify",
+                  "value": "apify"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Companies",
+              "displayName": "Companies",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "e1000009-0000-0000-0000-000000000009",
+      "name": "Create Enrichment Run",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        304
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Company by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Company by ID": {
+      "main": [
+        [
+          {
+            "node": "Resolve Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explorium Match Business": {
+      "main": [
+        [
+          {
+            "node": "Explorium Enrich Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explorium Enrich Business": {
+      "main": [
+        [
+          {
+            "node": "Map to Airtable Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map to Airtable Fields": {
+      "main": [
+        [
+          {
+            "node": "Update Company Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Company Record": {
+      "main": [
+        [
+          {
+            "node": "Build Enrichment Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Enrichment Run": {
+      "main": [
+        [
+          {
+            "node": "Create Enrichment Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Domain": {
+      "main": [
+        [
+          {
+            "node": "Apply Resolved Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Resolved Domain": {
+      "main": [
+        [
+          {
+            "node": "Explorium Match Business",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

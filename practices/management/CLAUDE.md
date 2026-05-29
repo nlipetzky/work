@@ -91,6 +91,24 @@ into a management surface over time.
   run manually 2–3 times and the shape has stabilized.
 - The artifact is the deliverable. The conversation is not.
 
+## Expert interaction routes through Hermes
+
+Hiring is usually Nick-internal and doesn't intersect with engagement experts. But if a role brief or working agreement encodes judgment from an engagement-level expert (e.g., a venture partner pressure-testing a role definition), that expert-facing interaction routes through Hermes (the expert-liaison practice). You produce the role brief / JD / scorecard; you do not decide the channel or draft the approval ask to an expert.
+
+See `/Users/nplmini/code/work/practices/expert-liaison/CLAUDE.md` and `/Users/nplmini/code/work/practices/expert-liaison/reference/methodology.md`.
+
+## Artifact discipline (cross-practice canon)
+
+Every practice in this OS produces and grows artifacts. Read `~/code/work/practices/agentic-systems/reference/artifact-discipline.md` for the shared methodology.
+
+Three obligations on every operator here:
+
+1. **Produce artifacts as the unit of work**, not chat-message summaries. A session that produced no artifact produced no compounding output.
+2. **Collect Learnings** from each real engagement that update existing artifacts or propose new ones.
+3. **Name your own context gaps** when you notice them. They are roadmap signals for what to build next.
+
+For hiring specifically: role briefs, JDs, candidate scorecards, working agreements are all artifacts. Learnings come from how candidates performed against the brief, where the JD attracted the wrong applicants, what the working agreement missed once the hire was operating.
+
 # context-mode — MANDATORY routing rules
 
 You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.

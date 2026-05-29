@@ -1,0 +1,235 @@
+{
+  "name": "Teknova SF Companies Enrichment (Pearl SF Mirror → Companies)",
+  "nodes": [
+    {
+      "id": "74df45e1-c399-4bf2-8c6a-6b2478a4a23a",
+      "name": "Run Enrichment",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        428
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "a1000001-0000-0000-0000-000000000001",
+      "name": "Get Companies Missing SF Data",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        428
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appYBYH3aOHhTODAw"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblnj3YlOI3thjrXp"
+        },
+        "filterByFormula": "AND({SF Sync Timestamp} = BLANK(), {Domain} != BLANK())",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000002-0000-0000-0000-000000000002",
+      "name": "Loop Over Companies",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        688,
+        428
+      ],
+      "parameters": {
+        "options": {}
+      }
+    },
+    {
+      "id": "a1000003-0000-0000-0000-000000000003",
+      "name": "Normalize Domain",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        428
+      ],
+      "parameters": {
+        "jsCode": "// Strip protocol, www, path, trailing slash\nconst raw = ($json.Domain || '').toString().trim().toLowerCase();\nconst host = raw\n  .replace(/^https?:\\/\\//, '')\n  .replace(/^www\\./, '')\n  .split('/')[0]\n  .split('?')[0];\nreturn [{ json: { ...$json, _normalizedDomain: host } }];"
+      }
+    },
+    {
+      "id": "a1000004-0000-0000-0000-000000000004",
+      "name": "Lookup Pearl SF Account Mirror",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        428
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "app5wdHwgM1SPNxcx"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblUgxKdATinoBMcR"
+        },
+        "filterByFormula": "=FIND('{{ $json._normalizedDomain }}', LOWER({Website})) > 0",
+        "options": {
+          "returnAll": false,
+          "limit": 1
+        }
+      }
+    },
+    {
+      "id": "a1000005-0000-0000-0000-000000000005",
+      "name": "Map Pearl Mirror to Companies",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        428
+      ],
+      "parameters": {
+        "jsCode": "// Pull source (Companies row) and matched Pearl mirror row.\nconst src = $('Normalize Domain').item.json;\nconst mirror = ($json && $json.fields) ? $json.fields : ($json || {});\nconst matched = !!(mirror && (mirror['Account ID'] || mirror['Account Name']));\n\nconst parseNum = (v) => {\n  if (v === null || v === undefined || v === '') return null;\n  const n = Number(String(v).replace(/[^0-9.\\-]/g, ''));\n  return Number.isFinite(n) ? n : null;\n};\n\nconst fields = {\n  id: src.id,\n  'SF Account Ownership': mirror['Account Owner'] || null,\n  'SF Sync Timestamp':    new Date().toISOString(),\n  'Industry':             mirror['Industry'] || null,\n  'Revenue Range':        mirror['Revenue Range'] || null,\n  'Stock Ticker':         mirror['Ticker'] || null,\n  'NAICS Code':           mirror['NACIS'] || null,\n  'Last Funding Date':    mirror['Last Funding Date'] || null,\n  'Last Funding Amount USD': parseNum(mirror['Last Funding Value']),\n  'Employee Count':       parseNum(mirror['Employees on LinkedIn']),\n  'SF Account Status Summary': matched\n    ? `Matched Pearl ME_Account_Mirror Account ID ${mirror['Account ID']} on domain ${src._normalizedDomain}.`\n    : `No Pearl SF mirror row found for domain ${src._normalizedDomain}.`\n};\n\n// Drop nulls so we don't overwrite existing values with empties.\nfor (const k of Object.keys(fields)) {\n  if (fields[k] === null || fields[k] === undefined) delete fields[k];\n}\nreturn [{ json: fields }];"
+      }
+    },
+    {
+      "id": "a1000006-0000-0000-0000-000000000006",
+      "name": "Update Company Record",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        428
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "gppZOg4RmjcuPf9T",
+          "name": "All KAI Bases"
+        }
+      },
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appYBYH3aOHhTODAw"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblnj3YlOI3thjrXp"
+        },
+        "options": {
+          "typecast": true
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Run Enrichment": {
+      "main": [
+        [
+          {
+            "node": "Get Companies Missing SF Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Companies Missing SF Data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Companies": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Normalize Domain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Domain": {
+      "main": [
+        [
+          {
+            "node": "Lookup Pearl SF Account Mirror",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Pearl SF Account Mirror": {
+      "main": [
+        [
+          {
+            "node": "Map Pearl Mirror to Companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Pearl Mirror to Companies": {
+      "main": [
+        [
+          {
+            "node": "Update Company Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Company Record": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Companies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

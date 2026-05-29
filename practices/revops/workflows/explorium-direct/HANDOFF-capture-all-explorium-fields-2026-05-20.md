@@ -212,3 +212,106 @@ Replacement file: [CODE-Z6-PrepareRunLog-2026-05-20.js](CODE-Z6-PrepareRunLog-20
 ### Contacts table — not yet patched
 
 The Contacts table `tblWJksRL1yKSUgrm` does not yet have a provider field. The bY workflow already runs through Apollo + Apify + Hunter + Explorium + Anthropic per prospect, so this is arguably where the multi-select earns its keep most. Flagged as the natural next pass — not done in this session because Nick's directive named Companies + Enrichment Runs explicitly.
+
+---
+
+## Addendum 2 — 2026-05-20 re-verification (PROMPT.md execution)
+
+Re-verified the above by fresh GET read of both workflows and Airtable schema.
+
+**versionIds confirmed (2026-05-20):**
+- Z6: `43cd0ae6-62b1-4be1-aa74-0fba50e62b72` (matches addendum above)
+- bY: `4347d9c3-8c02-4b21-8844-b7ba335d939f` (matches table above)
+
+**Credentials confirmed intact:**
+- Z6: all 8 Airtable/Explorium node bindings present (same credential IDs as per-node table above)
+- bY: all 10 node bindings present (Airtable, Explorium, Apollo, Apify, Anthropic, Hunter)
+
+**Airtable column counts confirmed:**
+- Companies `tblnj3YlOI3thjrXp`: 229 explorium_* columns (fetched from live schema)
+- Contacts `tblWJksRL1yKSUgrm`: 54 explorium_* columns (fetched from live schema)
+- Cross-check against code simulation: 0 columns missing from Airtable; 3 Airtable columns absent from exec-72396 simulation (explained: 2 sparse fields absent from that company's payload + 1 synthetic field handled by curated section, not foldExplorium)
+
+**Active state:** Both workflows `active: false`, `activeVersionId: null`. Both use `manualTrigger` only. This is the expected state between paid runs. No action needed to prevent accidental scheduled runs.
+
+**Additional scratch table written this session:**
+- Table: `SCRATCH-explorium-dry-run-2026-05-20` (tblNFrtL2iz5u12i9, appYBYH3aOHhTODAw)
+- Record: `recIOM49YfvcM6Abk` (created 2026-05-20T02:38:21Z)
+- Fields verified round-trip: singleLineText (business_id), number integer (ratings_count), number float (ratings_outlook), multilineText newline-joined array (full_tech_stack), checkbox false (payload_truncated)
+- All types confirmed write-read correctly. Scratch table safe to delete.
+
+**Field inventories written to:**
+- `capture-all-explorium-fields/inventory-companies-explorium-fields-2026-05-20.json` (226 keys from exec 72396 simulation)
+- `capture-all-explorium-fields/inventory-contacts-explorium-fields-2026-05-20.json` (53 keys from exec 80834)
+
+**No post-update execution exists.** Most recent Z6 run is exec 72396 (2026-05-14), before the code deploy. Most recent bY run is exec 80834 (2026-05-19T21:41Z), also before the code deploy (deployed at ~23:07Z same day). Live test pending Nick's authorization.
+
+---
+
+## Addendum 3 — 2026-05-20 live 3-company test run + bug fixes
+
+Three companies were selected for a live test run: REGENXBIO (`recJCe3fwYK4oU1uT`), Rocket Pharmaceuticals (`recXuzce8u5YpMpC9`), Spirovant Sciences (`rec0LOo5HdS4ZXmgJ`). Their `Enrichment Status` was cleared to blank before the run. `Get Unenriched Companies` filter was scoped to `FIND(RECORD_ID(), 'recJCe3fwYK4oU1uT,recXuzce8u5YpMpC9,rec0LOo5HdS4ZXmgJ')` for the duration of the test.
+
+### Bugs found and fixed (sequential; each exec triggered live)
+
+**Bug 1 — exec 80857 — credential not shared**
+- `Get Unenriched Companies` was bound to `RevOps Surface Airtable (oWpVVSd23y4jOtSK)`, not shared with INSTIG8 AI project.
+- Fix: Nick swapped the credential on that node to `may 26 all bases (FYqJQqdXIQkmT715)` via UI.
+
+**Bug 2 — exec 80858 — number value into singleLineText column**
+- `explorium_number_of_investors_for_first_funding_round` is `singleLineText`; `foldExplorium` was passing JS number `1`. Airtable's typecast does not coerce numbers → strings for text columns.
+- Fix: added `if (typeof v === 'number') { out[col] = String(v); continue; }` to `foldExplorium` in all 5 Z6 Code nodes + 1 bY Code node via REST PUT.
+- versionId after: `6a84a723-9986-45c3-99a9-f7b73a0dfc72` (Z6).
+
+**Bug 3 — exec 80860 / 80881 — `Update Enriched Record` node had `defineBelow` mapping with hardcoded `false` values for all explorium_* fields**
+- Node used `mappingMode: defineBelow` with 102 entries. All 71 explorium_* entries in `columns.value` were hardcoded `false` booleans, not expressions. The node was not reading from `Map Enriched Fields` output for those columns.
+- Fix: switched `Update Enriched Record` to `mappingMode: autoMapInputData`, cleared `columns.value`. Node now reads all input keys by name.
+- versionId after: `2ef3fb10-7589-491f-9919-a7a375c9d2b0` (Z6).
+
+**Bug 4 — exec 80881 — `Deep Enrichment Raw` blob 100,014 chars, exceeds Airtable 100K cell limit**
+- `Map Enriched Fields` sliced the blob to 100,000 chars then appended `'...[truncated]'` (14 chars) = 100,014. Airtable `multilineText` hard cap is 100,000. 422 result.
+- Fix: changed `.slice(0, 100000)` to `.slice(0, 99986)` so 99,986 + 14 = exactly 100,000.
+- Only `Map Enriched Fields` had this pattern (confirmed by grep across all Code nodes).
+- versionId after: `c49c5953-e9ab-4495-84fd-32d24a10c327` (Z6).
+
+**Bug 5 — exec 80904 — `Map Reroute Fields` output key `"Country"` instead of `"HQ Country"`**
+- `Update Rerouted` uses `autoMapInputData`. Airtable rejected unknown field `Country` (422). `Map Enriched Fields` and `Map Archive Fields` both correctly use `"HQ Country"` — this was a pre-existing inconsistency in `Map Reroute Fields` only.
+- Fix: renamed `"Country": qualify._country` → `"HQ Country": qualify._country` in `Map Reroute Fields` via REST PUT.
+- versionId after: `2e2345fa-0a4d-411d-a1a1-1cf7affcc7d1` (Z6). **This is the final deployed versionId.**
+
+### Final credential map, post all fixes (Z6 versionId `2e2345fa-0a4d-411d-a1a1-1cf7affcc7d1`)
+
+- Get Unenriched Companies: `airtableTokenApi=may 26 all bases (FYqJQqdXIQkmT715)` ← changed by Nick from `oWpVVSd23y4jOtSK`
+- Match Business: `exploriumApi=Explorium account (2hCOPHr2VEpraeAH)`
+- Enrich Firmographics Only: `exploriumApi=Explorium account (2hCOPHr2VEpraeAH)`
+- Enrich Deep: `exploriumApi=Explorium account (2hCOPHr2VEpraeAH)`
+- Update Enriched Record: `airtableTokenApi=All KAI Bases (gppZOg4RmjcuPf9T)`
+- Update Rerouted: `airtableTokenApi=All KAI Bases (gppZOg4RmjcuPf9T)`
+- Update Archived: `airtableTokenApi=All KAI Bases (gppZOg4RmjcuPf9T)`
+- Write Run Log: `airtableTokenApi=may 26 all bases (FYqJQqdXIQkmT715)`
+
+### Successful execution — exec 80918 (status: success, finished 2026-05-20T03:16:31.278Z)
+
+Per-node item counts (from exec 80918 runData):
+- Run Enrichment: 1, Get Unenriched Companies: 1, Loop Over Companies: 0
+- Prepare for Match: 1, Match Business: 1, IF Match Found?: 1
+- Enrich Firmographics Only: 1, Qualify Company: 1, IF Biotech?: 1
+- Build URLs Matched: 6, Fetch Pages Matched: 6, Check AAV Modality: 1
+- IF AAV?: 0, Map Reroute Fields: 1, Update Rerouted: 1
+- Done: 1, Prepare Run Log: 1, Write Run Log: 1
+
+Exec 80918 processed 1 company per trigger (Rocket, `recXuzce8u5YpMpC9`). The other 2 were processed in prior execs of this session before the bugs were fully isolated. All 3 records confirmed in Airtable after session:
+
+| Record ID | Company | Enrichment Status | explorium_payload_truncated | Notes |
+|---|---|---|---|---|
+| `recJCe3fwYK4oU1uT` | REGENXBIO Inc. | `enrichment_complete` | `true` | Deep blob truncated at 99,986 chars; explorium_* columns intact |
+| `recXuzce8u5YpMpC9` | Rocket Pharmaceuticals | `needs_aav_review` | — | Rerouted path; 82 explorium_* fields in Airtable update response |
+| `rec0LOo5HdS4ZXmgJ` | Spirovant Sciences | `enrichment_complete` | — | Full enrichment path |
+
+Airtable read: all 3 records confirmed via `list_records_for_table` (baseId `appYBYH3aOHhTODAw`, tableId `tblnj3YlOI3thjrXp`): `explorium_name`, `explorium_naics`, `Explorium Business ID` populated on all 3; `explorium_payload_truncated` true on REGENXBIO as expected.
+
+### Open items for orchestrator
+
+1. **`Get Unenriched Companies` filter is still scoped to the 3 test record IDs.** Must be restored to the production filter before any real run. Nick holds the correct production formula.
+2. **bY Contacts workflow live test not executed.** bY code was updated in prior session (versionId `4347d9c3-8c02-4b21-8844-b7ba335d939f`). No live Explorium run was triggered — per PROMPT hard rule, paid runs require Nick's explicit authorization.
+3. **`publish_workflow` on Z6 returns error** ("no trigger node") — expected for a manually-triggered sub-workflow. The draft at versionId `2e2345fa` is the version that ran exec 80918 successfully. No activation action needed between manual runs.

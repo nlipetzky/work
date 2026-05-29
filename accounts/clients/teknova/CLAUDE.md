@@ -1,5 +1,9 @@
 # Client: Teknova
 
+## READ STATE.md FIRST
+
+Before producing ANY client-facing artifact (email draft, status update, meeting brief, scope note, list, plan), read `/Users/nplmini/code/work/accounts/clients/teknova/STATE.md`. The active commitments, hard rules, and read-list there override default behavior. STATE.md is the session-bootstrapping file.
+
 ## Operations inventory
 
 Read `artifacts/teknova-operations-inventory.md` before starting any work. It lists every active system, workflow, sync path, provider, and artifact for this client. If your session changes any of these (activates a workflow, runs a migration, exhausts a provider, ships a play), update the inventory before ending the session.
@@ -60,6 +64,15 @@ Max 3-5 contacts per company per wave.
 **Large pharma filter:** Companies >500 employees require US/Canada location, tenure >= 5 years, and research publication history.
 
 **Relationship state:** Exclude contacts flagged opted_out, bounced, DNC, or known.
+
+## Expert and sponsor interactions route through their respective practices
+
+Any operator working in this engagement defers human-facing interaction to the appropriate practice. Do not draft approval asks, choose channels, or send artifacts directly to Ellie or Jenn from inside this folder.
+
+- **Ellie is the expert** ... AAV target verdicts, persona criteria, classification rules, ICP. Route through Hermes (the expert-liaison practice): `/Users/nplmini/code/work/practices/expert-liaison/CLAUDE.md`.
+- **Jenn is the sponsor** ... engagement scope, Trajectory, weekly delivery cadence, scope-change conversations. Route through Polaris (engagement-governance): `/Users/nplmini/code/work/practices/engagement-governance/CLAUDE.md`.
+
+Produce the underlying artifact, hand it to the right practice with a clear ask, reference the approval signature once it comes back.
 
 # context-mode — MANDATORY routing rules
 

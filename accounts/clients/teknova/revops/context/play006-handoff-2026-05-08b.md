@@ -63,7 +63,7 @@ Operations inventory updated with per-call pricing and new balances.
 
 ### Gaps to resolve before full run
 
-1. **Hunter API key location unknown.** The enrichment spec says `HUNTER_API_KEY` in `.env` but the key is not in any env file under `~/code/work/clients/teknova/`. Must locate before full run. Email verification step is currently blocked.
+1. **Hunter API key location unknown.** The enrichment spec says `HUNTER_API_KEY` in `.env` but the key is not in any env file under `~/code/work/accounts/clients/teknova/`. Must locate before full run. Email verification step is currently blocked.
 
 2. **Drop `has_email: true` from `fetch-prospects`.** The current filter restricts discovery to contacts already indexed with email by Explorium. Better approach: fetch all contacts at the right seniority/department, then run `enrich-prospects` contacts to get emails (waterfall to Hunter for gaps). Will find more contacts per company.
 

@@ -4,13 +4,16 @@ Nick is building an owned-asset studio with a JV venture arm. Service work funds
 
 ## Structure
 
-- `practices/` -- operator roles and pipelines. Each practice defines a persona, workflow, and artifact conventions. Shared across all engagement types.
+- `practices/` -- operator roles and pipelines. Each practice defines a persona, workflow, and artifact conventions. Shared across all engagement types. Active personas: Boris (agentic-systems), Kepler (sales-and-gtm), Hermes (expert-liaison), Polaris (engagement-governance), plus revops, automation, content, n8n-practice, management.
 - `capabilities/` -- shared building blocks: skills, schemas, and agents that any practice or engagement can use.
 - `assets/` -- owned properties Nick builds and operates. Audience, lead gen, monetization. Living proof of capability.
-- `ventures/` -- JV partnerships with domain experts. Nick provides agentic infrastructure; the partner provides credentialed expertise. Equity-based, co-owned businesses.
-- `clients/` -- legacy and transitional service engagements that fund the building. Expected to shrink over time.
+- `accounts/` -- all engagement-bound folders, grouped by relationship type:
+  - `accounts/ventures/` -- partnership businesses (e.g. Konstellation AI). LLC + bank account, equity-based, co-owned with a domain expert.
+  - `accounts/clients/` -- service engagements that fund the building. Expected to shrink over time.
+  - `accounts/prospects/` -- pre-engagement context for prospects in active conversation.
+- `reference/` -- studio-level reference docs (studio thesis, etc.).
 
-Practices hold the *how*. Everything else holds the *what*. They compose: launch Claude Code from an asset, venture, or client folder, and the right operator + skills load.
+Practices hold the *how*. Everything under `accounts/` holds the *what*. They compose: launch Claude Code from a folder under `accounts/` or from `assets/<name>/`, and the right operator + skills load via the practice's engagement-loading pattern.
 
 ## Studio thesis
 
@@ -35,11 +38,11 @@ This directory (`~/code/work/`) is Nick's active operating system for client wor
 
 **Authoritative sources** (read freely, treat as truth):
 - Anything inside `~/code/work/`
-- The client's NotebookLM notebook (Nick queries it; paste-only into `clients/<name>/context/`)
+- The engagement's NotebookLM notebook (Nick queries it; paste-only into `accounts/<type>/<name>/context/` where `<type>` is `clients`, `ventures`, or `prospects`)
 
 **Historical sources** (do NOT read by default):
 - `~/code/aos/`
-- `~/code/<client-name>/` folders that exist outside `~/code/work/clients/`
+- `~/code/<client-name>/` folders that exist outside `~/code/work/accounts/clients/`
 - `~/Archive/`
 - Any other folder under `~/code/` not inside `~/code/work/`
 
@@ -52,8 +55,8 @@ If Nick explicitly asks you to read something outside this boundary ("look at th
 Practices define roles and workflows. Clients hold engagement-specific context and artifacts. Skills produce artifacts. Artifacts are the deliverables.
 
 When you launch in this directory, orient yourself by reading:
-1. The relevant practice CLAUDE.md (revops, automation, content, agentic-systems, etc.)
-2. The relevant engagement CLAUDE.md (assets/, ventures/, or clients/ subfolder)
+1. The relevant practice CLAUDE.md (revops, automation, content, agentic-systems, sales-and-gtm, expert-liaison, engagement-governance, etc.)
+2. The relevant engagement CLAUDE.md (under `accounts/ventures/`, `accounts/clients/`, `accounts/prospects/`, or `assets/<name>/`)
 3. The architecture notes at `practices/agentic-systems/reference/architecture-notes.md` if you need broader context
 
 ## Working principles
