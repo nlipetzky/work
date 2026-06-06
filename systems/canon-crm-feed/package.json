@@ -1,0 +1,27 @@
+{
+  "name": "canon-crm-feed",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Inngest projection: Canon Engine events -> Nick's CRM (Airtable) derived state.",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "validate": "tsx scripts/validate-derive.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@supabase/supabase-js": "^2",
+    "dotenv": "^17.4.2",
+    "express": "^4",
+    "googleapis": "^173.0.0",
+    "inngest": "^3"
+  },
+  "devDependencies": {
+    "@types/express": "^4",
+    "@types/node": "^20",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}

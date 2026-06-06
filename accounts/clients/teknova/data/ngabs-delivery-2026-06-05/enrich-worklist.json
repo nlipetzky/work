@@ -1,0 +1,1055 @@
+[
+  {
+    "company": "ILC Dover",
+    "domain": "ilcdover.com",
+    "apollo_id": "54a464da7468693209d34844",
+    "first_name": "Victor",
+    "last_name_masked": "Ci***s",
+    "title": "Vice President Global Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "ILC Dover",
+    "domain": "ilcdover.com",
+    "apollo_id": "55d6a984f3e5bb59dc0038e1",
+    "first_name": "Trinity",
+    "last_name_masked": "St***y",
+    "title": "Site Director",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "ILC Dover",
+    "domain": "ilcdover.com",
+    "apollo_id": "62356da3b6433b0001626c16",
+    "first_name": "Kevin",
+    "last_name_masked": "No***n",
+    "title": "Supply Chain Lead - Hardware, USA",
+    "bucket": "procurement"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "6464ea26d4d40d00019c9d38",
+    "first_name": "Mousa",
+    "last_name_masked": "Ja***i",
+    "title": "Director, Drug Product Development",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "5addb07fa6da984d6e7ece68",
+    "first_name": "Erin",
+    "last_name_masked": "O'***n",
+    "title": "Vice President, Pharmaceutical Development",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "54a391d87468693b8cfd2a03",
+    "first_name": "Aeona",
+    "last_name_masked": "Ma***a",
+    "title": "Director, CMC Operations",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "66f577ced3b2a70001b334a4",
+    "first_name": "Christopher",
+    "last_name_masked": "Ma***n",
+    "title": "Vice President of Manufacturing",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "66faa9fcbd0c940001561222",
+    "first_name": "Rohin",
+    "last_name_masked": "Mh***e",
+    "title": "EVP & Chief Technical Operations Officer",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "67ef6c631d544200012b96fb",
+    "first_name": "Madhumita",
+    "last_name_masked": "Bo***n",
+    "title": "Sr. Director, Biology",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "FogPharma",
+    "domain": "fogpharma.com",
+    "apollo_id": "66f58722a85072000120f08a",
+    "first_name": "Diwakar",
+    "last_name_masked": "Pa***n",
+    "title": "Director, Discovery Biology",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Dalton Pharma Services",
+    "domain": "dalton.com",
+    "apollo_id": "60dc69883675460001311ab8",
+    "first_name": "Tan",
+    "last_name_masked": "Qu***h",
+    "title": "Senior Director of GMP Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Dalton Pharma Services",
+    "domain": "dalton.com",
+    "apollo_id": "5b2744c9a6da98c35620e35b",
+    "first_name": "Christopher",
+    "last_name_masked": "Ko***s",
+    "title": "Senior Director of Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Dalton Pharma Services",
+    "domain": "dalton.com",
+    "apollo_id": "685fae0751ee350001adfec7",
+    "first_name": "Vinod",
+    "last_name_masked": "Ra***m",
+    "title": "Head - R & D Services",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Dalton Pharma Services",
+    "domain": "dalton.com",
+    "apollo_id": "5641e61fa6da9853a2006d1a",
+    "first_name": "Alina",
+    "last_name_masked": "Ku***a",
+    "title": "Materials and Logistics Manager",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Dalton Pharma Services",
+    "domain": "dalton.com",
+    "apollo_id": "54a448717468692cf0af293b",
+    "first_name": "Sandhya",
+    "last_name_masked": "Pa***a",
+    "title": "Senior Formulation Specialist",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "6515041d3e40f50001dafe80",
+    "first_name": "Roland",
+    "last_name_masked": "Ko***k",
+    "title": "Chief Scientific Officer",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "54aa45c27468690b75052f00",
+    "first_name": "Shaun",
+    "last_name_masked": "Se***s",
+    "title": "SVP, Head of Discovery and Preclinical Sciences",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "5ab2521ea6da98f8c24db396",
+    "first_name": "Michelle",
+    "last_name_masked": "Sc***t",
+    "title": "Sr. Director of Chemical Development",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "65433b6802eebb0001ad8ac0",
+    "first_name": "Gary",
+    "last_name_masked": "De***o",
+    "title": "SVP Research and Pharmaceutical Development",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "5d5aa75ff6512538690b7240",
+    "first_name": "Rakesh",
+    "last_name_masked": "Ba***a",
+    "title": "Senior Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "665f70d3d21e5a0001cd4397",
+    "first_name": "Margaret",
+    "last_name_masked": "No***n",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "563be468a6da984cc2003dca",
+    "first_name": "Dean",
+    "last_name_masked": "Mc***w",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Aclaris Therapeutics, Inc.",
+    "domain": "aclaristx.com",
+    "apollo_id": "54a236717468693825938616",
+    "first_name": "Huiyan",
+    "last_name_masked": "Hu***g",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Algorithme Pharma | An Altasciences Company",
+    "domain": "altasciences.com",
+    "apollo_id": "54a26f6b7468693318575322",
+    "first_name": "Scott",
+    "last_name_masked": "My***i",
+    "title": "Director, Manufacturing",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Algorithme Pharma | An Altasciences Company",
+    "domain": "altasciences.com",
+    "apollo_id": "658e55a28fdc960001d31ace",
+    "first_name": "Robert",
+    "last_name_masked": "Cr***k",
+    "title": "Senior Formulation Scientist",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Algorithme Pharma | An Altasciences Company",
+    "domain": "altasciences.com",
+    "apollo_id": "60a3ddbfe4924f0001f8d3cf",
+    "first_name": "Andrew",
+    "last_name_masked": "Bu***s",
+    "title": "Senior Formulation Scientist",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Algorithme Pharma | An Altasciences Company",
+    "domain": "altasciences.com",
+    "apollo_id": "635be50d2e57d5000174dffa",
+    "first_name": "Tabitha",
+    "last_name_masked": "Mu***n",
+    "title": "Formulation Manager",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "6593809a51fe860001182945",
+    "first_name": "Honglei",
+    "last_name_masked": "Zh***i",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "66ade9b432146d00012a30b6",
+    "first_name": "Amin",
+    "last_name_masked": "Es***a",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "54aaf59c746869037783d91c",
+    "first_name": "Karen",
+    "last_name_masked": "Mo***g",
+    "title": "Laboratory Manager, Center for Bioprocessing, Sino Biological US Inc.",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "57d857f2a6da98780f878a67",
+    "first_name": "Chen",
+    "last_name_masked": "Yu***g",
+    "title": "Research and Development Manager",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "54a5daf17468693676c8d5ad",
+    "first_name": "Erfan",
+    "last_name_masked": "Ra***n",
+    "title": "Senior Downstream Analyst",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Sino Biological, Inc.",
+    "domain": "sinobiological.com",
+    "apollo_id": "66d9e58d0727ad00011f5b07",
+    "first_name": "Huaiqi",
+    "last_name_masked": "Yin",
+    "title": "Fermentation Supervisor",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "XtalPi Inc.",
+    "domain": "xtalpi.com",
+    "apollo_id": "54a7726b74686965d9f8a835",
+    "first_name": "Jun",
+    "last_name_masked": "Yan",
+    "title": "Head of Automated Synthesis",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "XtalPi Inc.",
+    "domain": "xtalpi.com",
+    "apollo_id": "64da31f65384840001a1212a",
+    "first_name": "Genwei",
+    "last_name_masked": "Zh***g",
+    "title": "Peptide Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "614885bfd2452c0001c27ca9",
+    "first_name": "Thomas",
+    "last_name_masked": "Re***r",
+    "title": "Chief Scientific Officer",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "6856561c9df62800018cb9f8",
+    "first_name": "Rucheet",
+    "last_name_masked": "Pa***l",
+    "title": "Director of Supply Chain",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "557149737369642bb9d93b00",
+    "first_name": "Rafael",
+    "last_name_masked": "Fr***y",
+    "title": "Director Clinical Development Supply and Procurement",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "6425640e35018000011992ee",
+    "first_name": "Thomas",
+    "last_name_masked": "We***i",
+    "title": "Director, Factory Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "6105f985f1d12c00010cc4ff",
+    "first_name": "Paola",
+    "last_name_masked": "Aq***o",
+    "title": "Senior Supply Chain Specialist",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Evergreen Theragnostics",
+    "domain": "evergreentgn.com",
+    "apollo_id": "635f0991fb94f40001258971",
+    "first_name": "Daylin",
+    "last_name_masked": "Re***o",
+    "title": "Senior Production Technician",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "63fd410fd22dee0001a3f447",
+    "first_name": "Jack",
+    "last_name_masked": "O'***l",
+    "title": "Executive Director, Preclinical Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "61f17fc4f4146a00011e28b4",
+    "first_name": "Dmitry",
+    "last_name_masked": "Gu***v",
+    "title": "Senior Director Pharmaceutical Sciences and Technology (CMC)",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "600678d812814f000195775a",
+    "first_name": "Kathryn",
+    "last_name_masked": "El***s",
+    "title": "Director, Research",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "62f4a259de8b4900011119c8",
+    "first_name": "Brian",
+    "last_name_masked": "Bo***h",
+    "title": "Director, Research",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "54a7445b74686975f884ca24",
+    "first_name": "Yi-Fen",
+    "last_name_masked": "Lu",
+    "title": "Associate Director, Research",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "5d8d1a17f6512596c359d776",
+    "first_name": "Brahm",
+    "last_name_masked": "Ya***n",
+    "title": "Associate Director, Research",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "63fe3f4b5c184800013a0594",
+    "first_name": "Emily",
+    "last_name_masked": "Mi***l",
+    "title": "Associate Director, Preclinical Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Visterra Inc.",
+    "domain": "visterrainc.com",
+    "apollo_id": "54a7e753746869622096dd56",
+    "first_name": "Benjamin",
+    "last_name_masked": "Ca***n",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "BWXT Medical",
+    "domain": "bwxtmedical.com",
+    "apollo_id": "60f58f0c2bcb980001fd6e42",
+    "first_name": "Gord",
+    "last_name_masked": "Sc***z",
+    "title": "Director of Supply Chain",
+    "bucket": "procurement"
+  },
+  {
+    "company": "BWXT Medical",
+    "domain": "bwxtmedical.com",
+    "apollo_id": "635b53404b07390001ccd4f8",
+    "first_name": "Ian",
+    "last_name_masked": "Ba***t",
+    "title": "Supply Chain Manager",
+    "bucket": "procurement"
+  },
+  {
+    "company": "BWXT Medical",
+    "domain": "bwxtmedical.com",
+    "apollo_id": "5b8a60a5f874f72131305bd5",
+    "first_name": "David",
+    "last_name_masked": "Ly***h",
+    "title": "Development Engineering Manager (RadioPharm)",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "61004998286d95000144f5ae",
+    "first_name": "David",
+    "last_name_masked": "Sc***d",
+    "title": "Director of Research and Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "610049d502e071000160e8a4",
+    "first_name": "Trevor",
+    "last_name_masked": "Ca***s",
+    "title": "Chief Technical Officer",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "6102b0924252940001ce2acc",
+    "first_name": "Hameraj",
+    "last_name_masked": "Si***h",
+    "title": "Director of Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "61004a3c0d48490001aa04ed",
+    "first_name": "Antonio",
+    "last_name_masked": "Lo***t",
+    "title": "Vice President Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "66165f08716162000794a868",
+    "first_name": "Timothy",
+    "last_name_masked": "Ac***i",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "610049a366f4ac000156927c",
+    "first_name": "Hanlin",
+    "last_name_masked": "Nie",
+    "title": "Principal Scientist, Process Development",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "610049c7b002210001f17d72",
+    "first_name": "Hetal",
+    "last_name_masked": "Bh***t",
+    "title": "Method Development and Validation Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Pfanstiehl, Inc.",
+    "domain": "pfanstiehl.com",
+    "apollo_id": "610049a9ff8f0600017a8261",
+    "first_name": "Jared",
+    "last_name_masked": "Wi***n",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "54abecbe7468692a6b1f6b16",
+    "first_name": "Ilse",
+    "last_name_masked": "Ro***k",
+    "title": "Chief Scientific Officer",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "672769ee71352c0001aaf167",
+    "first_name": "Kim",
+    "last_name_masked": "Sc***i",
+    "title": "Executive Director Supply Chain & Operations",
+    "bucket": "procurement"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "60c13208e6c1e20001cd3f86",
+    "first_name": "Sander",
+    "last_name_masked": "Va***n",
+    "title": "Scientific Director",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "54a467de746869344279e844",
+    "first_name": "Dwight",
+    "last_name_masked": "Sc***e",
+    "title": "Associate Director Production Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "61387c0de8a3160001cae121",
+    "first_name": "Kaitlin",
+    "last_name_masked": "St***k",
+    "title": "Director of Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "66fa420f16af6200011e30cb",
+    "first_name": "Dawn",
+    "last_name_masked": "Al***n",
+    "title": "Sr. Director of Product Development & Portfolio",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "636c93bf2c73a10001b82467",
+    "first_name": "Eddy",
+    "last_name_masked": "En***i",
+    "title": "Senior Manager - Biologics Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "AVS Bio",
+    "domain": "avsbio.com",
+    "apollo_id": "600e96dcf80b9c0001048855",
+    "first_name": "Serge",
+    "last_name_masked": "Sc***s",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "54a80b907468696829dc585d",
+    "first_name": "Richard",
+    "last_name_masked": "Se***t",
+    "title": "Director of Technical Development and Transfer",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "6513b29afcb02400018e3565",
+    "first_name": "Craig",
+    "last_name_masked": "Hi***l",
+    "title": "Director Radiopharmacutical Development and Translation",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "6548cb8270e12600013b3a4b",
+    "first_name": "Anton",
+    "last_name_masked": "Ki***r",
+    "title": "Director of Chemistry, Instrumentation and Emerging Technologies",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "5edb523234699b00010a4120",
+    "first_name": "Vernal",
+    "last_name_masked": "Ri***s",
+    "title": "Director Inorganic Radiochemistry",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "639b091026609a0001e70aa0",
+    "first_name": "Jonathan",
+    "last_name_masked": "Bo***n",
+    "title": "Director of Manufacturing Services",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "601a7c16b99ecd00014b002b",
+    "first_name": "Jim",
+    "last_name_masked": "Vi***t",
+    "title": "Director of Manufacturing",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "637f3df6bed7b00001aaa099",
+    "first_name": "David",
+    "last_name_masked": "Tr***p",
+    "title": "Chief Radiochemist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SpectronRx",
+    "domain": "spectronrx.com",
+    "apollo_id": "57debd1ea6da987b4563e209",
+    "first_name": "Manzar",
+    "last_name_masked": "Ri***i",
+    "title": "Manager Manufacturing Services and Distribution",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "65966741d361f1000121cebe",
+    "first_name": "Patrick",
+    "last_name_masked": "Ka***l",
+    "title": "Director of Quality Control and Analytical Services",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "638498d4474c750001076f2e",
+    "first_name": "Sam",
+    "last_name_masked": "Sl***r",
+    "title": "Director - Site Engineering",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "54ebc7777468694311fc5123",
+    "first_name": "Kyle",
+    "last_name_masked": "Jo***n",
+    "title": "Associate Director Procurement",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "602f503a1902330001bf8b58",
+    "first_name": "Jason",
+    "last_name_masked": "Sp***n",
+    "title": "Associate Director, Project Management - Supply Chain/CMO Management",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "604fdcd7515f4500011bb1e1",
+    "first_name": "Kevin",
+    "last_name_masked": "Hi***s",
+    "title": "Corporate Director, Quality Control",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "64edf4f50e0b21000187457b",
+    "first_name": "John",
+    "last_name_masked": "Abt",
+    "title": "VP and Chief Operations and Quality Officer",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "54a496d07468693b8cb40953",
+    "first_name": "Jacob",
+    "last_name_masked": "Ha***s",
+    "title": "Technical Services Validation Manager",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Lannett Company, Inc.",
+    "domain": "lannett.com",
+    "apollo_id": "54a82a037468696829c4dd63",
+    "first_name": "Erica",
+    "last_name_masked": "Be***s",
+    "title": "Technical Services Senior Validation Engineer",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "5f90be70b2b13500014aaf34",
+    "first_name": "Ben",
+    "last_name_masked": "Ch***h",
+    "title": "CSO, Neuroscience",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "54a2007a7468693a7ef65204",
+    "first_name": "Jenny",
+    "last_name_masked": "Xie",
+    "title": "CSO, Immunology",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "66f7a87d5812e800019fb17d",
+    "first_name": "Yiping",
+    "last_name_masked": "Ro***g",
+    "title": "CSO, Executive Board of Director",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "5f0c7fc7322fdb0001f2c350",
+    "first_name": "Sammi",
+    "last_name_masked": "Sun",
+    "title": "Head of Supply Chain Management and China Alliance Management",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "54a62ec27468692cf0f350c8",
+    "first_name": "Sang",
+    "last_name_masked": "Al***n",
+    "title": "Associate Director, Procurement -capex & FM, Plant & Lab Supply Team Lead",
+    "bucket": "procurement"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "62bd6b2620c1bd0001ef747c",
+    "first_name": "Jimmy",
+    "last_name_masked": "Ro***g",
+    "title": "Associate Research Director",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "614ed33136c5010001dd184e",
+    "first_name": "Delong",
+    "last_name_masked": "Zh***g",
+    "title": "Senior Scientist & Technical Leader of Late Stage Project",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Harbour BioMed",
+    "domain": "harbourbiomed.com",
+    "apollo_id": "54a5f96b7468693209331ab8",
+    "first_name": "Xi",
+    "last_name_masked": "Zh***o",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "69a97d507ba2dd0001d4a2fb",
+    "first_name": "Michael",
+    "last_name_masked": "Mi***s",
+    "title": "Vice President of Manufacturing",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "557097f07369642b42b97300",
+    "first_name": "Mo",
+    "last_name_masked": "Ah***d",
+    "title": "Senior Director of Research Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "5b3f26b6a6da98f1d1a2cd9c",
+    "first_name": "Carl",
+    "last_name_masked": "Ad***s",
+    "title": "Senior Manager, Analytical Research and Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "63b43c4cddce0800016fe760",
+    "first_name": "Andrew",
+    "last_name_masked": "We***r",
+    "title": "Senior Research Development Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "621dc84dd48e3b0001235457",
+    "first_name": "Moussa",
+    "last_name_masked": "El***i",
+    "title": "Senior Research Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "57dfe53da6da980b53e2c606",
+    "first_name": "Yeng",
+    "last_name_masked": "Va***g",
+    "title": "Senior Technology Transfer Specialist",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Exela Pharma Sciences LLC",
+    "domain": "exelapharma.com",
+    "apollo_id": "6a0fe6f7f355050001add680",
+    "first_name": "Frank",
+    "last_name_masked": "Mo***s",
+    "title": "Research and Development Supervisor",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SAB BIO",
+    "domain": "sab.bio",
+    "apollo_id": "55e29a09f3e5bb1b5c003093",
+    "first_name": "Todd",
+    "last_name_masked": "St***l",
+    "title": "Vice President of Plasma Production",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "SAB BIO",
+    "domain": "sab.bio",
+    "apollo_id": "66f7ab315812e80001a0c2b8",
+    "first_name": "Hua",
+    "last_name_masked": "Wu",
+    "title": "Senior Vice President, Research and Product Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SAB BIO",
+    "domain": "sab.bio",
+    "apollo_id": "664da3cf5592c50001f1e7b8",
+    "first_name": "Thomas",
+    "last_name_masked": "Lu***e",
+    "title": "SVP Research and Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "SAB BIO",
+    "domain": "sab.bio",
+    "apollo_id": "613873cbb5a65e0001e5487c",
+    "first_name": "Ahmed",
+    "last_name_masked": "Ta***o",
+    "title": "Manager, Process Development and Manufacturing",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Avance Biosciences, Inc.",
+    "domain": "avancebio.com",
+    "apollo_id": "61ebb32836efa90001f00309",
+    "first_name": "Mariah",
+    "last_name_masked": "Ta***r",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Avance Biosciences, Inc.",
+    "domain": "avancebio.com",
+    "apollo_id": "62126695545df90001c8f0a7",
+    "first_name": "Xihong",
+    "last_name_masked": "Xie",
+    "title": "Senior Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Avance Biosciences, Inc.",
+    "domain": "avancebio.com",
+    "apollo_id": "6070c739c1a44e00011f0804",
+    "first_name": "Thy",
+    "last_name_masked": "Ng***n",
+    "title": "Laboratory Operations Manager",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Avance Biosciences, Inc.",
+    "domain": "avancebio.com",
+    "apollo_id": "6481fccb13083400018fa277",
+    "first_name": "James",
+    "last_name_masked": "Ot***o",
+    "title": "Senior Associate Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Althea, CMO",
+    "domain": "altheacmo.com",
+    "apollo_id": "644a685f4dc17d0001b88f4a",
+    "first_name": "Rusty",
+    "last_name_masked": "He***n",
+    "title": "Sr. Director of Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Althea, CMO",
+    "domain": "altheacmo.com",
+    "apollo_id": "54ab57947468690ae6c17303",
+    "first_name": "Bill",
+    "last_name_masked": "Br***e",
+    "title": "Sr Process Engineer",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "611c3de658b4f90001f6d429",
+    "first_name": "Nicholas",
+    "last_name_masked": "Ma***l",
+    "title": "Head of Protein Sciences",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "54a40b697468693442c81128",
+    "first_name": "Uyen",
+    "last_name_masked": "Ph***n",
+    "title": "Head of Immunology",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "63110b21a077c000012a133b",
+    "first_name": "Dileep",
+    "last_name_masked": "Pu***t",
+    "title": "Director of Discovery",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "611c2a2bac48ca0001fa5384",
+    "first_name": "Bonnie",
+    "last_name_masked": "Ha***r",
+    "title": "Executive Vice President, Research and Development",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "611c2a2b5499590001214628",
+    "first_name": "Sherry",
+    "last_name_masked": "Bo***s",
+    "title": "Sr. Director of Operations",
+    "bucket": "process_mfg"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "54ab5530746869056417ec02",
+    "first_name": "Ron",
+    "last_name_masked": "Ja***k",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "60642e12cd43b80001656ca9",
+    "first_name": "John",
+    "last_name_masked": "Ri***s",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  },
+  {
+    "company": "Invenra",
+    "domain": "invenra.com",
+    "apollo_id": "5b3e5ca8a6da98a0fb29154a",
+    "first_name": "Xin",
+    "last_name_masked": "Ch***n",
+    "title": "Principal Scientist",
+    "bucket": "rnd_science"
+  }
+]

@@ -1,6 +1,6 @@
 # Teknova Operations Inventory
 
-**Last updated:** 2026-05-08 (Batch 4 final -- all 4 enrichment batches complete, 54 companies, 222 contacts)
+**Last updated:** 2026-06-01 (ngAbs play registered for Sprint 1; offer + segment artifacts derived from Ellie's playbook v1)
 **Purpose:** Single source of truth for every system, workflow, sync path, artifact, and provider serving the Teknova engagement. Any practice session working on Teknova reads this before building anything new.
 
 ---
@@ -67,6 +67,16 @@ Salesforce -- patches Accounts, Leads, Contacts from sync queue
 ---
 
 ## Enrichment artifacts (per play)
+
+### Play: ngabs (Sprint 1)
+
+| Artifact | Path | Status |
+|----------|------|--------|
+| Source playbook (Ellie v1) | `clients/teknova/sources/teknova-ngabs-playbook-v1-2026-05-29.md` | Filed 2026-06-01. Ellie's ICP delivery; Sprint 1 input doc. |
+| Offer | `clients/teknova/artifacts/revops-offer-ngabs.md` | Derived 2026-06-01. Open items: CTA, pricing frame, proof refs. |
+| Segment criteria | `clients/teknova/artifacts/revops-segment-ngabs.md` | Derived 2026-06-01. Open items: soft-scoring vs gate-only, persona narrowing, named-account exclusions. |
+| Enrichment spec | Not yet built | Pending. |
+| Company discovery | Not yet run | Pending. |
 
 ### Play: aav-gene-therapy-ellie-outreach (PLAY-006)
 

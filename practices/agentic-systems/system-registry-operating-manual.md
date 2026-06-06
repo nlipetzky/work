@@ -3,7 +3,7 @@ title: System Registry — Operating Manual
 bound_base: apppQjlZiktpbO4aX
 bound_base_name: System Registry
 binding: bidirectional — this manual and the base's "Operating Model" table are two halves of one thing; change one, update the other in the same turn
-last_synced: 2026-05-18
+last_synced: 2026-06-04
 ---
 
 # System Registry — Operating Manual
@@ -35,13 +35,23 @@ The agentic form is **self-describing structure**: the structured surface carrie
 2. **One roadmap, system-scoped.** A single `Roadmap` table. "Teknova's roadmap" and "the master roadmap" are the same table, different filters. Never a per-system roadmap table — that is the anti-pattern that fails at scale.
 3. **Registration requires a declared emit contract.** A system is not fully registered until `Inputs`, `Outputs`, `Key Metrics` are filled. The eventual per-system dashboard is a *consequence* of that contract, not separate future work.
 
-## System types and dependency (added 2026-05-18)
+## Classification: the five layers (aligned to the Konstellation Catalog, 2026-06-04)
 
-Not every system is a client engagement. `System Type` distinguishes **platform** (shared infrastructure reused across engagements) from **client/engagement** (an instance that consumes a platform). Shared infrastructure is NEVER an asset of a client system — it belongs to its platform system, and client systems point at it via `Depends On`. First platform system: `revops-engine` (the shared RevOps platform: Strategic / Data / Outreach pillars). `teknova-aav-enrichment` is a client system that depends on it; RevOps Surface and the sync are `revops-engine` assets, not Teknova's.
+The studio is itself an agentic organization, so the registry uses the SAME architecture KAI sells: the locked five-layer Konstellation Catalog (`/Users/nplmini/code/work/accounts/ventures/konstellation-ai/reference/catalog.md`, "do not re-litigate"). The deep research (`reference/agentic-system-definition-research-2026-06-04.md`) does not replace it; it sharpens the System/Asset boundary. Full rubric: `reference/system-classification.md`.
 
-A **segment / play is a configuration of a client system, not a new system.** The platform/instance pattern recurses: platform → client engagement → segment. Never spawn a system per segment, and never encode a foreseeable variant axis (segment, region, product line) into the immutable `System ID` slug — that guarantees a forbidden rename. `teknova-enrichment` runs AAV as its first segment; it is not `teknova-aav-enrichment`.
+Read bottom-up: Asset → System → {Cluster (sales lens), Constellation (architecture lens)} → Trajectory. Cluster and Constellation are NOT parallel groupings — a Cluster is how buyers shop, a Constellation is how the company integrates.
+
+- **Asset** — atomic deliverable (workflow, DB, context spec, surface); no standalone emit contract; unit of cost/reuse; one write owner.
+- **System** — a coherent capability with an emit contract (`Inputs` / `Outputs` / `Key Metrics` + stopping condition), one outcome, operated/sold as one unit. ONE home Constellation, MANY Clusters. Agency is orthogonal; never split a System by human role/SOP (a verified failure mode).
+- **Cluster** — a sales bundle of Systems in legacy buyer language ("RevOps", "Customer Expansion"). Packaging, not integration. A System appears in many.
+- **Constellation** — the integration architecture: Systems that share data, infrastructure, and operating logic. EIGHT, fixed, first-principles: Canon, Compass, Signal, Forge, Voice, Pulse, Guard, Garden. A System has ONE home. GUARDRAIL (keeps us consistent with conventional wisdom): a Constellation is a real shared-substrate integration boundary, not a theme — Systems share a Constellation because they share substrate, not because the name fits.
+- **Trajectory** — a per-engagement sequence of Systems over time. An engagement (client/venture) HAS a Trajectory; it is NOT a Constellation.
+
+A **segment / play is a configuration of a system, not a new system.** Never spawn a system per segment, and never encode a foreseeable variant axis (segment, region, product line, signal source) into the immutable `System ID` slug — that guarantees a forbidden rename. `teknova-enrichment` runs AAV as its first segment; it is not `teknova-aav-enrichment`.
 
 `Definition Maturity` (emerging / forming / stable) is orthogonal to operational `Status`. A system can be `building`/`operating` while its definition is still `emerging`. Emerging is a legitimate, registrable state — registration tracks evolving understanding, it does not gate on finished understanding. Add only structure reality has demanded; modeling ahead of reality is the rigidity failure mode.
+
+Migration note (2026-06-04, realigned): the base is mid-migration on an earlier wrong 3-tier model. Pending corrections: Canon → Constellation (currently a System row); RevOps / GTM → Clusters (currently Constellation rows); Teknova / KAI → engagements with Trajectories (currently Constellation rows); each System gets a home Constellation. See `PLAN-registry-classification-migration-2026-06-04.md`.
 
 ## What the tables are (and are not)
 
@@ -59,7 +69,7 @@ A **segment / play is a configuration of a client system, not a new system.** Th
 
 ## Pointers
 
-- Base: `apppQjlZiktpbO4aX` — tables: Operating Model `tbljPzQuvxDti10yc`, Systems `tbldwCzbavBcOlP2C`, Assets `tblu5JBzOxbEHLQmP`, Roadmap `tblt6pQ3Snu7qkMGb`.
+- Base: `apppQjlZiktpbO4aX` — tables: Operating Model `tbljPzQuvxDti10yc`, Systems `tbldwCzbavBcOlP2C`, Assets `tblu5JBzOxbEHLQmP`, Roadmap `tblt6pQ3Snu7qkMGb`, Constellations `tblCCPj7Sm9md86y3`.
 - Design rationale: `practices/agentic-systems/DESIGN-system-registry-v0-2026-05-18.md`.
 - Canon principle: `practices/agentic-systems/canon/canon-log.md` — "Structured data must be self-describing at the point of access" (2026-05-18).
 - Frozen predecessor (tombstone, do not edit): `practices/revops/workflows/REGISTRY.md`.

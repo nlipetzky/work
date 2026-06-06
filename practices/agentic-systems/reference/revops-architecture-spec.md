@@ -197,3 +197,16 @@ The migration plan is a separate document. This spec defines the target.
 - L1 Event Evidence (CT.gov) state: `/Users/nplmini/code/work/practices/revops/workflows/L1-event-evidence/HANDOFF-revops-to-agentic-systems-2026-05-21.md`
 - PubMed capture state: `/Users/nplmini/code/work/practices/revops/workflows/HANDOFF-pubmed-capture-2026-05-21.md`
 - Explorium fields capture state: `/Users/nplmini/code/work/practices/revops/workflows/explorium-direct/HANDOFF-capture-all-explorium-fields-2026-05-20.md`
+
+## Open gaps (2026-06-04, revised)
+
+Four projection gaps were named during the Deepline evaluation. Pre-migration inventory closed two of them. Revised list:
+
+1. ~~No `enrichment_runs` join table live.~~ **CLOSED.** `entity_activity_log` (11.9M rows), `enrichment_runs`, `enrichment_jobs`, `enrichment_ledger` all live. Gap was visibility, not schema.
+2. ~~No per-field provenance on contacts.~~ **CLOSED.** `contacts.field_provenance` JSONB exists with default `'{}'::jsonb`.
+3. **No `duplicate_review_queue` and `duplicate_resolutions`.** Open. Materialized view + table is the fix. Requires `pg_trgm` extension (not yet installed).
+4. **No projection surface.** Open. Records ↔ runs ↔ provenance ↔ gaps live in SQL but have no UI. Retool pilot reads from the four existing audit tables; Next.js downstream.
+
+Also: a `staging` schema is the proposed work surface where in-flight enrichment lands before promotion to canonical. Same provenance + runs pattern, separate namespace. Open. See plan addendum.
+
+Known debt: the wave-level `enrichment_runs` carries Inngest-shaped columns (`inngest_event_id`, `inngest_run_id`) rather than a vendor-agnostic `backing_system` + `backing_run_id` pair. Accepted pragmatically while the runtime IS Inngest. Refactor lands when the runtime changes, not before.

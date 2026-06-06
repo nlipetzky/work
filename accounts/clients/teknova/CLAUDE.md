@@ -33,7 +33,8 @@ NotebookLM notebook: Teknova Events
 
 ## Active plays
 
-- **AAV gene therapy - Ellie Outreach** -- offer design stage. One event (name TBD), personalized offer, 3-touch sequence. Sending from Ellie's inbox. Weekly reporting to Jenn Henry.
+- **ngAbs (next-generation antibodies) -- Sprint 1** -- offer + segment artifacts derived from Ellie's playbook v1 (2026-05-29). Target: NA-based bispecific ADC, multispecific, and adjacent antibody-format developers. Open items before copy: CTA, pricing frame, soft-scoring vs gate-only.
+- **AAV gene therapy - Ellie Outreach** -- closing out as the AAV chapter winds down. Survivor filter pass to land before AAV is fully retired.
 
 ## Voice and tone
 

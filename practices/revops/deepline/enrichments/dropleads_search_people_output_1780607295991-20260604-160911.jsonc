@@ -1,0 +1,91 @@
+// Deepline enrich compiled config.
+// This file stores the concrete commands that ran.
+// Expanded from Deepline native play.
+// tool: person_linkedin_to_email_waterfall
+// original alias: email
+{
+  "version": 1,
+  "commands": [
+    {
+      "with_waterfall": "email",
+      "commands": [
+        {
+          "alias": "email__prospeo_verified_email",
+          "tool": "prospeo_enrich_person",
+          "operation": "prospeo_enrich_person",
+          "payload": {
+            "linkedin_url": "{{linkedin_url}}",
+            "only_verified_email": true
+          },
+          "extract_js": "(output_data)=>extract(\"prospeo_enrich_person\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__native_contact",
+          "tool": "deepline_native_enrich_contact",
+          "operation": "enrich_contact",
+          "payload": {
+            "linkedin": "{{linkedin_url}}"
+          },
+          "extract_js": "(output_data)=>extract(\"deepline_native_enrich_contact\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__findymail_linkedin_email",
+          "tool": "findymail_find_from_business_profile",
+          "operation": "findymail_find_from_business_profile",
+          "payload": {
+            "linkedin_url": "{{linkedin_url}}"
+          },
+          "extract_js": "(output_data)=>extract(\"findymail_find_from_business_profile\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__lusha_linkedin_email",
+          "tool": "lusha_enrich_person",
+          "operation": "lusha_enrich_person",
+          "payload": {
+            "linkedin_url": "{{linkedin_url}}",
+            "reveal_emails": true,
+            "reveal_phones": false
+          },
+          "extract_js": "(output_data)=>extract(\"lusha_enrich_person\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__contactout_work_email",
+          "tool": "contactout_enrich_person",
+          "operation": "contactout_enrich_person",
+          "payload": {
+            "linkedin_url": "{{linkedin_url}}",
+            "include": [
+              "work_email"
+            ]
+          },
+          "extract_js": "(output_data)=>extract(\"contactout_enrich_person\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__forager_work_email",
+          "tool": "forager_person_contacts_lookup_work_emails",
+          "operation": "forager_person_contacts_lookup_work_emails",
+          "payload": {
+            "linkedin_public_identifier": "{{linkedin_url}}"
+          },
+          "extract_js": "(output_data)=>extract(\"forager_person_contacts_lookup_work_emails\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        },
+        {
+          "alias": "email__leadmagic_social_email",
+          "tool": "leadmagic_b2b_social_email",
+          "operation": "leadmagic_b2b_social_email",
+          "payload": {
+            "profile_url": "{{linkedin_url}}"
+          },
+          "extract_js": "(output_data)=>extract(\"leadmagic_b2b_social_email\", output_data, \"email\")",
+          "run_if_js": "const __dlGetByPath=(obj,path)=>String(path||'').replace(/\\[(\\d+)\\]/g,'.$1').split('.').filter(Boolean).reduce((cur,key)=>{if(cur==null)return undefined;if(cur&&typeof cur==='object'){if(key in cur)return cur[key];const data=cur.data;if(data&&typeof data==='object'&&key in data)return data[key];}return undefined;},obj);const __dlMeaningful=(value)=>{if(value&&typeof value==='object'&&!Array.isArray(value)&&'data'in value)return __dlMeaningful(value.data);return value!==null&&value!==undefined&&!(typeof value==='string'&&value.trim()==='');};if (![\"linkedin_url\"].every((path)=>__dlMeaningful(__dlGetByPath(row,path)))) return false;return true;"
+        }
+      ]
+    }
+  ]
+}

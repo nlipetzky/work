@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Experts — Context Sandbox</title>
+<style>
+  :root {
+    --bg: #050506;
+    --panel: #0a0a0c;
+    --panel-2: #11131a;
+    --panel-3: #161922;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --text: #EDEDEF;
+    --text-dim: #8A8F98;
+    --text-muted: #5b6170;
+    --accent: #5E6AD2;
+    --accent-glow: rgba(94,106,210,0.25);
+    --green: #9ece6a;
+    --yellow: #e0af68;
+    --red: #f7768e;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Inter", "Helvetica Neue", sans-serif;
+    font-size: 13px; line-height: 1.45;
+    overflow: hidden;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px; padding: 8px 16px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    height: 44px;
+  }
+  header .title { font-weight: 600; font-size: 13px; }
+  header .crumb { color: var(--text-dim); font-size: 12px; }
+  header a { color: var(--text-dim); text-decoration: none; font-size: 12px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 5px; }
+  header a:hover { color: var(--text); border-color: var(--border-strong); }
+  header a.active { background: var(--panel-2); color: var(--text); }
+  header .grow { flex: 1; }
+  header button { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+  header button.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  main { display: flex; height: calc(100vh - 44px); }
+  /* expert rail */
+  .rail { width: 240px; background: var(--panel); border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; }
+  .rail-header { padding: 10px 14px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+  .rail-header .grow { flex: 1; }
+  .rail-header button { background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+  .expert-item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .expert-item:hover { background: var(--panel-2); }
+  .expert-item.active { background: var(--panel-2); border-left: 2px solid var(--accent); padding-left: 12px; }
+  .expert-item .name { font-weight: 500; font-size: 13px; }
+  .expert-item .niche { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .expert-item .stat-row { display: flex; gap: 8px; margin-top: 6px; font-size: 10px; color: var(--text-muted); }
+  /* main detail */
+  .detail { flex: 1; overflow-y: auto; }
+  .detail-inner { padding: 20px 24px; max-width: 1200px; }
+  .expert-header { display: flex; align-items: flex-start; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .avatar { width: 56px; height: 56px; border-radius: 8px; background: var(--panel-3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-dim); flex-shrink: 0; }
+  .expert-header h1 { margin: 0 0 4px 0; font-size: 18px; font-weight: 600; }
+  .expert-header .meta { color: var(--text-dim); font-size: 12px; }
+  .meta-row { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  .meta-pill { background: var(--panel-2); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; font-size: 11px; color: var(--text-dim); }
+  .meta-pill strong { color: var(--text); }
+  .metric { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; }
+  .metric .num { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1; }
+  .metric .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+  /* sections */
+  section.block { margin-bottom: 24px; }
+  section.block h2 { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 10px 0; }
+  section.block h2 .count { background: var(--panel-2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 8px; font-size: 10px; color: var(--text-dim); }
+  /* artifact grid */
+  .artifact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .artifact-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 10px; cursor: pointer; }
+  .artifact-card:hover { border-color: var(--border-strong); }
+  .artifact-card .row1 { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .artifact-card .name { font-weight: 500; font-size: 12px; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .artifact-card .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .artifact-card .dot.empty { background: var(--text-muted); }
+  .artifact-card .dot.draft { background: var(--yellow); }
+  .artifact-card .dot.approved { background: var(--green); }
+  .artifact-card .dot.superseded { background: var(--text-muted); opacity: 0.5; }
+  .artifact-card .meta { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+  .artifact-card .path { font-family: var(--mono); font-size: 10px; color: var(--text-muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* tables */
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  th { text-align: left; padding: 8px 10px; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; background: var(--panel-2); border-bottom: 1px solid var(--border); font-weight: 600; }
+  td { padding: 10px; font-size: 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  td.dim { color: var(--text-dim); font-size: 11px; }
+  td.path { font-family: var(--mono); font-size: 10px; color: var(--text-muted); }
+  .empty-row { padding: 16px; text-align: center; color: var(--text-muted); font-style: italic; font-size: 12px; }
+  .badge { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: var(--panel-2); color: var(--text-dim); border: 1px solid var(--border); }
+  .badge.draft { background: rgba(224,175,104,0.1); color: var(--yellow); border-color: var(--yellow); }
+  .badge.approved { background: rgba(158,206,106,0.1); color: var(--green); border-color: var(--green); }
+  .badge.sent { background: rgba(94,106,210,0.1); color: var(--accent); border-color: var(--accent); }
+  /* gap card */
+  .gap-card { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
+  .gap-card .summary { font-size: 13px; color: var(--text); margin-bottom: 10px; }
+  .gap-card ul { margin: 0; padding-left: 20px; }
+  .gap-card li { color: var(--text-dim); font-size: 12px; margin: 4px 0; }
+  .gap-card .progress { height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; margin: 10px 0; }
+  .gap-card .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.2s; }
+  /* modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; }
+  .modal-bg.show { display: flex; }
+  .modal { background: var(--panel); border: 1px solid var(--border-strong); border-radius: 8px; padding: 20px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; }
+  .modal h2 { margin: 0 0 16px 0; font-size: 16px; }
+  .modal .row { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
+  .modal .row label { width: 140px; font-size: 12px; color: var(--text-dim); }
+  .modal .row input, .modal .row select, .modal .row textarea { flex: 1; background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 6px 10px; font-size: 12px; font-family: inherit; }
+  .modal .row textarea { font-family: var(--mono); min-height: 200px; resize: vertical; }
+  .modal .footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .modal .footer button { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+  .modal .footer button.primary { background: var(--accent); border-color: var(--accent); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="title">Context Sandbox</span>
+  <span class="crumb">expert ops</span>
+  <a href="index.html">Lab Bench</a>
+  <a href="experts.html" class="active">Experts</a>
+  <span class="grow"></span>
+  <button id="btn-add-artifact">+ Artifact</button>
+  <button id="btn-add-exchange">+ Hermes Ask</button>
+  <button id="btn-add-booking">+ Booking</button>
+</header>
+
+<main>
+  <aside class="rail">
+    <div class="rail-header">
+      Experts
+      <span class="grow"></span>
+      <button id="btn-add-expert">+</button>
+    </div>
+    <div id="experts-list"></div>
+  </aside>
+  <div class="detail">
+    <div class="detail-inner" id="detail"></div>
+  </div>
+</main>
+
+<div class="modal-bg" id="modal-edit">
+  <div class="modal">
+    <h2 id="modal-title">Edit</h2>
+    <div id="modal-body"></div>
+    <div class="footer">
+      <button id="modal-cancel">Cancel</button>
+      <button class="primary" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'experts-sandbox-v0';
+
+// Mirrors Liaison base appbFsdqrC5vnxuIR.
+// On wire-to-Airtable (v1), records sync by airtable_id field.
+
+const SME_ARTIFACT_TYPES = [
+  'voice','credibility','hypotheses','decision-profile','war-stories',
+  'hot-takes','time-boundaries','network','identity','patterns','refusals'
+];
+
+function today() { return new Date().toISOString().slice(0,10); }
+function uid(p) { return p + '_' + Math.random().toString(36).slice(2,9); }
+function esc(s) {
+  if (s === undefined || s === null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function seed() {
+  // Mirrors Will Rosellini's 11 v0 draft artifacts from the Liaison base.
+  const willId = 'exp_will';
+  const willArtifacts = [
+    { airtable_id: 'rec0QxnD3ZucVTDlz', type: 'voice', name: 'sme-voice-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-voice-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recGqw4Faq5B305Ip', type: 'credibility', name: 'sme-credibility-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-credibility-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recJ0RPkWwh7D8hug', type: 'hypotheses', name: 'sme-hypotheses-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-hypotheses-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recJAqyZP3m5Atuui', type: 'decision-profile', name: 'sme-decision-profile-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-decision-profile-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recNxy7TFMp2ogh0Z', type: 'war-stories', name: 'sme-war-stories-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-war-stories-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recVl5Z0vF0M3GTW3', type: 'hot-takes', name: 'sme-hot-takes-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-hot-takes-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recXLtyIPFycpWf3j', type: 'time-boundaries', name: 'sme-time-boundaries-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-time-boundaries-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'reccoexOE00LFT0dY', type: 'network', name: 'sme-network-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-network-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'reckYAwL6QeYY7taR', type: 'identity', name: 'sme-identity-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-identity-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recsSLaQJ3H9PCJ5G', type: 'patterns', name: 'sme-patterns-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-patterns-will-rosellini-v0-2026-05-27.md' },
+    { airtable_id: 'recwfJ5NZmZPbcBXj', type: 'refusals', name: 'sme-refusals-will-rosellini', file_path: '/Users/nplmini/code/work/accounts/ventures/konstellation-ai/artifacts/sme-refusals-will-rosellini-v0-2026-05-27.md' }
+  ].map(a => ({
+    id: uid('art'),
+    expert_id: willId,
+    version: 0,
+    status: 'draft',
+    owner: 'Nick Lipetzky',
+    engagement: 'konstellation-ai',
+    content_loaded: false,  // becomes true when actual body content is populated
+    body: '',
+    ...a
+  }));
+
+  return {
+    experts: [{
+      id: willId,
+      name: 'Will Rosellini',
+      role: 'Co-founder',
+      niches: ['Biotech', 'BCI', 'Venture'],
+      engagement: 'konstellation-ai',
+      airtable_id: null,
+      photo: null,
+      summary: '3x exit operator, BCI / biotech, Konstellation AI co-founder.'
+    }],
+    artifacts: willArtifacts,
+    system_artifacts: [],
+    exchanges: [],
+    bookings: [],
+    selected_expert_id: willId
+  };
+}
+
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || seed();
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+// Auto-hydrate empty Will artifacts from on-disk manifest.
+async function hydrateFromManifest() {
+  try {
+    const res = await fetch('will-artifacts.json');
+    if (!res.ok) return;
+    const manifest = await res.json();
+    let changed = false;
+    state.artifacts.forEach(a => {
+      if (a.expert_id === 'exp_will' && (!a.body || a.body.length < 50) && manifest[a.type]) {
+        a.body = manifest[a.type];
+        a.content_loaded = true;
+        changed = true;
+      }
+    });
+    if (changed) { save(); render(); }
+  } catch (e) { console.warn('No manifest available:', e); }
+}
+
+// ============ render ============
+function render() {
+  renderRail();
+  renderDetail();
+}
+
+function renderRail() {
+  const list = document.getElementById('experts-list');
+  list.innerHTML = state.experts.map(e => {
+    const arts = state.artifacts.filter(a => a.expert_id === e.id);
+    const loaded = arts.filter(a => a.content_loaded).length;
+    const total = SME_ARTIFACT_TYPES.length;
+    const exchOpen = state.exchanges.filter(x => x.expert_id === e.id && !x.received).length;
+    const bookings = state.bookings.filter(b => b.expert_id === e.id && b.status === 'booked').length;
+    const cls = 'expert-item' + (e.id === state.selected_expert_id ? ' active' : '');
+    return '<div class="' + cls + '" data-id="' + esc(e.id) + '">' +
+      '<div class="name">' + esc(e.name) + '</div>' +
+      '<div class="niche">' + esc(e.niches.join(' · ')) + '</div>' +
+      '<div class="stat-row">' +
+        '<span>📄 ' + loaded + '/' + total + '</span>' +
+        '<span>⏳ ' + exchOpen + ' open</span>' +
+        '<span>📅 ' + bookings + ' booked</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  list.querySelectorAll('.expert-item').forEach(el => {
+    el.onclick = () => { state.selected_expert_id = el.dataset.id; save(); render(); };
+  });
+}
+
+function renderDetail() {
+  const e = state.experts.find(x => x.id === state.selected_expert_id);
+  if (!e) { document.getElementById('detail').innerHTML = '<p style="color: var(--text-dim); padding: 24px;">Pick an expert.</p>'; return; }
+  const arts = state.artifacts.filter(a => a.expert_id === e.id);
+  const sysArts = state.system_artifacts.filter(s => s.expert_id === e.id);
+  const exch = state.exchanges.filter(x => x.expert_id === e.id);
+  const exchOpen = exch.filter(x => !x.received);
+  const approvedQueue = sysArts.filter(s => s.status === 'approved');
+  const sent = sysArts.filter(s => s.status === 'sent');
+  const bookings = state.bookings.filter(b => b.expert_id === e.id);
+  const bookingCount = bookings.filter(b => b.status === 'booked').length;
+
+  // artifact grid by type, fixed ordering
+  const byType = {};
+  arts.forEach(a => { byType[a.type] = a; });
+
+  let html = '';
+
+  // header
+  html += '<div class="expert-header">';
+  html += '<div class="avatar">' + esc(e.name.split(' ').map(s => s[0]).slice(0,2).join('')) + '</div>';
+  html += '<div>';
+  html += '<h1>' + esc(e.name) + '</h1>';
+  html += '<div class="meta">' + esc(e.summary || '') + '</div>';
+  html += '<div class="meta-row">';
+  html += '<span class="meta-pill"><strong>role</strong> ' + esc(e.role || '') + '</span>';
+  html += '<span class="meta-pill"><strong>engagement</strong> ' + esc(e.engagement || '') + '</span>';
+  e.niches.forEach(n => html += '<span class="meta-pill">' + esc(n) + '</span>');
+  html += '</div></div>';
+  html += '<div class="metric"><div class="num">' + bookingCount + '</div><div class="label">meetings booked</div></div>';
+  html += '</div>';
+
+  // gap analysis at top — most-important signal
+  const loadedCount = SME_ARTIFACT_TYPES.filter(t => byType[t] && byType[t].content_loaded).length;
+  const missingTypes = SME_ARTIFACT_TYPES.filter(t => !byType[t]);
+  const emptyDrafts = SME_ARTIFACT_TYPES.filter(t => byType[t] && !byType[t].content_loaded);
+  html += '<section class="block">';
+  html += '<h2>Gap Analysis</h2>';
+  html += '<div class="gap-card">';
+  html += '<div class="summary"><strong>' + loadedCount + ' of ' + SME_ARTIFACT_TYPES.length + '</strong> SME artifact types populated for ' + esc(e.name) + '.</div>';
+  html += '<div class="progress"><div class="progress-fill" style="width: ' + (loadedCount / SME_ARTIFACT_TYPES.length * 100) + '%"></div></div>';
+  if (emptyDrafts.length > 0) {
+    html += '<div style="margin-top:8px;font-size:12px;color:var(--text-dim);">Empty drafts:</div>';
+    html += '<ul>' + emptyDrafts.map(t => '<li>' + esc(t) + ' (file: ' + esc((byType[t].file_path || '').split('/').pop()) + ')</li>').join('') + '</ul>';
+  }
+  if (missingTypes.length > 0) {
+    html += '<div style="margin-top:8px;font-size:12px;color:var(--text-dim);">Missing artifact types entirely:</div>';
+    html += '<ul>' + missingTypes.map(t => '<li>' + esc(t) + '</li>').join('') + '</ul>';
+  }
+  if (loadedCount === SME_ARTIFACT_TYPES.length) {
+    html += '<div style="color:var(--green);font-size:12px;margin-top:8px;">All SME artifact types loaded. Ready for projection-rule application.</div>';
+  }
+  html += '</div></section>';
+
+  // SME artifacts grid — the substrate
+  html += '<section class="block">';
+  html += '<h2>SME Artifacts <span class="count">' + arts.length + '</span></h2>';
+  html += '<div class="artifact-grid">';
+  SME_ARTIFACT_TYPES.forEach(t => {
+    const a = byType[t];
+    if (!a) {
+      html += '<div class="artifact-card" data-type="' + esc(t) + '" data-action="create-artifact">';
+      html += '<div class="row1"><span class="dot empty"></span><span class="name">' + esc(t) + '</span></div>';
+      html += '<div class="meta">— not created —</div>';
+      html += '</div>';
+    } else {
+      const cls = a.content_loaded ? 'draft' : 'empty';
+      html += '<div class="artifact-card" data-id="' + esc(a.id) + '" data-action="edit-artifact">';
+      html += '<div class="row1"><span class="dot ' + a.status + '"></span><span class="name">' + esc(t) + '</span></div>';
+      html += '<div class="meta">v' + a.version + ' · ' + esc(a.status) + (a.content_loaded ? '' : ' · empty') + (a.airtable_id ? ' · synced' : '') + '</div>';
+      html += '<div class="path">' + esc((a.file_path || '').split('/').pop()) + '</div>';
+      html += '</div>';
+    }
+  });
+  // any non-canonical extras
+  const extras = arts.filter(a => !SME_ARTIFACT_TYPES.includes(a.type));
+  extras.forEach(a => {
+    html += '<div class="artifact-card" data-id="' + esc(a.id) + '" data-action="edit-artifact" style="border-style:dashed;">';
+    html += '<div class="row1"><span class="dot ' + a.status + '"></span><span class="name">' + esc(a.type) + '</span></div>';
+    html += '<div class="meta">v' + a.version + ' · custom type</div>';
+    html += '</div>';
+  });
+  html += '</div></section>';
+
+  // Hermes queue
+  html += '<section class="block">';
+  html += '<h2>Hermes Queue <span class="count">' + exchOpen.length + '</span></h2>';
+  if (exchOpen.length === 0) html += '<div class="gap-card" style="font-size:12px;color:var(--text-dim);">No pending asks.</div>';
+  else {
+    html += '<table>';
+    html += '<thead><tr><th>Channel</th><th>Ask</th><th>Sent</th><th>Reason</th></tr></thead><tbody>';
+    exchOpen.forEach(x => {
+      html += '<tr><td><span class="badge">' + esc(x.channel || '?') + '</span></td><td>' + esc((x.ask || '').slice(0, 100)) + '</td><td class="dim">' + esc(x.sent || '') + '</td><td class="dim">' + esc(x.reason || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</section>';
+
+  // Approved drafts queue
+  html += '<section class="block">';
+  html += '<h2>Approved Drafts <span class="count">' + approvedQueue.length + '</span></h2>';
+  if (approvedQueue.length === 0) html += '<div class="gap-card" style="font-size:12px;color:var(--text-dim);">No drafts approved for send.</div>';
+  else {
+    html += '<table><thead><tr><th>Artifact</th><th>Engagement</th><th>Approved</th></tr></thead><tbody>';
+    approvedQueue.forEach(s => {
+      html += '<tr><td>' + esc(s.name || '?') + '</td><td class="dim">' + esc(s.engagement || '') + '</td><td class="dim">' + esc(s.approved_at || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</section>';
+
+  // Sent campaigns
+  html += '<section class="block">';
+  html += '<h2>Sent Campaigns <span class="count">' + sent.length + '</span></h2>';
+  if (sent.length === 0) html += '<div class="gap-card" style="font-size:12px;color:var(--text-dim);">Nothing sent yet under this expert\'s name.</div>';
+  else {
+    html += '<table><thead><tr><th>Campaign</th><th>Sent</th><th>Replies</th><th>Bookings</th></tr></thead><tbody>';
+    sent.forEach(s => {
+      html += '<tr><td>' + esc(s.name) + '</td><td class="dim">' + esc(s.sent_at || '') + '</td><td>' + (s.replies || 0) + '</td><td>' + (s.bookings || 0) + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</section>';
+
+  // Bookings
+  html += '<section class="block">';
+  html += '<h2>Meeting Bookings <span class="count">' + bookings.length + '</span></h2>';
+  if (bookings.length === 0) html += '<div class="gap-card" style="font-size:12px;color:var(--text-dim);">No bookings yet. Goal: first booking via outbound under ' + esc(e.name) + '\'s name.</div>';
+  else {
+    html += '<table><thead><tr><th>Prospect</th><th>Scheduled</th><th>Status</th><th>Source</th></tr></thead><tbody>';
+    bookings.forEach(b => {
+      html += '<tr><td>' + esc(b.prospect) + '</td><td class="dim">' + esc(b.scheduled_for || '') + '</td><td><span class="badge ' + (b.status === 'booked' ? 'approved' : '') + '">' + esc(b.status) + '</span></td><td class="dim">' + esc(b.source_campaign || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</section>';
+
+  document.getElementById('detail').innerHTML = html;
+
+  // wire artifact card clicks
+  document.querySelectorAll('[data-action="edit-artifact"]').forEach(el => {
+    el.onclick = () => openArtifactEditor(el.dataset.id);
+  });
+  document.querySelectorAll('[data-action="create-artifact"]').forEach(el => {
+    el.onclick = () => createArtifact(el.dataset.type);
+  });
+}
+
+// ============ artifact editor ============
+let editingArtifactId = null;
+function openArtifactEditor(id) {
+  const a = state.artifacts.find(x => x.id === id);
+  if (!a) return;
+  editingArtifactId = id;
+  document.getElementById('modal-title').textContent = 'Artifact: ' + a.name + ' v' + a.version;
+  document.getElementById('modal-body').innerHTML =
+    '<div class="row"><label>Type</label><input id="ed-type" value="' + esc(a.type) + '"></div>' +
+    '<div class="row"><label>Name (slug)</label><input id="ed-name" value="' + esc(a.name) + '"></div>' +
+    '<div class="row"><label>Version</label><input type="number" id="ed-version" value="' + a.version + '"></div>' +
+    '<div class="row"><label>Status</label><select id="ed-status"><option value="draft"' + (a.status==='draft'?' selected':'') + '>draft</option><option value="approved"' + (a.status==='approved'?' selected':'') + '>approved</option><option value="superseded"' + (a.status==='superseded'?' selected':'') + '>superseded</option></select></div>' +
+    '<div class="row"><label>File path</label><input id="ed-path" value="' + esc(a.file_path || '') + '"></div>' +
+    '<div class="row"><label>Body</label><textarea id="ed-body" placeholder="Paste artifact content here. content_loaded flips true when this is non-empty.">' + esc(a.body || '') + '</textarea></div>' +
+    (a.airtable_id ? '<div class="row"><label>Airtable id</label><input value="' + esc(a.airtable_id) + '" disabled></div>' : '');
+  document.getElementById('modal-edit').classList.add('show');
+}
+
+function createArtifact(type) {
+  const e = state.experts.find(x => x.id === state.selected_expert_id);
+  if (!e) return;
+  const a = {
+    id: uid('art'),
+    expert_id: e.id,
+    type, name: 'sme-' + type + '-' + (e.name.toLowerCase().replace(/[^a-z]+/g,'-')),
+    version: 0,
+    status: 'draft',
+    file_path: '',
+    owner: 'Nick Lipetzky',
+    engagement: e.engagement || '',
+    body: '',
+    content_loaded: false,
+    airtable_id: null
+  };
+  state.artifacts.push(a);
+  save();
+  openArtifactEditor(a.id);
+  render();
+}
+
+document.getElementById('modal-cancel').onclick = () => { document.getElementById('modal-edit').classList.remove('show'); editingArtifactId = null; };
+document.getElementById('modal-save').onclick = () => {
+  const a = state.artifacts.find(x => x.id === editingArtifactId);
+  if (!a) { document.getElementById('modal-edit').classList.remove('show'); return; }
+  a.type = document.getElementById('ed-type').value.trim();
+  a.name = document.getElementById('ed-name').value.trim();
+  a.version = parseInt(document.getElementById('ed-version').value) || 0;
+  a.status = document.getElementById('ed-status').value;
+  a.file_path = document.getElementById('ed-path').value.trim();
+  a.body = document.getElementById('ed-body').value;
+  a.content_loaded = a.body.trim().length > 50;  // simple heuristic: body has real content
+  save();
+  document.getElementById('modal-edit').classList.remove('show');
+  editingArtifactId = null;
+  render();
+};
+
+// ============ create flows ============
+document.getElementById('btn-add-expert').onclick = () => {
+  const name = prompt('Expert name?'); if (!name) return;
+  const e = { id: uid('exp'), name, role: '', niches: [], engagement: '', summary: '', airtable_id: null, photo: null };
+  state.experts.push(e);
+  state.selected_expert_id = e.id;
+  save(); render();
+};
+
+document.getElementById('btn-add-artifact').onclick = () => {
+  const type = prompt('Artifact type (e.g. voice, credibility, hypotheses, or custom)?'); if (!type) return;
+  createArtifact(type);
+};
+
+document.getElementById('btn-add-exchange').onclick = () => {
+  const e = state.experts.find(x => x.id === state.selected_expert_id);
+  if (!e) return;
+  const ask = prompt('Ask (what are you asking ' + e.name + '?)'); if (!ask) return;
+  const channel = prompt('Channel? (email / slack / linkedin / text)') || 'email';
+  state.exchanges.push({
+    id: uid('exch'), expert_id: e.id, channel, ask, reason: '',
+    sent: today(), received: null, response: null
+  });
+  save(); render();
+};
+
+document.getElementById('btn-add-booking').onclick = () => {
+  const e = state.experts.find(x => x.id === state.selected_expert_id);
+  if (!e) return;
+  const prospect = prompt('Prospect name?'); if (!prospect) return;
+  state.bookings.push({
+    id: uid('bk'), expert_id: e.id, prospect,
+    scheduled_for: '', status: 'booked', source_campaign: ''
+  });
+  save(); render();
+};
+
+render();
+hydrateFromManifest();
+</script>
+</body>
+</html>

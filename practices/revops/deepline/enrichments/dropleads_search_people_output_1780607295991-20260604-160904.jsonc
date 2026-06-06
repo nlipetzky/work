@@ -1,0 +1,31 @@
+// Deepline enrich compiled config.
+// This file stores the concrete commands that ran.
+{
+  "version": 1,
+  "commands": [
+    {
+      "alias": "first_name",
+      "tool": "run_javascript",
+      "operation": "run_javascript",
+      "payload": {
+        "code": "return (row[\"fullName\"]||\"\").trim().split(\" \")[0]||null;"
+      }
+    },
+    {
+      "alias": "last_name",
+      "tool": "run_javascript",
+      "operation": "run_javascript",
+      "payload": {
+        "code": "const parts=(row[\"fullName\"]||\"\").trim().split(\" \"); return parts.slice(1).join(\" \")||null;"
+      }
+    },
+    {
+      "alias": "linkedin_url",
+      "tool": "run_javascript",
+      "operation": "run_javascript",
+      "payload": {
+        "code": "return row[\"linkedinUrl\"]||null;"
+      }
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agentic system overview ... 2026-06-05</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; max-width: 760px; margin: 3rem auto; padding: 0 1.5rem; color: #1a1a1a; background: #fafaf7; }
+  @media (prefers-color-scheme: dark) { body { background: #16161a; color: #e4e4e7; } code { background: #2a2a30; } table { border-color: #2a2a30; } th, td { border-color: #2a2a30; } }
+  h1 { font-size: 1.8rem; margin-top: 0; }
+  h2 { font-size: 1.25rem; margin-top: 2.5rem; border-bottom: 1px solid #d4d4d4; padding-bottom: 0.3rem; }
+  h3 { font-size: 1.05rem; margin-top: 1.8rem; }
+  code { background: #efece4; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.9em; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.93rem; }
+  th, td { border: 1px solid #d4d4d4; padding: 0.5rem 0.7rem; text-align: left; vertical-align: top; }
+  th { background: #f0ede4; font-weight: 600; }
+  .lede { font-size: 1.1rem; color: #444; }
+  @media (prefers-color-scheme: dark) { .lede { color: #aaa; } th { background: #232329; } }
+  .meta { font-size: 0.85rem; color: #666; margin-bottom: 2rem; }
+  .pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 10px; background: #e8e3d4; font-size: 0.78rem; font-weight: 500; }
+  @media (prefers-color-scheme: dark) { .pill { background: #2e2e36; } }
+  ul { padding-left: 1.4rem; }
+  li { margin-bottom: 0.3rem; }
+  .callout { background: #f5f1e3; border-left: 3px solid #c7b87a; padding: 0.7rem 1rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  @media (prefers-color-scheme: dark) { .callout { background: #2a2a1f; border-left-color: #8a7d4a; } }
+</style>
+</head>
+<body>
+
+<h1>Nick's agentic system, in plain English</h1>
+<div class="meta">Snapshot 2026-06-05. After the Deepline evaluation and the observability migration. Read this if you walked in cold and want the whole picture.</div>
+
+<p class="lede">Nick runs a multi-client RevOps engine that finds the right companies and contacts for an outbound play, enriches them, classifies them, gates them, and ships them to a per-client Airtable for outreach. It is built on Supabase, Inngest, n8n, and Airtable. The work that just landed adds a way to actually see the engine running ... which fields came from where, what runs touched what records, where the duplicates are, where the gaps are.</p>
+
+<h2>What the engine does, end to end</h2>
+
+<p>The pipeline has four layers. Each one has a single job. They compose into a play.</p>
+
+<table>
+<tr><th>Layer</th><th>Job</th><th>Where it lives</th></tr>
+<tr><td><strong>Source</strong></td><td>Pull companies and people from the outside world. Clinical trial registries, PubMed, Explorium, conference rosters, funding feeds.</td><td>Inngest functions writing to Supabase</td></tr>
+<tr><td><strong>Surface</strong></td><td>One canonical schema across all clients. Companies, Contacts, Events. Plus per-client stamp columns like <code>Teknova AAV Ready</code>.</td><td>Supabase <code>revops-engine-dev</code> + RevOps Surface Airtable base</td></tr>
+<tr><td><strong>Mover</strong></td><td>Dumb pipe. Moves curated records from Surface to a client's base. Does no transformation.</td><td>One reusable n8n workflow</td></tr>
+<tr><td><strong>Client</strong></td><td>Per-client base with their own taxonomy, reviewer UX, and outreach surface.</td><td>Per-client Airtable (e.g. Teknova Outreach base)</td></tr>
+</table>
+
+<p>The rule that holds the whole thing together: <strong>tenant-agnostic at the hub, tenant-specific at the edge</strong>. The Surface never knows about clients except through stamp columns. Movement is dumb. Transformation happens upstream or downstream, never in the middle.</p>
+
+<h2>What's actually running</h2>
+
+<p>There are three generations of code in the system. Knowing which is which prevents confusion.</p>
+
+<table>
+<tr><th>Generation</th><th>Where</th><th>Status</th></tr>
+<tr><td>Archived RevOps engine (107 Inngest functions)</td><td><code>/Users/nplmini/code/ARCHIVE/aos/workflows/revops/</code></td><td>Predecessor. Not running. The blueprint for what the engine should be.</td></tr>
+<tr><td>Live n8n workflows</td><td><code>/Users/nplmini/code/work/practices/revops/workflows/</code></td><td>Currently doing Teknova's enrichment and Surface ↔ Client sync. The workhorse today.</td></tr>
+<tr><td>New Inngest projection layer</td><td><code>/Users/nplmini/code/work/systems/canon-crm-feed/</code></td><td>Three functions. Motions rewire shipped 2026-06-04. Projection pilot gate opens ~2026-06-12 after 1 week green. Task 11 (destructive Contacts cleanup) separately gated on Nick's explicit go.</td></tr>
+</table>
+
+<p>The path forward is incremental: prove the new pattern on the smallest live system (canon-crm-feed), then bring archived functions back online one at a time, retiring n8n workflows as they're replaced.</p>
+
+<h2>The data layer</h2>
+
+<p>One Postgres project (<code>revops-engine-dev</code>, project id <code>mrmnyscurmkfppicqqhk</code>) holds everything that matters.</p>
+
+<ul>
+<li><strong>Records:</strong> Companies (~9K), Contacts (~26K). Plus canonical aliases for both.</li>
+<li><strong>Wave + recipe machinery:</strong> Waves, recipes, wave contacts, lists, segments, plays, playbooks.</li>
+<li><strong>Activity history:</strong> <code>entity_activity_log</code> (11.9M rows, 90 day retention) is the universal record-of-what-happened. Plus <code>enrichment_jobs</code> (per provider call), <code>enrichment_ledger</code> (per recipe step), <code>enrichment_runs</code> (per wave).</li>
+<li><strong>Per-field source tracking:</strong> Both Companies and Contacts carry a <code>field_provenance</code> JSONB column. This is where "where did this email come from" is answered.</li>
+</ul>
+
+<h2>The Deepline lesson, in one paragraph</h2>
+
+<div class="callout">
+Deepline (a vendor evaluated this week) did not teach the engine anything new. Nick's archived RevOps system covers what Deepline does and more. What Deepline made obvious was a different thing: <strong>the projection layer over the engine</strong>. Deepline's UI shows records and runs side by side, every field carries its source, duplicates surface as a queue, gaps surface as views. Nick's engine had all the data to support this view but no UI for it, and no schema to expose it cleanly. That is the work that just landed.
+</div>
+
+<h2>What the new observability layer adds</h2>
+
+<p>Four ideas, vendor-agnostic, written down at <code>practices/agentic-systems/reference/observability-projection-pattern.md</code>.</p>
+
+<ol>
+<li><strong>Records and runs cross-link.</strong> Every record knows which runs touched it; every run knows which records it produced. This was already true via <code>entity_activity_log</code>, just not surfaced. Visibility gap, not schema gap.</li>
+<li><strong>Per-field provenance.</strong> Every enrichable column carries source, run id, captured-at, cost. The JSONB column already existed on Companies; it now exists on Contacts too.</li>
+<li><strong>Duplicate review queue.</strong> A nightly-refreshed materialized view of probable duplicate company pairs, scored by domain and name similarity. <strong>Live as of today. 1,391 pairs surfaced.</strong> Operator marks each pair Merged, Not-a-duplicate, or Deferred in a <code>duplicate_resolutions</code> table.</li>
+<li><strong>Gaps as views.</strong> Things the engine still needs to do, materialized as queryable surfaces. <code>v_contacts_missing_email</code> (1,958 today), <code>v_companies_missing_modality</code> (664 today), <code>v_contacts_stale_employment</code> (every contact until the employer field gets populated by enrichment).</li>
+</ol>
+
+<h2>Where in-flight work happens (new)</h2>
+
+<p>A <code>staging</code> schema was added today. When an enrichment run kicks off, results land in <code>staging.companies_&lt;batch_id&gt;</code> first, not in canonical Companies. Operator reviews via a UI, then either promotes (one SQL move) or discards (drop the staging tables). A <code>staging_promotions</code> ledger keeps the lineage so canonical records remember which staging batch built them.</p>
+
+<p>This replaces the Deepline pattern of "work in a CSV, push when ready" with the equivalent inside Postgres. Same idea, no split truth, the projection still works.</p>
+
+<h2>How a client consumes the engine</h2>
+
+<p>A client (Teknova, for example) sees three things. None of them include the engine internals.</p>
+
+<ul>
+<li>An Airtable base with curated, ready-to-act-on records (their Outreach base, app <code>app...</code>).</li>
+<li>A periodic quality report showing what was sourced, classified, qualified, disqualified, and why.</li>
+<li>An expert liaison (Hermes) routing questions and approvals to the right human at the client.</li>
+</ul>
+
+<p>Everything else, including the 165+ functions, the per-field provenance, and the duplicate queue, is operator surface only. Clients see the artifacts, not the kitchen.</p>
+
+<h2>The system that surfaces it all (CRM-side)</h2>
+
+<p>Separate from the RevOps engine, Nick has a Canon Engine (Supabase project <code>mzzjvoiwughcnmmqzbxv</code>) which is his personal CRM source-of-truth. Inbound emails, meeting transcripts, and documents become typed Events. A small system called <code>canon-crm-feed</code> projects those Events into a separate Airtable CRM, deriving <code>Waiting On</code> from the event history and writing it to a new Motions table. The Motions rewire shipped on 2026-06-04. Once the Motions board runs green for a week (gate opens approximately 2026-06-12), this is the first system that will be extended with provenance writes as the pilot for the observability projection pattern.</p>
+
+<h2>What is still missing</h2>
+
+<ul>
+<li><strong>The projection UI itself.</strong> The data exists; nothing renders it yet. Pilot plan: a Retool surface with Records, Runs, Duplicates, Gaps, and Staging Batches pages. About a day of work.</li>
+<li><strong>Contacts deduplication queue.</strong> Trigram similarity is wrong for contacts; they need exact match on LinkedIn URL and email plus normalized name plus employer. Deferred until the dedup key is agreed.</li>
+<li><strong>Row-Level Security.</strong> 36 public tables in the Supabase project have RLS disabled. The anon key can read or modify them all. Surfaced as an advisory; no action taken pending Nick's decision on a policy.</li>
+<li><strong>Promotion of the archived functions.</strong> 107 RevOps functions in archive are not yet wired into the new pattern. Adoption rolls out per-function after the canon-crm-feed pilot proves the shape.</li>
+<li><strong>Nightly refresh of the duplicate queue.</strong> Materialized view is live but unscheduled. Needs a <code>pg_cron</code> job (extension already installed) that runs nightly with the right session threshold.</li>
+</ul>
+
+<h2>Where to look</h2>
+
+<ul>
+<li><code>/Users/nplmini/code/work/practices/agentic-systems/reference/observability-projection-pattern.md</code> ... the new canon pattern doc</li>
+<li><code>/Users/nplmini/code/work/practices/agentic-systems/reference/revops-architecture-spec.md</code> ... the four-layer model, locked source of truth</li>
+<li><code>/Users/nplmini/code/work/practices/agentic-systems/reference/deepline-evaluation-2026-06-04.md</code> ... vendor snapshot, decays</li>
+<li><code>/Users/nplmini/code/work/practices/revops/database/revops-engine-dev.md</code> ... live schema reference</li>
+<li><code>/Users/nplmini/.claude/plans/lovely-dancing-pumpkin.md</code> ... the execution plan, partially executed today</li>
+<li><code>/Users/nplmini/code/work/systems/canon-crm-feed/</code> ... pilot system; motions-rewire shipped 2026-06-04, projection pilot gate opens ~2026-06-12 after 1 week green</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+// Deepline enrich compiled config.
+// This file stores the concrete commands that ran.
+{
+  "version": 1,
+  "commands": [
+    {
+      "alias": "NA Site Classification",
+      "tool": "deeplineagent",
+      "operation": "deeplineagent",
+      "payload": {
+        "prompt": "Research whether the company {{Company Name}} (website {{Domain}}) operates any physical site in North America (United States, Canada, or Mexico) that is a wet lab, R&D lab, process development, or GMP manufacturing site. Check the company website pages such as about, locations, facilities, contact, careers, and manufacturing. For each North American site found, capture address, city, state, country, a siteType chosen from rnd_wetlab, process_dev, gmp_mfg, qc_analytical, sales_admin, or unclear, and the evidence URL. Set verdict to yes if at least one site is rnd_wetlab, process_dev, or gmp_mfg in North America; no if only sales_admin or none found; unclear if evidence is insufficient.",
+        "jsonSchema": {
+          "type": "object",
+          "properties": {
+            "verdict": {
+              "type": "string"
+            },
+            "reasoning": {
+              "type": "string"
+            },
+            "sites": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "siteType": {
+                    "type": "string"
+                  },
+                  "evidenceUrl": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -95,3 +95,13 @@ Your minimum Clay-free stack:
 This covers every field in the Teknova enrichment spec. The waterfall email logic (Prospeo -> Hunter -> Apollo) is ~20 lines of code in Claude Code. The cost savings are 60-75% at your scale.
 
 The one thing to build: a Claude Code agent that accepts "find me VPs of Process Development at these 50 companies" and translates that into Explorium `fetch-prospects` + Apollo API calls. That replaces Clay's contact discovery UI.
+
+## Learnings 2026-06-04
+
+Evaluated Deepline (deepline.com) end-to-end during a live session. Conclusion held: it is a Clay replacement, not a stack replacement. Not adopted as runtime.
+
+The real takeaway was not vendor-shaped. Deepline's UI made four architectural opinions concrete that this prior doc did not name: records ↔ runs cross-link, per-field provenance, dedup as a queue, gaps as views. Those are the projection layer over the enrichment engine, and they are what was missing from Nick's "I can't see the data move" symptom. The pattern itself is captured separately and vendor-agnostic.
+
+See:
+- [observability-projection-pattern.md](./observability-projection-pattern.md) — canon pattern doc
+- [deepline-evaluation-2026-06-04.md](./deepline-evaluation-2026-06-04.md) — vendor snapshot (decays)

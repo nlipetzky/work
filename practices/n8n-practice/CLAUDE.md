@@ -6,12 +6,11 @@ The 7 `n8n-mcp-skills` plugin skills (expression syntax, mcp tools expert, workf
 
 ## MCP connection
 
-Two n8n MCP servers are mounted:
+One n8n MCP server is mounted:
 
-- `n8n-mcp-mms` — points at `https://millermechanical.app.n8n.cloud/api/v1`. Full workflow CRUD, validation, executions, autofix, audit, templates.
-- `n8n-mcp` — read/validation-only subset (no workflow CRUD).
+- `n8n-mcp` — points at `https://instig8.app.n8n.cloud/api/v1`. Full workflow CRUD, validation, executions, autofix, audit, templates.
 
-Memory says the user's primary instance is `https://instig8.app.n8n.cloud/` (project Creative Glue, id `zUtXwwXkg6z00OLO`). The MCP currently points at a different tenant. Before any write operation, confirm with Nick which instance to target. Do not assume.
+Target instance is always `https://instig8.app.n8n.cloud/` (project Creative Glue, id `zUtXwwXkg6z00OLO`). No other instance should be referenced or targeted.
 
 If the MCP becomes unavailable, run `n8n_health_check` with `mode: "diagnostic"` and report the result.
 
