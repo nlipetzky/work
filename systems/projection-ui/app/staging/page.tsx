@@ -53,18 +53,39 @@ const CRITERIA_ORDER = [
   "C1_core", "C2_conjugate", "C3_fragment_only",
   "N1_fusion", "N2_peg_enzyme", "N3_car", "N4_aav", "F1_fill_finish",
 ];
-function verdictTone(v: unknown) {
-  const s = String(v ?? "").toUpperCase();
-  if (s === "IN") return "text-ok";
-  if (s === "OUT") return "text-bad";
-  if (s === "NARROW") return "text-warn";
-  return "text-muted"; // NEEDS_REVIEW / null
-}
-function resultTone(r: unknown) {
+const VERDICT_LABEL: Record<string, { label: string; pill: string }> = {
+  IN: { label: "In scope — a fit", pill: "bg-ok/15 text-ok" },
+  NARROW: { label: "Narrow fit (lower priority)", pill: "bg-warn/15 text-warn" },
+  OUT: { label: "Not a fit", pill: "bg-bad/15 text-bad" },
+  NEEDS_REVIEW: { label: "Needs a look", pill: "bg-warn/15 text-warn" },
+};
+const CRITERIA_LABELS: Record<string, string> = {
+  C1_core: "Core modality (bispecific / multispecific / ADC)",
+  C2_conjugate: "Conjugate subclass (AOC / RDC / immunocytokine)",
+  C3_fragment_only: "Fragment-only (disqualifies)",
+  N1_fusion: "Fusion protein only (disqualifies)",
+  N2_peg_enzyme: "PEGylated enzyme (disqualifies)",
+  N3_car: "CAR cell therapy (disqualifies)",
+  N4_aav: "AAV gene therapy (disqualifies)",
+  F1_fill_finish: "Fill-finish only (narrow fit)",
+};
+const VERIFY_FIELD_LABELS: Record<string, string> = {
+  biotech_modality_types: "Modalities (claimed)", biotech_role: "Company role",
+  company_focus: "Company focus", explorium_company_focus: "Company focus (alt source)",
+  explorium_business_description: "Business description",
+  explorium_company_product_development: "Product development",
+  classification_notes: "Classification notes", client_sme_note: "Client expert note",
+  strategic_notes: "Strategic notes",
+};
+function resultYesNo(r: unknown) {
   const s = String(r ?? "").toLowerCase();
-  if (s === "pass") return "text-ok";
-  if (s === "fail") return "text-bad";
-  return "text-ink-600"; // n/a
+  if (s === "pass") return { txt: "yes", cls: "text-[#e6edf3]" };
+  if (s === "fail") return { txt: "no", cls: "text-muted" };
+  return { txt: "n/a", cls: "text-ink-600" };
+}
+function confidencePlain(c: unknown) {
+  const s = String(c ?? "").toUpperCase();
+  return s === "MED" ? "medium confidence" : s ? `${s.toLowerCase()} confidence` : "";
 }
 function parseCriteria(c: unknown): Record<string, { result?: string; evidence?: string }> | null {
   if (!c) return null;
@@ -73,19 +94,19 @@ function parseCriteria(c: unknown): Record<string, { result?: string; evidence?:
   return null;
 }
 
-// Shows what was USED to verify and what came OUT — not a repeat of the table columns.
+// What was used to decide, and the outcome — plain English, not a repeat of the table.
 function VerificationDrawer({ row }: { row: Record<string, unknown> }) {
   const criteria = parseCriteria(row.prep_criteria);
   const verified = row.prep_verified === true || row.prep_verified === "true";
+  const v = VERDICT_LABEL[String(row.prep_verdict).toUpperCase()] ?? { label: toCell(row.prep_verdict) || "—", pill: "bg-ink-800 text-muted" };
   return (
     <div className="space-y-4 text-xs">
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`text-sm font-semibold ${verdictTone(row.prep_verdict)}`}>{toCell(row.prep_verdict) || "—"}</span>
-        {row.prep_confidence ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">{toCell(row.prep_confidence)}</span> : null}
-        {row.prep_role ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">{toCell(row.prep_role)}</span> : null}
+        <span className={`rounded px-1.5 py-0.5 text-sm font-semibold ${v.pill}`}>{v.label}</span>
+        {row.prep_confidence ? <span className="text-muted">{confidencePlain(row.prep_confidence)}</span> : null}
         {verified
-          ? <span className="rounded bg-ok/15 px-1.5 py-0.5 font-medium text-ok">✓ verified for play</span>
-          : <span className="rounded bg-warn/15 px-1.5 py-0.5 text-warn">unverified{row.prep_needs_evidence ? " · needs evidence" : ""}</span>}
+          ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">confirmed</span>
+          : <span className="rounded bg-warn/15 px-1.5 py-0.5 text-warn">needs more evidence</span>}
       </div>
 
       {row.prep_rationale ? (
@@ -94,27 +115,30 @@ function VerificationDrawer({ row }: { row: Record<string, unknown> }) {
 
       {criteria && (
         <section>
-          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Verification — per criterion</h4>
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">How it was judged</h4>
           <div className="space-y-1">
-            {CRITERIA_ORDER.filter((k) => criteria[k]).map((k) => (
-              <div key={k} className="border-b border-ink-800 py-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-32 shrink-0 text-ink-600">{k}</span>
-                  <span className={`font-medium ${resultTone(criteria[k]?.result)}`}>{criteria[k]?.result ?? "—"}</span>
+            {CRITERIA_ORDER.filter((k) => criteria[k]).map((k) => {
+              const yn = resultYesNo(criteria[k]?.result);
+              return (
+                <div key={k} className="border-b border-ink-800 py-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className={`w-8 shrink-0 font-medium ${yn.cls}`}>{yn.txt}</span>
+                    <span className="text-muted">{CRITERIA_LABELS[k] ?? k}</span>
+                  </div>
+                  {criteria[k]?.evidence ? <div className="pl-10 text-muted">{criteria[k]?.evidence}</div> : null}
                 </div>
-                {criteria[k]?.evidence ? <div className="ml-32 pl-2 text-muted">{criteria[k]?.evidence}</div> : null}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
 
       <section>
-        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Records used to verify</h4>
+        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">What we looked at</h4>
         <div>
           {VERIFY_INPUTS.filter((f) => row[f] != null && String(row[f]).trim() !== "" && String(row[f]).trim().toLowerCase() !== "none").map((f) => (
             <div key={f} className="flex items-start gap-2 border-b border-ink-800 py-1">
-              <div className="w-40 shrink-0 text-muted">{f}{f === "client_sme_note" ? <span className="ml-1 text-ok">★</span> : null}</div>
+              <div className="w-40 shrink-0 text-muted">{VERIFY_FIELD_LABELS[f] ?? f}{f === "client_sme_note" ? <span className="ml-1 text-ok">★ gold</span> : null}</div>
               <div className="flex-1 break-words text-[#e6edf3]">{toCell(row[f])}</div>
             </div>
           ))}
@@ -358,7 +382,7 @@ export default function StagingPage() {
       </div>
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         {loading ? <div className="text-sm text-muted">loading…</div> : detail && (
-          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => (r.prep_verified === true || r.prep_contact_status === "eligible" ? "text-ok font-semibold" : undefined)} />
+          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => ((r.prep_verified === true && (r.prep_verdict === "IN" || r.prep_verdict === "NARROW")) || r.prep_contact_status === "eligible" ? "text-ok font-semibold" : undefined)} />
         )}
       </div>
 
