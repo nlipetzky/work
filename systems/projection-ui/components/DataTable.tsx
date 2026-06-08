@@ -12,6 +12,7 @@ export interface DataTableProps {
   onInspect?: (col: string) => void;
   onRowClick?: (row: Record<string, unknown>) => void;
   rowKey?: (row: Record<string, unknown>, i: number) => string;
+  rowAccent?: (row: Record<string, unknown>) => string | undefined;
   showRowNumbers?: boolean;
   startIndex?: number;
 }
@@ -38,6 +39,7 @@ export default function DataTable({
   onInspect,
   onRowClick,
   rowKey,
+  rowAccent,
   showRowNumbers,
   startIndex = 0,
 }: DataTableProps) {
@@ -87,7 +89,10 @@ export default function DataTable({
               onClick={() => onRowClick?.(r)}
             >
               {showRowNumbers && (
-                <td className="sticky left-0 z-10 bg-ink-900 px-3 py-1.5 text-right text-ink-600">
+                <td
+                  className={`sticky left-0 z-10 bg-ink-900 px-3 py-1.5 text-right ${rowAccent?.(r) ?? "text-ink-600"}`}
+                  title={rowAccent?.(r) ? "Verified for the play" : undefined}
+                >
                   {startIndex + i + 1}
                 </td>
               )}

@@ -42,6 +42,88 @@ function orderCols(keys: string[], entity: string) {
   return [...pri, ...keys.filter((k) => !pri.includes(k))];
 }
 
+// ---- verification drawer ----------------------------------------------------
+// The input fields the classifier actually reads to reach a verdict (self-description + SME gold).
+const VERIFY_INPUTS = [
+  "biotech_modality_types", "biotech_role", "company_focus", "explorium_company_focus",
+  "explorium_business_description", "explorium_company_product_development",
+  "classification_notes", "client_sme_note", "strategic_notes",
+];
+const CRITERIA_ORDER = [
+  "C1_core", "C2_conjugate", "C3_fragment_only",
+  "N1_fusion", "N2_peg_enzyme", "N3_car", "N4_aav", "F1_fill_finish",
+];
+function verdictTone(v: unknown) {
+  const s = String(v ?? "").toUpperCase();
+  if (s === "IN") return "text-ok";
+  if (s === "OUT") return "text-bad";
+  if (s === "NARROW") return "text-warn";
+  return "text-muted"; // NEEDS_REVIEW / null
+}
+function resultTone(r: unknown) {
+  const s = String(r ?? "").toLowerCase();
+  if (s === "pass") return "text-ok";
+  if (s === "fail") return "text-bad";
+  return "text-ink-600"; // n/a
+}
+function parseCriteria(c: unknown): Record<string, { result?: string; evidence?: string }> | null {
+  if (!c) return null;
+  if (typeof c === "string") { try { return JSON.parse(c); } catch { return null; } }
+  if (typeof c === "object") return c as Record<string, { result?: string; evidence?: string }>;
+  return null;
+}
+
+// Shows what was USED to verify and what came OUT — not a repeat of the table columns.
+function VerificationDrawer({ row }: { row: Record<string, unknown> }) {
+  const criteria = parseCriteria(row.prep_criteria);
+  const verified = row.prep_verified === true || row.prep_verified === "true";
+  return (
+    <div className="space-y-4 text-xs">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`text-sm font-semibold ${verdictTone(row.prep_verdict)}`}>{toCell(row.prep_verdict) || "—"}</span>
+        {row.prep_confidence ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">{toCell(row.prep_confidence)}</span> : null}
+        {row.prep_role ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">{toCell(row.prep_role)}</span> : null}
+        {verified
+          ? <span className="rounded bg-ok/15 px-1.5 py-0.5 font-medium text-ok">✓ verified for play</span>
+          : <span className="rounded bg-warn/15 px-1.5 py-0.5 text-warn">unverified{row.prep_needs_evidence ? " · needs evidence" : ""}</span>}
+      </div>
+
+      {row.prep_rationale ? (
+        <div className="rounded border border-ink-700 bg-ink-800 p-2 text-[#e6edf3]">{toCell(row.prep_rationale)}</div>
+      ) : null}
+
+      {criteria && (
+        <section>
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Verification — per criterion</h4>
+          <div className="space-y-1">
+            {CRITERIA_ORDER.filter((k) => criteria[k]).map((k) => (
+              <div key={k} className="border-b border-ink-800 py-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-32 shrink-0 text-ink-600">{k}</span>
+                  <span className={`font-medium ${resultTone(criteria[k]?.result)}`}>{criteria[k]?.result ?? "—"}</span>
+                </div>
+                {criteria[k]?.evidence ? <div className="ml-32 pl-2 text-muted">{criteria[k]?.evidence}</div> : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section>
+        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Records used to verify</h4>
+        <div>
+          {VERIFY_INPUTS.filter((f) => row[f] != null && String(row[f]).trim() !== "" && String(row[f]).trim().toLowerCase() !== "none").map((f) => (
+            <div key={f} className="flex items-start gap-2 border-b border-ink-800 py-1">
+              <div className="w-40 shrink-0 text-muted">{f}{f === "client_sme_note" ? <span className="ml-1 text-ok">★</span> : null}</div>
+              <div className="flex-1 break-words text-[#e6edf3]">{toCell(row[f])}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function StagingPage() {
   const [state, setState] = useState<StagingState | null>(null);
   const [open, setOpen] = useState<StagingBatch | null>(null);
@@ -197,7 +279,7 @@ export default function StagingPage() {
       </div>
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         {loading ? <div className="text-sm text-muted">loading…</div> : detail && (
-          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} />
+          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => (r.prep_verified ? "text-ok font-semibold" : undefined)} />
         )}
       </div>
 
@@ -209,14 +291,18 @@ export default function StagingPage() {
               <div className="text-sm font-semibold text-white">{open.entity === "companies" ? toCell(drawerRow.name) : `${toCell(drawerRow.first_name)} ${toCell(drawerRow.last_name)}`}</div>
               <button className="text-muted hover:text-white" onClick={() => setDrawerRow(null)}>✕</button>
             </div>
-            <div>
-              {Object.entries(drawerRow).map(([k, v]) => (
-                <div key={k} className="flex items-start gap-2 border-b border-ink-800 py-1 text-xs">
-                  <div className="w-40 shrink-0 text-muted">{k}</div>
-                  <div className="flex-1 break-words text-[#e6edf3]">{v == null || v === "" ? <span className="text-ink-600">—</span> : toCell(v)}</div>
-                </div>
-              ))}
-            </div>
+            {drawerRow.prep_verdict ? (
+              <VerificationDrawer row={drawerRow} />
+            ) : (
+              <div>
+                {Object.entries(drawerRow).map(([k, v]) => (
+                  <div key={k} className="flex items-start gap-2 border-b border-ink-800 py-1 text-xs">
+                    <div className="w-40 shrink-0 text-muted">{k}</div>
+                    <div className="flex-1 break-words text-[#e6edf3]">{v == null || v === "" ? <span className="text-ink-600">—</span> : toCell(v)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
