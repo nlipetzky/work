@@ -124,6 +124,83 @@ function VerificationDrawer({ row }: { row: Record<string, unknown> }) {
   );
 }
 
+// ---- contact verification drawer -------------------------------------------
+const CONTACT_INPUTS = [
+  "title", "role_segment", "company_name", "company_domain", "email",
+  "email_verified_status", "linkedin_url", "employment_verification", "country",
+];
+function contactTone(s: unknown) {
+  const v = String(s ?? "").toLowerCase();
+  if (v === "eligible") return "text-ok";
+  if (v === "needs_review") return "text-warn";
+  if (v === "disqualified_company" || v === "out_of_scope_title") return "text-bad";
+  return "text-muted";
+}
+function routeTone(s: unknown) {
+  const v = String(s ?? "").toLowerCase();
+  if (v === "matched") return "text-ok";
+  if (v === "review") return "text-warn";
+  return "text-muted";
+}
+
+// Contact screen view (playbook §4.2/§6/§7): company inheritance + title check + routing,
+// the input fields used, and which gates are deferred. Not a repeat of the table columns.
+function ContactVerificationDrawer({ row }: { row: Record<string, unknown> }) {
+  const checks = String(row.prep_contact_checks ?? "").split(";").map((s) => s.trim()).filter(Boolean);
+  const eligible = row.prep_contact_status === "eligible";
+  return (
+    <div className="space-y-4 text-xs">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`text-sm font-semibold ${contactTone(row.prep_contact_status)}`}>{toCell(row.prep_contact_status) || "—"}</span>
+        {row.prep_contact_company_verdict ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">company: {toCell(row.prep_contact_company_verdict)}</span> : null}
+        {eligible
+          ? <span className="rounded bg-ok/15 px-1.5 py-0.5 font-medium text-ok">✓ eligible</span>
+          : <span className="rounded bg-warn/15 px-1.5 py-0.5 text-warn">not eligible</span>}
+      </div>
+
+      {row.prep_contact_reason ? (
+        <div className="rounded border border-ink-700 bg-ink-800 p-2 text-[#e6edf3]">{toCell(row.prep_contact_reason)}</div>
+      ) : null}
+
+      {checks.length ? (
+        <section>
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Screen checks (§4.2/§6/§7)</h4>
+          <div className="space-y-1">
+            {checks.map((c, i) => {
+              const deferred = /defer|database_only/i.test(c);
+              return <div key={i} className={deferred ? "text-warn" : "text-[#e6edf3]"}>{c}{deferred ? " ⏳ deferred" : ""}</div>;
+            })}
+          </div>
+        </section>
+      ) : null}
+
+      {row.prep_route_status ? (
+        <section>
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Acquired-routing (§3)</h4>
+          <div className={routeTone(row.prep_route_status)}>
+            {toCell(row.prep_route_status)}
+            {row.prep_routed_company ? ` → ${toCell(row.prep_routed_company)}` : ""}
+            {row.prep_routed_domain ? ` (@${toCell(row.prep_routed_domain)})` : ""}
+          </div>
+          {row.prep_route_note ? <div className="text-muted">{toCell(row.prep_route_note)}</div> : null}
+        </section>
+      ) : null}
+
+      <section>
+        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Records used to screen</h4>
+        <div>
+          {CONTACT_INPUTS.filter((f) => row[f] != null && String(row[f]).trim() !== "").map((f) => (
+            <div key={f} className="flex items-start gap-2 border-b border-ink-800 py-1">
+              <div className="w-40 shrink-0 text-muted">{f}</div>
+              <div className="flex-1 break-words text-[#e6edf3]">{toCell(row[f])}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function StagingPage() {
   const [state, setState] = useState<StagingState | null>(null);
   const [open, setOpen] = useState<StagingBatch | null>(null);
@@ -279,7 +356,7 @@ export default function StagingPage() {
       </div>
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         {loading ? <div className="text-sm text-muted">loading…</div> : detail && (
-          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => (r.prep_verified ? "text-ok font-semibold" : undefined)} />
+          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => (r.prep_verified === true || r.prep_contact_status === "eligible" ? "text-ok font-semibold" : undefined)} />
         )}
       </div>
 
@@ -293,6 +370,8 @@ export default function StagingPage() {
             </div>
             {drawerRow.prep_verdict ? (
               <VerificationDrawer row={drawerRow} />
+            ) : drawerRow.prep_contact_status ? (
+              <ContactVerificationDrawer row={drawerRow} />
             ) : (
               <div>
                 {Object.entries(drawerRow).map(([k, v]) => (
