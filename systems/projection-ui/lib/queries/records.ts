@@ -17,14 +17,33 @@ const SEARCH_FIELDS: Record<Entity, string[]> = {
 // this is just a sensible left-anchor so the useful columns aren't buried at column 130.
 const PRIORITY: Record<Entity, string[]> = {
   companies: [
-    "name", "domain", "primary_modality", "modality_confirmed", "enrichment_status",
+    "verdict", "name", "domain", "primary_modality", "modality_confirmed", "enrichment_status",
     "v2_needs_manual_review", "company_score", "fit_score", "country", "last_enriched_at",
   ],
   contacts: [
-    "first_name", "last_name", "email", "email_verified_status", "title", "role_segment",
+    "verdict", "first_name", "last_name", "email", "email_verified_status", "title", "role_segment",
     "seniority_level", "enrichment_status", "lead_score", "last_enriched_at",
   ],
 };
+
+// Plain-English fit labels for the segment view's verdict column (no raw IN/OUT codes).
+const VERDICT_FRIENDLY: Record<string, string> = {
+  IN: "In scope", NARROW: "Narrow", OUT: "Out", NEEDS_REVIEW: "Needs review",
+  eligible: "Eligible", needs_review: "Needs review",
+  disqualified_company: "Company not a fit", out_of_scope_title: "Off-target role",
+};
+const srcTypeOf = (entity: Entity) => (entity === "companies" ? "staging_company" : "staging_contact");
+
+// Distinct plays that have promoted records of this entity — drives the Records segment dropdown.
+export async function listPlays(entity: Entity): Promise<string[]> {
+  const { data, error } = await db
+    .from("staging_promotions")
+    .select("play_name")
+    .eq("source_record_type", srcTypeOf(entity))
+    .not("play_name", "is", null);
+  if (error) throw new Error(`listPlays(${entity}): ${error.message}`);
+  return [...new Set((data ?? []).map((r) => r.play_name as string).filter(Boolean))].sort();
+}
 
 function orderColumns(entity: Entity, keys: string[]): string[] {
   const pri = PRIORITY[entity].filter((k) => keys.includes(k));
@@ -34,7 +53,7 @@ function orderColumns(entity: Entity, keys: string[]): string[] {
 
 export async function listRecords(
   entity: Entity,
-  opts: { search?: string; page?: number; pageSize?: number; sort?: string; desc?: boolean },
+  opts: { search?: string; page?: number; pageSize?: number; sort?: string; desc?: boolean; play?: string; fit?: string },
 ): Promise<ListResult> {
   const page = Math.max(0, opts.page ?? 0);
   const pageSize = Math.min(200, Math.max(10, opts.pageSize ?? 50));
@@ -42,6 +61,22 @@ export async function listRecords(
   const to = from + pageSize - 1;
 
   let q = db.from(entity).select("*", { count: "exact" });
+
+  // Play segment: restrict to records promoted under this play, carrying their verdict.
+  let verdictById: Map<string, string> | null = null;
+  if (opts.play) {
+    let pq = db.from("staging_promotions").select("canonical_record_id, verdict")
+      .eq("source_record_type", srcTypeOf(entity)).eq("play_name", opts.play);
+    if (opts.fit) pq = pq.eq("verdict", opts.fit);
+    const { data: promos, error: pe } = await pq;
+    if (pe) throw new Error(`listRecords play(${opts.play}): ${pe.message}`);
+    verdictById = new Map((promos ?? []).map((p) => [p.canonical_record_id as string, p.verdict as string]));
+    const ids = [...verdictById.keys()].filter(Boolean);
+    if (!ids.length) {
+      return { rows: [], total: 0, columns: orderColumns(entity, PRIORITY[entity]), page, pageSize };
+    }
+    q = q.in("id", ids);
+  }
 
   if (opts.search && opts.search.trim()) {
     const term = opts.search.trim().replace(/[%,()]/g, " ");
@@ -56,8 +91,14 @@ export async function listRecords(
   const { data, count, error } = await q;
   if (error) throw new Error(`listRecords(${entity}): ${error.message}`);
 
-  const rows = data ?? [];
-  const keys = rows.length ? Object.keys(rows[0]) : PRIORITY[entity];
+  let rows = data ?? [];
+  if (verdictById) {
+    rows = rows.map((r) => {
+      const raw = verdictById!.get(r.id as string);
+      return { ...r, verdict: raw ? (VERDICT_FRIENDLY[raw] ?? raw) : null };
+    });
+  }
+  const keys = rows.length ? Object.keys(rows[0]) : (opts.play ? ["verdict", ...PRIORITY[entity]] : PRIORITY[entity]);
   return {
     rows,
     total: count ?? 0,
