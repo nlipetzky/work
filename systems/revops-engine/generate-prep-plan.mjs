@@ -38,10 +38,14 @@ const playDir = meta.play_file_path ? path.dirname(meta.play_file_path) : ".";
 const outDir = path.join(playDir, "prep-plans");
 const outPath = path.join(outDir, `${batchId}-${entity}-prep-plan.md`);
 
-const rows = await sql(`
-  select name, domain, prep_verdict, prep_confidence, prep_role, prep_verified,
-         prep_needs_evidence, prep_rationale, prep_stage, prep_evidence, prep_criteria
-  from ${stagingTbl} order by prep_verdict, name`);
+const isCo = entity === "companies";
+const rows = isCo
+  ? await sql(`select name, domain, prep_verdict v, prep_confidence, prep_role, prep_verified,
+        prep_needs_evidence, prep_rationale rationale, prep_stage, prep_criteria
+      from ${stagingTbl} order by prep_verdict, name`)
+  : await sql(`select coalesce(full_name, first_name || ' ' || last_name) name, title, company_name, email,
+        prep_contact_status v, prep_contact_reason rationale, prep_route_status route
+      from ${stagingTbl} order by prep_contact_status, company_name`);
 
 // dedup (companies) / acquired-routing (contacts) actions, rendered from the staging labels
 let actionsSection = "## Dedup / hierarchy + acquired-routing\n";
@@ -61,28 +65,38 @@ try {
 } catch { actionsSection += "- (labels not yet applied — run dedup-runner / route-runner)"; }
 
 const norm = (v) => (v == null ? "" : String(v));
-const by = (verdict) => rows.filter((r) => norm(r.prep_verdict).toUpperCase() === verdict);
-const verifiedCount = rows.filter((r) => r.prep_verified === true).length;
-const needsEv = rows.filter((r) => r.prep_needs_evidence === true);
-const byStage = rows.reduce((a, r) => { a[r.prep_stage] = (a[r.prep_stage] || 0) + 1; return a; }, {});
+const by = (val) => rows.filter((r) => norm(r.v) === val);
+const verifiedCount = isCo ? rows.filter((r) => r.prep_verified === true).length : by("eligible").length;
+const needsEv = isCo ? rows.filter((r) => r.prep_needs_evidence === true) : [];
+const byStage = isCo ? rows.reduce((a, r) => { a[r.prep_stage] = (a[r.prep_stage] || 0) + 1; return a; }, {}) : {};
 
-const failedCriteria = (r) => {
-  let c = r.prep_criteria;
-  if (typeof c === "string") { try { c = JSON.parse(c); } catch { return ""; } }
-  if (!c || typeof c !== "object") return "";
-  return Object.entries(c)
-    .filter(([, v]) => v && (v.result === "pass" || v.result === "fail"))
-    .map(([k, v]) => `${k}=${v.result}`)
-    .join(", ");
-};
+const coLine = (r) => `- **${norm(r.name)}** — ${norm(r.prep_confidence) || "—"}${r.prep_verified ? " · ✓verified" : " · unverified"}${r.prep_needs_evidence ? " · needs-evidence" : ""}\n  ${norm(r.rationale)}`;
+const ctLine = (r) => `- **${norm(r.name)}** — ${norm(r.title)} @ ${norm(r.company_name)}${r.route === "review" ? " · route:review" : ""}\n  ${norm(r.rationale)}`;
+const lineFn = isCo ? coLine : ctLine;
+const group = (title, val) => { const g = by(val); return g.length ? `\n### ${title} (${g.length})\n${g.map(lineFn).join("\n")}\n` : ""; };
 
-const line = (r) => `- **${norm(r.name)}** — ${norm(r.prep_confidence) || "—"}${r.prep_verified ? " · ✓verified" : " · unverified"}${r.prep_needs_evidence ? " · needs-evidence" : ""}\n  ${norm(r.prep_rationale)}`;
+const ledger = isCo
+  ? `- by stage: ${Object.entries(byStage).map(([k, v]) => `${k}=${v}`).join(", ")}
+- verdicts: IN=${by("IN").length} · NARROW=${by("NARROW").length} · OUT=${by("OUT").length} · NEEDS_REVIEW=${by("NEEDS_REVIEW").length}
+- **verified for play: ${verifiedCount}/${rows.length}** · needs-evidence (research-lane queue): ${needsEv.length}`
+  : `- statuses: eligible=${by("eligible").length} · needs_review=${by("needs_review").length} · disqualified_company=${by("disqualified_company").length} · out_of_scope_title=${by("out_of_scope_title").length}
+- **eligible (company + title pass): ${verifiedCount}/${rows.length}** · LinkedIn (§6.1) + CRM suppression (§6.2) DEFERRED — data not in staging`;
 
-const group = (title, verdict) => {
-  const g = by(verdict);
-  if (!g.length) return "";
-  return `\n### ${title} (${g.length})\n${g.map(line).join("\n")}\n`;
-};
+const verdictsBlock = isCo
+  ? `${group("IN — promote", "IN")}${group("NARROW — keep, lower priority", "NARROW")}${group("OUT — exclude (flagged, not dropped)", "OUT")}${group("NEEDS_REVIEW — not verified, do not promote yet", "NEEDS_REVIEW")}`
+  : `${group("ELIGIBLE — company + approved title (LinkedIn/CRM deferred)", "eligible")}${group("NEEDS_REVIEW — company unresolved / title ambiguous", "needs_review")}${group("DISQUALIFIED — company verdict OUT", "disqualified_company")}${group("OUT OF SCOPE TITLE", "out_of_scope_title")}`;
+
+const gapBlock = isCo
+  ? `## Gap + enrichment plan (research lane — parked)\n${needsEv.length ? needsEv.map((r) => `- **${norm(r.name)}**: ${norm(r.rationale)}`).join("\n") : "- none flagged"}`
+  : `## Deferred checks (playbook §6)\n- LinkedIn current-role verification (§6.1) and CRM 6-month suppression (§6.2) are NOT applied — those sources aren't in staging. ELIGIBLE contacts are pending these.`;
+
+const opsBlock = isCo
+  ? `1. promote the IN set on-rails via promote_staging_batch (provenance-aware).
+2. leave NARROW + OUT in staging, visibly flagged; do not drop.
+3. hold NEEDS_REVIEW for the research lane.`
+  : `1. promote the ELIGIBLE contacts on-rails (after LinkedIn/CRM checks if/when wired).
+2. resolve the acquired-routing review set (operator decides acquirer vs alt-domain).
+3. hold needs_review (company unresolved) until the company is classified.`;
 
 const md = `# Prep Plan — ${batchId} (${entity})
 
@@ -93,22 +107,17 @@ guidance: ${meta.guidance_file_path || "?"}
 generated: ${new Date().toISOString()}
 
 ## Processing ledger
-- by stage: ${Object.entries(byStage).map(([k, v]) => `${k}=${v}`).join(", ")}
-- verdicts: IN=${by("IN").length} · NARROW=${by("NARROW").length} · OUT=${by("OUT").length} · NEEDS_REVIEW=${by("NEEDS_REVIEW").length}
-- **verified for play: ${verifiedCount}/${rows.length}** · needs-evidence (research-lane queue): ${needsEv.length}
+${ledger}
 
-## Verdicts
-${group("IN — promote", "IN")}${group("NARROW — keep, lower priority", "NARROW")}${group("OUT — exclude (flagged, not dropped)", "OUT")}${group("NEEDS_REVIEW — not verified, do not promote yet", "NEEDS_REVIEW")}
+## ${isCo ? "Verdicts" : "Contact screen"}
+${verdictsBlock}
 
-## Gap + enrichment plan (research lane — parked)
-${needsEv.length ? needsEv.map((r) => `- **${norm(r.name)}**: ${norm(r.prep_evidence)} — ${norm(r.prep_rationale)}`).join("\n") : "- none flagged"}
+${gapBlock}
 
 ${actionsSection}
 
 ## Execution operations (for the executor, on approval)
-1. promote the IN set on-rails via promote_staging_batch (provenance-aware).
-2. leave NARROW + OUT in staging, visibly flagged; do not drop.
-3. hold NEEDS_REVIEW for the research lane.
+${opsBlock}
 
 ## APPROVAL: <go | no-go> — Nick, <date>
 `;
@@ -116,4 +125,6 @@ ${actionsSection}
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(outPath, md);
 console.log("wrote:", outPath);
-console.log(`verdicts IN=${by("IN").length} NARROW=${by("NARROW").length} OUT=${by("OUT").length} NEEDS_REVIEW=${by("NEEDS_REVIEW").length} | verified ${verifiedCount}/${rows.length}`);
+console.log(isCo
+  ? `verdicts IN=${by("IN").length} NARROW=${by("NARROW").length} OUT=${by("OUT").length} NEEDS_REVIEW=${by("NEEDS_REVIEW").length} | verified ${verifiedCount}/${rows.length}`
+  : `eligible=${by("eligible").length} needs_review=${by("needs_review").length} disqualified=${by("disqualified_company").length} oos_title=${by("out_of_scope_title").length}`);

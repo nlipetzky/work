@@ -22,9 +22,17 @@ load the table into your context — only counts, the artifact path, and a few s
 - `<play>/classifier/` — the play's `stage1-deterministic.sql` and `classifier-prompt.md`.
 
 ## Run the funnel (each step is a runner in systems/revops-engine/; capture only its stdout)
-1. **Stage-1 deterministic.** `node run-stage1.mjs <batch_id> <entity> <play>/classifier/stage1-deterministic.sql`
+
+**Companies** use the modality funnel (steps 1–2). **Contacts** use a single deterministic screen
+instead (the playbook §7 gates are deterministic, no LLM): run
+`node contacts-screen-runner.mjs <batch_id> contacts <play>/classifier/contacts-screen-rules.json`
+→ inherits each contact's company verdict, runs the §4.2 title check (approved overrides exclusion;
+`role_segment` is a hint, never trusted — null is unsegmented, not out-of-scope), and DEFERS
+LinkedIn/CRM (data not in staging). Then skip to step 3.
+
+1. **Stage-1 deterministic.** `node run-stage1.mjs <batch_id> companies <play>/classifier/stage1-deterministic.sql`
    → auto-decides the safe cases, leaves the rest residual. Report the distribution.
-2. **Semantic verification.** `node classify-runner.mjs <batch_id> <entity> --play <play>/classifier`
+2. **Semantic verification.** `node classify-runner.mjs <batch_id> companies --play <play>/classifier`
    → classifies every residual row in isolated per-row API calls, writes per-criterion verdicts +
    needs_evidence flags to staging. Report ok/errors + the verdict distribution.
 3. **Dedup / hierarchy + acquired-routing** (so the operator reviews them in the artifact):
