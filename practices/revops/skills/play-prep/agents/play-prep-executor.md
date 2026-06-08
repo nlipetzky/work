@@ -17,14 +17,15 @@ checkpoint. You do not classify, you do not re-decide verdicts, and you do not p
   `APPROVAL:` line says **go** with an operator name + date. If it says `<go | no-go>` or no-go,
   STOP and report that approval is missing — run nothing.
 
-## Apply the approved actions (on-rails, staging only)
-Each action is a controlled write to `staging.prep_*` columns or a staging label — never canonical.
-- **Dedup / hierarchy** (when the runner exists): collapse the plan's named pairs (e.g. LSNE→PCI,
-  FUJIFILM Diosynth→FUJIFILM, SK pharmteco↔KBI), recording the canonical target + source-cite.
-- **Acquired-routing** (contacts, when the runner exists): route contacts by the live email domain
-  per the plan (e.g. Seagen→Pfizer), recording the deciding field.
-- If a runner for an action does not yet exist, record it as **pending** in your report — do NOT
-  hand-edit canonical data to fake it.
+## Confirm the approved actions are in place (the planner already applied them to staging)
+The planner ran dedup/hierarchy (companies) and acquired-routing (contacts) before the artifact, so
+their labels (`prep_dedup_*`, `prep_route_*`) are already in staging and were part of what the
+operator approved. Verify they are present and match the artifact; do not re-run or alter them.
+- Any contact `prep_route_status='review'` is an **unresolved operator decision** — leave it; do
+  not pick an acquirer yourself.
+- **Promote does not yet honor dedup** (it dedups by domain/email natural key only). So a labeled
+  exact-dup / acquired pair (e.g. FUJIFILM Diosynth + FUJIFILM) will both promote unless the
+  operator excludes one. Flag this in your handoff as a known gap (promote-dedup-skip is pending).
 
 ## Hand off — do NOT promote
 - Leave the prepared batch in staging: IN promoted-ready, NARROW/OUT visibly flagged (never

@@ -27,7 +27,13 @@ load the table into your context — only counts, the artifact path, and a few s
 2. **Semantic verification.** `node classify-runner.mjs <batch_id> <entity> --play <play>/classifier`
    → classifies every residual row in isolated per-row API calls, writes per-criterion verdicts +
    needs_evidence flags to staging. Report ok/errors + the verdict distribution.
-3. **Emit the artifact.** `node generate-prep-plan.mjs <batch_id> <entity>` → writes
+3. **Dedup / hierarchy + acquired-routing** (so the operator reviews them in the artifact):
+   - companies: `node dedup-runner.mjs <batch_id> companies <play>/classifier/dedup-rules.json`
+     → labels exact-dups, SME-cited acquired/alias maps, parent/child hierarchy (both kept).
+   - contacts: `node route-runner.mjs <batch_id> contacts <play>/classifier/routing-rules.json`
+     → applies SME-confirmed routes; flags every other email-vs-company domain mismatch for review.
+   Report the label counts; the review set is the operator's call, not yours to resolve.
+4. **Emit the artifact.** `node generate-prep-plan.mjs <batch_id> <entity>` → writes
    `<play>/prep-plans/<batch_id>-<entity>-prep-plan.md`. Report the path.
 
 ## Honor the mandate

@@ -43,6 +43,23 @@ const rows = await sql(`
          prep_needs_evidence, prep_rationale, prep_stage, prep_evidence, prep_criteria
   from ${stagingTbl} order by prep_verdict, name`);
 
+// dedup (companies) / acquired-routing (contacts) actions, rendered from the staging labels
+let actionsSection = "## Dedup / hierarchy + acquired-routing\n";
+try {
+  if (entity === "companies") {
+    const d = await sql(`select name, prep_dedup_kind, coalesce(prep_dedup_target, prep_hierarchy_parent) target, prep_dedup_note
+      from ${stagingTbl} where prep_dedup_kind is not null order by prep_dedup_kind, name`);
+    actionsSection += d.length
+      ? d.map((r) => `- **${r.name}** [${r.prep_dedup_kind}] → ${r.target} — ${r.prep_dedup_note || ""}`).join("\n")
+      : "- none";
+  } else {
+    const m = await sql(`select prep_routed_company, prep_routed_domain, count(*) n from ${stagingTbl} where prep_route_status='matched' group by 1,2`);
+    const rv = await sql(`select company_name, prep_routed_domain, count(*) n from ${stagingTbl} where prep_route_status='review' group by 1,2 order by 1`);
+    actionsSection += "**Routed (SME-confirmed):**\n" + (m.length ? m.map((r) => `- → ${r.prep_routed_company} via @${r.prep_routed_domain} (${r.n})`).join("\n") : "- none") +
+      "\n\n**Review (operator decides acquirer vs alt-domain):**\n" + (rv.length ? rv.map((r) => `- ${r.company_name}: contacts use @${r.prep_routed_domain} (${r.n})`).join("\n") : "- none");
+  }
+} catch { actionsSection += "- (labels not yet applied — run dedup-runner / route-runner)"; }
+
 const norm = (v) => (v == null ? "" : String(v));
 const by = (verdict) => rows.filter((r) => norm(r.prep_verdict).toUpperCase() === verdict);
 const verifiedCount = rows.filter((r) => r.prep_verified === true).length;
@@ -86,8 +103,7 @@ ${group("IN — promote", "IN")}${group("NARROW — keep, lower priority", "NARR
 ## Gap + enrichment plan (research lane — parked)
 ${needsEv.length ? needsEv.map((r) => `- **${norm(r.name)}**: ${norm(r.prep_evidence)} — ${norm(r.prep_rationale)}`).join("\n") : "- none flagged"}
 
-## Dedup / hierarchy + acquired-routing
-- pending: separate deterministic step (LSNE→PCI, FUJIFILM Diosynth→FUJIFILM, SK pharmteco↔KBI, etc.; Seagen→Pfizer contact routing). Not applied in this run.
+${actionsSection}
 
 ## Execution operations (for the executor, on approval)
 1. promote the IN set on-rails via promote_staging_batch (provenance-aware).

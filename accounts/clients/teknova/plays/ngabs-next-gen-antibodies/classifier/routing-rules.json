@@ -1,0 +1,12 @@
+{
+  "_comment": "Acquired-company contact routing for the ngAbs play (client-guidance.md §3). Route each contact by the email domain ACTUALLY IN USE. Only SME-confirmed routes are applied deterministically; every other email-vs-company domain mismatch is FLAGGED for operator review with the live domain, never auto-resolved (the rule is a screen, the specific call is a judgment).",
+  "routes": [
+    {
+      "acquired_company_match": "seagen",
+      "acquirer_domain": "pfizer.com",
+      "acquirer": "Pfizer",
+      "cite": "client SME 2026-06-03: Seagen -> Pfizer (CRM correspondence shows Pfizer emails)"
+    }
+  ],
+  "flag_domain_mismatch": true
+}
