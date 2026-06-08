@@ -339,7 +339,7 @@ export default function StagingPage() {
       {result && (
         <div className="rounded-lg border border-accent/40 bg-accent/10 p-2 text-sm">
           {result.error ? <span className="text-bad">{toCell(result.error)}</span> :
-            <span className="text-white">promoted {toCell(result.promoted)} · inserted {toCell(result.inserted)} · updated {toCell(result.updated)} · rejected {toCell(result.rejected)}{result.deduped != null ? <> · deduped {toCell(result.deduped)}</> : null}</span>}
+            <span className="text-white">promoted {toCell(result.promoted)} · inserted {toCell(result.inserted)} · updated {toCell(result.updated)} · rejected {toCell(result.rejected)}{result.deduped != null ? <> · deduped {toCell(result.deduped)}</> : null}{result.skipped != null ? <> · skipped {toCell(result.skipped)}</> : null}</span>}
         </div>
       )}
 
