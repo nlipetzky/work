@@ -154,8 +154,11 @@ const CONTACT_INPUTS = [
   "email_verified_status", "linkedin_url", "employment_verification", "country",
 ];
 // Plain-English presentation for the contact screen — no status codes or section refs.
+// "eligible" = company fit + role fit ONLY. LinkedIn (§6.1) and CRM (§6.2) are still pending,
+// so it is NOT "ready for outreach" — a good match is not a cleared lead. Cleared-for-outreach is
+// reserved for when those gates also pass (not wired yet), so nothing reaches it today.
 const CONTACT_STATUS: Record<string, { label: string; tone: string; pill: string }> = {
-  eligible: { label: "Ready for outreach", tone: "text-ok", pill: "bg-ok/15 text-ok" },
+  eligible: { label: "Good match — not yet cleared", tone: "text-accent", pill: "bg-accent/15 text-accent" },
   needs_review: { label: "Needs a look", tone: "text-warn", pill: "bg-warn/15 text-warn" },
   disqualified_company: { label: "Skipped — company isn’t a fit", tone: "text-bad", pill: "bg-bad/15 text-bad" },
   out_of_scope_title: { label: "Skipped — not a role we target", tone: "text-bad", pill: "bg-bad/15 text-bad" },
@@ -382,7 +385,7 @@ export default function StagingPage() {
       </div>
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         {loading ? <div className="text-sm text-muted">loading…</div> : detail && (
-          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => ((r.prep_verified === true && (r.prep_verdict === "IN" || r.prep_verdict === "NARROW")) || r.prep_contact_status === "eligible" ? "text-ok font-semibold" : undefined)} />
+          <DataTable columns={visibleCols} rows={detail.rows} showRowNumbers onRowClick={setDrawerRow} rowKey={(r) => toCell(r.id)} rowAccent={(r) => (r.prep_verified === true && (r.prep_verdict === "IN" || r.prep_verdict === "NARROW") ? "text-ok font-semibold" : r.prep_contact_status === "eligible" ? "text-accent font-semibold" : undefined)} />
         )}
       </div>
 
