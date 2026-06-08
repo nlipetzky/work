@@ -53,7 +53,7 @@ for (const r of rows) {
     if (route && route.acquirer_domain && ed === String(route.acquirer_domain).toLowerCase()) {
       status = "matched"; company = route.acquirer; note = route.cite; matched++;
     } else {
-      status = "review"; note = `domain mismatch: contact uses @${ed}, company domain is ${cd || "?"} — confirm acquirer vs alt-domain`; review++;
+      status = "review"; note = `This contact's email uses @${ed}, but the company is listed under ${cd || "an unknown domain"}. Confirm whether the company was acquired or renamed.`; review++;
     }
   }
   const sets = [`prep_route_status='${esc(status)}'`, `prep_routed_domain='${esc(ed)}'`];

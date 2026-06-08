@@ -61,14 +61,18 @@ for (const r of rows) {
   const tc = titleCheck(r.title, r.role_segment);
   let status, reason;
 
-  if (cv === "OUT") { status = "disqualified_company"; reason = "company verdict OUT (playbook §5 gate fail)"; }
-  else if (cv == null) { status = "needs_review"; reason = "company not in classified batch — verdict unresolved"; }
-  else if (cv === "NEEDS_REVIEW") { status = "needs_review"; reason = "company verdict NEEDS_REVIEW — not verified"; }
-  else if (tc === "excluded") { status = "out_of_scope_title"; reason = `title excluded per §4.2: ${r.title}`; }
-  else if (tc === "review") { status = "needs_review"; reason = `title not clearly approved/excluded — flag (§4.2): ${r.title}`; }
-  else { status = "eligible"; reason = `company ${cv} + approved title (${r.role_segment || "title-matched"})`; }
+  const coName = r.company_name || "this contact's company";
+  if (cv === "OUT") { status = "disqualified_company"; reason = `${coName} isn't a fit for this play, so this contact is skipped.`; }
+  else if (cv == null) { status = "needs_review"; reason = `${coName} isn't in the reviewed company set yet, so we can't confirm fit.`; }
+  else if (cv === "NEEDS_REVIEW") { status = "needs_review"; reason = `${coName} still needs review, so this contact isn't confirmed yet.`; }
+  else if (tc === "excluded") { status = "out_of_scope_title"; reason = `This role isn't one we target for this play: ${r.title}`; }
+  else if (tc === "review") { status = "needs_review"; reason = `This role isn't clearly one we target — worth a quick look: ${r.title}`; }
+  else { status = "eligible"; reason = "The company is a fit and this role is one we target."; }
 
-  const checks = `company=${cv ?? "none"}; title=${tc}; linkedin=${r.linkedin_url ? "present(verify §6.1 deferred)" : "none(database_only §6.1)"}; crm_suppression=deferred(§6.2, no CRM data)`;
+  const titlePlain = tc === "approved" ? "one we target" : tc === "excluded" ? "not one we target" : "unclear — worth a look";
+  const coPlain = cv === "IN" ? "a fit" : cv === "NARROW" ? "a fit (lower priority)" : cv === "OUT" ? "not a fit"
+    : cv === "NEEDS_REVIEW" ? "still under review" : "not in the reviewed set";
+  const checks = `Company: ${coPlain}; Role: ${titlePlain}; LinkedIn: ${r.linkedin_url ? "profile on file, not yet verified" : "none on file"}; Recent contact in CRM: not checked yet (no CRM data)`;
   await sql(`update ${tbl} set
       prep_contact_status='${esc(status)}', prep_contact_reason='${esc(reason)}',
       prep_contact_checks='${esc(checks)}', prep_contact_company_verdict='${esc(cv ?? "")}'

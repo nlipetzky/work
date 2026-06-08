@@ -129,33 +129,37 @@ const CONTACT_INPUTS = [
   "title", "role_segment", "company_name", "company_domain", "email",
   "email_verified_status", "linkedin_url", "employment_verification", "country",
 ];
-function contactTone(s: unknown) {
-  const v = String(s ?? "").toLowerCase();
-  if (v === "eligible") return "text-ok";
-  if (v === "needs_review") return "text-warn";
-  if (v === "disqualified_company" || v === "out_of_scope_title") return "text-bad";
-  return "text-muted";
+// Plain-English presentation for the contact screen — no status codes or section refs.
+const CONTACT_STATUS: Record<string, { label: string; tone: string; pill: string }> = {
+  eligible: { label: "Ready for outreach", tone: "text-ok", pill: "bg-ok/15 text-ok" },
+  needs_review: { label: "Needs a look", tone: "text-warn", pill: "bg-warn/15 text-warn" },
+  disqualified_company: { label: "Skipped — company isn’t a fit", tone: "text-bad", pill: "bg-bad/15 text-bad" },
+  out_of_scope_title: { label: "Skipped — not a role we target", tone: "text-bad", pill: "bg-bad/15 text-bad" },
+};
+function companyFitPlain(v: unknown) {
+  const s = String(v ?? "").toUpperCase();
+  if (s === "IN") return "a fit";
+  if (s === "NARROW") return "a fit (lower priority)";
+  if (s === "OUT") return "not a fit";
+  if (s === "NEEDS_REVIEW") return "still under review";
+  return "not in the reviewed set";
 }
-function routeTone(s: unknown) {
-  const v = String(s ?? "").toLowerCase();
-  if (v === "matched") return "text-ok";
-  if (v === "review") return "text-warn";
-  return "text-muted";
-}
+const CONTACT_FIELD_LABELS: Record<string, string> = {
+  title: "Role / title", role_segment: "Role group", company_name: "Company",
+  company_domain: "Company website", email: "Email", email_verified_status: "Email status",
+  linkedin_url: "LinkedIn", employment_verification: "Employment check", country: "Country",
+};
 
-// Contact screen view (playbook §4.2/§6/§7): company inheritance + title check + routing,
-// the input fields used, and which gates are deferred. Not a repeat of the table columns.
+// What was used to decide, and the outcome — in plain English, not a repeat of the table.
 function ContactVerificationDrawer({ row }: { row: Record<string, unknown> }) {
   const checks = String(row.prep_contact_checks ?? "").split(";").map((s) => s.trim()).filter(Boolean);
-  const eligible = row.prep_contact_status === "eligible";
+  const st = CONTACT_STATUS[String(row.prep_contact_status)] ?? { label: toCell(row.prep_contact_status) || "—", tone: "text-muted", pill: "bg-ink-800 text-muted" };
+  const route = String(row.prep_route_status ?? "");
   return (
     <div className="space-y-4 text-xs">
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`text-sm font-semibold ${contactTone(row.prep_contact_status)}`}>{toCell(row.prep_contact_status) || "—"}</span>
-        {row.prep_contact_company_verdict ? <span className="rounded bg-ink-800 px-1.5 py-0.5 text-muted">company: {toCell(row.prep_contact_company_verdict)}</span> : null}
-        {eligible
-          ? <span className="rounded bg-ok/15 px-1.5 py-0.5 font-medium text-ok">✓ eligible</span>
-          : <span className="rounded bg-warn/15 px-1.5 py-0.5 text-warn">not eligible</span>}
+        <span className={`rounded px-1.5 py-0.5 text-sm font-semibold ${st.pill}`}>{st.label}</span>
+        {row.prep_contact_company_verdict ? <span className="text-muted">Company is {companyFitPlain(row.prep_contact_company_verdict)}</span> : null}
       </div>
 
       {row.prep_contact_reason ? (
@@ -164,34 +168,32 @@ function ContactVerificationDrawer({ row }: { row: Record<string, unknown> }) {
 
       {checks.length ? (
         <section>
-          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Screen checks (§4.2/§6/§7)</h4>
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Checks</h4>
           <div className="space-y-1">
             {checks.map((c, i) => {
-              const deferred = /defer|database_only/i.test(c);
-              return <div key={i} className={deferred ? "text-warn" : "text-[#e6edf3]"}>{c}{deferred ? " ⏳ deferred" : ""}</div>;
+              const pending = /not checked|not yet|pending/i.test(c);
+              return <div key={i} className={pending ? "text-warn" : "text-[#e6edf3]"}>{c}{pending ? " (pending)" : ""}</div>;
             })}
           </div>
         </section>
       ) : null}
 
-      {row.prep_route_status ? (
+      {route ? (
         <section>
-          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Acquired-routing (§3)</h4>
-          <div className={routeTone(row.prep_route_status)}>
-            {toCell(row.prep_route_status)}
-            {row.prep_routed_company ? ` → ${toCell(row.prep_routed_company)}` : ""}
-            {row.prep_routed_domain ? ` (@${toCell(row.prep_routed_domain)})` : ""}
+          <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Company match</h4>
+          <div className={route === "review" ? "text-warn" : route === "matched" ? "text-ok" : "text-muted"}>
+            {route === "review" ? "Needs review" : route === "matched" ? `Matched to ${toCell(row.prep_routed_company)}` : "Looks correct"}
           </div>
           {row.prep_route_note ? <div className="text-muted">{toCell(row.prep_route_note)}</div> : null}
         </section>
       ) : null}
 
       <section>
-        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">Records used to screen</h4>
+        <h4 className="mb-1 font-semibold uppercase tracking-wide text-muted">What we looked at</h4>
         <div>
           {CONTACT_INPUTS.filter((f) => row[f] != null && String(row[f]).trim() !== "").map((f) => (
             <div key={f} className="flex items-start gap-2 border-b border-ink-800 py-1">
-              <div className="w-40 shrink-0 text-muted">{f}</div>
+              <div className="w-40 shrink-0 text-muted">{CONTACT_FIELD_LABELS[f] ?? f}</div>
               <div className="flex-1 break-words text-[#e6edf3]">{toCell(row[f])}</div>
             </div>
           ))}
