@@ -1,0 +1,91 @@
+{
+  "name": "Promote → Airtable (flat upsert)",
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "39e9f285-b9c0-47c7-a945-2268c4e38655",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "promote-airtable-sync",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "id": "n2",
+      "name": "Map",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const inJson = $input.first().json;\nconst body = inJson.body || inJson;\nconst table = body.table;\nconst r = body.record || {};\nconst COMPANY='tblnj3YlOI3thjrXp', CONTACT='tblWJksRL1yKSUgrm';\nlet airtableTable, fields, matchOn='Supabase ID';\nif (table === 'companies') {\n  airtableTable = COMPANY;\n  fields = { 'Supabase ID': r.id, 'Company Name': r.name, 'Domain': r.domain, 'Industry': r.industry, 'HQ Country': r.country };\n} else if (table === 'contacts') {\n  airtableTable = CONTACT;\n  fields = { 'Supabase ID': r.id, 'Full Name': r.full_name, 'First Name': r.first_name, 'Last Name': r.last_name,\n    'Email': r.email, 'Title': r.title, 'Company Name': r.company_name, 'Company Domain': r.company_domain,\n    'LinkedIn URL': r.linkedin_url, 'City': r.city, 'State/Region': r.state_region, 'Country': r.country };\n} else {\n  return [{ json: { skip: true, reason: 'unknown table ' + table } }];\n}\nObject.keys(fields).forEach(k => { if (fields[k] == null || fields[k] === '') delete fields[k]; });\nreturn [{ json: { airtableTable, airtableBody: { performUpsert: { fieldsToMergeOn: [matchOn] }, records: [{ fields }], typecast: true } } }];"
+      }
+    },
+    {
+      "id": "n3",
+      "name": "Airtable Upsert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/appYBYH3aOHhTODAw/{{ $json.airtableTable }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "airtableTokenApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.airtableBody }}",
+        "options": {}
+      },
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "FYqJQqdXIQkmT715",
+          "name": "may 26 all bases"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map": {
+      "main": [
+        [
+          {
+            "node": "Airtable Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "active": true,
+  "id": "Hfb3N72nBmPBtE8d"
+}
