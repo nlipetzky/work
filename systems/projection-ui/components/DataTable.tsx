@@ -12,6 +12,8 @@ export interface DataTableProps {
   onInspect?: (col: string) => void;
   onRowClick?: (row: Record<string, unknown>) => void;
   rowKey?: (row: Record<string, unknown>, i: number) => string;
+  showRowNumbers?: boolean;
+  startIndex?: number;
 }
 
 function Cell({ value }: { value: unknown }) {
@@ -36,12 +38,19 @@ export default function DataTable({
   onInspect,
   onRowClick,
   rowKey,
+  showRowNumbers,
+  startIndex = 0,
 }: DataTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg border border-ink-700">
       <table className="min-w-full border-collapse text-sm">
         <thead className="sticky top-0 z-10 bg-ink-850">
           <tr>
+            {showRowNumbers && (
+              <th className="sticky left-0 z-20 border-b border-ink-700 bg-ink-850 px-3 py-2 text-right font-medium text-ink-600">
+                #
+              </th>
+            )}
             {columns.map((c) => (
               <th
                 key={c}
@@ -77,6 +86,11 @@ export default function DataTable({
               className="cursor-pointer border-b border-ink-800 hover:bg-ink-800"
               onClick={() => onRowClick?.(r)}
             >
+              {showRowNumbers && (
+                <td className="sticky left-0 z-10 bg-ink-900 px-3 py-1.5 text-right text-ink-600">
+                  {startIndex + i + 1}
+                </td>
+              )}
               {columns.map((c) => (
                 <td key={c} className="whitespace-nowrap px-3 py-1.5">
                   <Cell value={r[c]} />
@@ -86,7 +100,7 @@ export default function DataTable({
           ))}
           {rows.length === 0 && (
             <tr>
-              <td colSpan={columns.length} className="px-3 py-8 text-center text-muted">
+              <td colSpan={columns.length + (showRowNumbers ? 1 : 0)} className="px-3 py-8 text-center text-muted">
                 No rows.
               </td>
             </tr>
