@@ -1,6 +1,6 @@
 # Owned Execution Engine Roadmap
 
-> *Last touched: 2026-06-09. Active focus: Phase 3 (Input-document contract) is next. Phases 0-2 done.*
+> *Last touched: 2026-06-09. Active focus: Phase 4 (Skill hierarchy / agent-driven driver) is next. Phases 0-3 done.*
 
 **Scope & authority.** This is the authoritative, build-level roadmap for the owned execution engine — Nick's
 Deepline-equivalent tactical layer (references input documents, works a GTM funnel through stages, shows the
@@ -30,13 +30,12 @@ reconciling them is a tracked open thread below, deferred.
 - Binding folded in: new `systems/revops-engine/CLAUDE.md` + an `@import` in `accounts/clients/teknova/CLAUDE.md` so account-launched sessions load system context
   - → Fixes the "launch from an account, get no engine context" gap. Verified on `ngabs_2026_06_05`: 5/5 recipe-driven run; removing a stage yields a 4-stage run with no code change.
 
-### Phase 3 — Input-document contract + pre-flight gate *(sequenced after Phase 2)*
-**Done when:** a run refuses to start (or clearly flags) when the play's required input documents are missing, checked against a declared input contract.
-**Model hint:** Opus — the contract is the seam between the strategic and execution layers; it has to anticipate inputs that don't exist yet.
-- A declared contract of the upstream inputs a run needs (offer, segment, ICP-titles, disqualifiers, ...) per the deepline upstream-inputs doc (§8 pre-flight)
-  - → A checklist of "what must be defined before we can run this play," so the engine never improvises strategy it was supposed to be handed.
-- Presence/validity check wired ahead of the funnel
-  - → A gate that stops a run early if the play isn't actually ready, instead of producing confident garbage.
+### Phase 3 — Input readiness check *(done)*
+**Done when:** before a run, the engine reports in plain English which of the play's declared input documents are present vs missing (now vs later) and proceeds; `--strict` stops on a missing needed input. *(Took the "clearly flags" branch deliberately — a report, not a hard gate.)*
+- Shipped: a visible per-play `inputs` list in `prep-recipe.json` (name + path + `now`/`later`) + `lib/readiness.mjs` (`checkReadiness`/`formatReadiness`); `run-prep.mjs` prints the readiness report before seeding, proceeds by default, `--strict` stops
+  - → Before a run you see, in plain words, which strategic documents back the play and what's missing. It informs; it doesn't block unless you ask with `--strict`. Verified on `ngabs_2026_06_05`.
+- Honors `feedback_no_blocker_overbuild`: zero new default hard-stops, plain-English output (no acronyms), the contract visible in the recipe
+  - → Built to inform, not obstruct — the report reads like a human checklist, and nothing is hidden in code.
 
 ### Phase 4 — Skill hierarchy / agent-driven driver *(sequenced after Phase 3)*
 **Done when:** the play-prep skill can drive the funnel end-to-end (agent issuing the status-primitive CLI), not `run-prep.mjs`.
