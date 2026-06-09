@@ -16,8 +16,10 @@ const PROJECT_REF = "mrmnyscurmkfppicqqhk";
 const env = fs.readFileSync(ENV_PATH, "utf8");
 const TOKEN = (env.match(/^SupaBase_CLI_access_token=(.*)$/m) || [])[1]?.trim().replace(/^["']|["']$/g, "");
 
-const batchId = process.argv[2] || "ngabs_2026_06_05";
-const entity = process.argv[3] || "companies";
+const argv = process.argv.slice(2);
+const batchId = argv[0] || "ngabs_2026_06_05";
+const entity = (argv[1] && !argv[1].startsWith("--")) ? argv[1] : "companies";
+const playFlag = (() => { const i = argv.indexOf("--play"); return i >= 0 ? argv[i + 1] : null; })();
 const stagingTbl = `staging.${entity}_${batchId}`;
 
 async function sql(query) {
@@ -34,13 +36,18 @@ async function sql(query) {
 const meta = (await sql(
   `select play_file_path, guidance_file_path, segment_name, playbook_name
      from staging_batch_meta where batch_id = '${batchId}' limit 1`))[0] || {};
-const playDir = meta.play_file_path ? path.dirname(meta.play_file_path) : ".";
+const playDir = playFlag || (meta.play_file_path ? path.dirname(meta.play_file_path) : ".");
 const outDir = path.join(playDir, "prep-plans");
 const outPath = path.join(outDir, `${batchId}-${entity}-prep-plan.md`);
 
 const isCo = entity === "companies";
+// prep_verified is an optional research-lane column (not written by stage1/classify). Older plays
+// (ngabs) carry it; a fresh play does not. Detect it so the SELECT never breaks on a missing column.
+const hasVerified = isCo && (await sql(
+  `select 1 from information_schema.columns
+     where table_schema='staging' and table_name='${entity}_${batchId}' and column_name='prep_verified'`)).length > 0;
 const rows = isCo
-  ? await sql(`select name, domain, prep_verdict v, prep_confidence, prep_role, prep_verified,
+  ? await sql(`select name, domain, prep_verdict v, prep_confidence, prep_role,${hasVerified ? " prep_verified," : ""}
         prep_needs_evidence, prep_rationale rationale, prep_stage, prep_criteria
       from ${stagingTbl} order by prep_verdict, name`)
   : await sql(`select coalesce(full_name, first_name || ' ' || last_name) name, title, company_name, email,
@@ -66,11 +73,16 @@ try {
 
 const norm = (v) => (v == null ? "" : String(v));
 const by = (val) => rows.filter((r) => norm(r.v) === val);
-const verifiedCount = isCo ? rows.filter((r) => r.prep_verified === true).length : by("eligible").length;
+// "verified for play": use prep_verified when the column exists, else fall back to a decided verdict
+// the classifier didn't flag for more evidence (honors the verification mandate without the column).
+const isVerified = (r) => hasVerified
+  ? r.prep_verified === true
+  : (["IN", "NARROW", "OUT"].includes(norm(r.v)) && r.prep_needs_evidence !== true);
+const verifiedCount = isCo ? rows.filter(isVerified).length : by("eligible").length;
 const needsEv = isCo ? rows.filter((r) => r.prep_needs_evidence === true) : [];
 const byStage = isCo ? rows.reduce((a, r) => { a[r.prep_stage] = (a[r.prep_stage] || 0) + 1; return a; }, {}) : {};
 
-const coLine = (r) => `- **${norm(r.name)}** — ${norm(r.prep_confidence) || "—"}${r.prep_verified ? " · ✓verified" : " · unverified"}${r.prep_needs_evidence ? " · needs-evidence" : ""}\n  ${norm(r.rationale)}`;
+const coLine = (r) => `- **${norm(r.name)}** — ${norm(r.prep_confidence) || "—"}${isVerified(r) ? " · ✓verified" : " · unverified"}${r.prep_needs_evidence ? " · needs-evidence" : ""}\n  ${norm(r.rationale)}`;
 const ctLine = (r) => `- **${norm(r.name)}** — ${norm(r.title)} @ ${norm(r.company_name)}${r.route === "review" ? " · route:review" : ""}\n  ${norm(r.rationale)}`;
 const lineFn = isCo ? coLine : ctLine;
 const group = (title, val) => { const g = by(val); return g.length ? `\n### ${title} (${g.length})\n${g.map(lineFn).join("\n")}\n` : ""; };

@@ -53,8 +53,9 @@ recipe + the same status table. Run everything from `/Users/nplmini/code/work/sy
      --status error --message "<short reason>"` and **stop the run** (a failed stage is red, not
      skipped — mirrors `run-prep.mjs`).
 
-4. **Emit the artifact.** `node generate-prep-plan.mjs <batch_id> <entity>` → writes
-   `<playDir>/prep-plans/<batch_id>-<entity>-prep-plan.md`. Report the path.
+4. **Emit the artifact.** `node generate-prep-plan.mjs <batch_id> <entity> --play <playDir>` → writes
+   `<playDir>/prep-plans/<batch_id>-<entity>-prep-plan.md`. Report the path. (`--play` sets the output
+   location; without it the script falls back to `staging_batch_meta`, which a CSV-loaded batch lacks.)
 
 ## Honor the mandate
 - If the runners report rows that are present-but-unverified or needs_evidence, that is correct
