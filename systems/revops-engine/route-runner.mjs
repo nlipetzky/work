@@ -7,6 +7,9 @@
 // Usage: node route-runner.mjs <batch_id> contacts <path-to-routing-rules.json>
 
 import fs from "fs";
+import { markDone } from "./lib/run-status.mjs";
+
+const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
 const env = fs.readFileSync(ENV_PATH, "utf8");
@@ -66,3 +69,5 @@ console.log(`routing labels written to ${tbl}: ok=${ok}, matched=${matched}, rev
 const groups = await sql(`select company_name, prep_routed_domain, count(*) n from ${tbl}
   where prep_route_status='review' group by 1,2 order by 1`);
 if (groups.length) { console.log("review (operator decides acquirer vs alt-domain):"); for (const g of groups) console.log(`  - ${g.company_name}: contacts use @${g.prep_routed_domain} (${g.n})`); }
+
+if (runId) await markDone(runId, "route", { ok, matched, review });

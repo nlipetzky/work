@@ -8,6 +8,9 @@
 // Usage: node dedup-runner.mjs <batch_id> companies <path-to-dedup-rules.json>
 
 import fs from "fs";
+import { markDone } from "./lib/run-status.mjs";
+
+const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
 const env = fs.readFileSync(ENV_PATH, "utf8");
@@ -77,3 +80,5 @@ const detail = await sql(`select name, prep_dedup_kind, coalesce(prep_dedup_targ
 console.log(`dedup labels written to ${tbl}:`);
 for (const s of summ) console.log(`  ${s.kind}: ${s.n}`);
 for (const d of detail) console.log(`  - ${d.name} [${d.prep_dedup_kind}] -> ${d.target}`);
+
+if (runId) await markDone(runId, "dedup", { labeled: updates.length, ...Object.fromEntries(summ.map((s) => [s.kind, Number(s.n)])) });

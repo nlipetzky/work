@@ -18,7 +18,9 @@
 // work/.env) for the per-row inference.
 
 import fs from "fs";
+import { markDone } from "./lib/run-status.mjs";
 
+const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
 const env = fs.readFileSync(ENV_PATH, "utf8");
@@ -153,3 +155,5 @@ await pool(rows, CONCURRENCY, async (row) => {
 console.log(`\nclassified ok: ${ok}, errors: ${err}`);
 console.log("verdict distribution:", JSON.stringify(tally));
 console.log(`needs_evidence (research-lane candidates): ${needs}`);
+
+if (runId) await markDone(runId, "classify", { processed: ok, errors: err, needs_evidence: needs, ...tally });

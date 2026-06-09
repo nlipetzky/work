@@ -10,6 +10,9 @@
 // Usage: node contacts-screen-runner.mjs <batch_id> contacts <path-to-contacts-screen-rules.json>
 
 import fs from "fs";
+import { markDone } from "./lib/run-status.mjs";
+
+const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
 const env = fs.readFileSync(ENV_PATH, "utf8");
@@ -56,6 +59,7 @@ const rows = await sql(`
   left join ${coTbl} co on lower(co.domain) = lower(c.company_domain)`);
 
 const tally = {};
+const tuples = [];
 for (const r of rows) {
   const cv = r.company_verdict; // IN|NARROW|OUT|NEEDS_REVIEW|null(no match in batch)
   const tc = titleCheck(r.title, r.role_segment);
@@ -73,13 +77,24 @@ for (const r of rows) {
   const coPlain = cv === "IN" ? "a fit" : cv === "NARROW" ? "a fit (lower priority)" : cv === "OUT" ? "not a fit"
     : cv === "NEEDS_REVIEW" ? "still under review" : "not in the reviewed set";
   const checks = `Company: ${coPlain}; Role: ${titlePlain}; LinkedIn: ${r.linkedin_url ? "profile on file, not yet verified" : "none on file"}; Recent contact in CRM: not checked yet (no CRM data)`;
-  await sql(`update ${tbl} set
-      prep_contact_status='${esc(status)}', prep_contact_reason='${esc(reason)}',
-      prep_contact_checks='${esc(checks)}', prep_contact_company_verdict='${esc(cv ?? "")}'
-      where id='${r.id}'`);
+  tuples.push(`('${esc(r.id)}','${esc(status)}','${esc(reason)}','${esc(checks)}','${esc(cv ?? "")}')`);
   tally[status] = (tally[status] || 0) + 1;
+}
+
+// Single batched write. The per-row UPDATE loop tripped the Management-API rate limit (429)
+// and left the batch half-classified; one set-based UPDATE is atomic and avoids the throttle.
+if (tuples.length) {
+  await sql(`update ${tbl} t set
+      prep_contact_status = v.status,
+      prep_contact_reason = v.reason,
+      prep_contact_checks = v.checks,
+      prep_contact_company_verdict = v.cv
+    from (values ${tuples.join(",\n")}) as v(id, status, reason, checks, cv)
+    where t.id = v.id::uuid`);
 }
 
 console.log(`contact screen written to ${tbl} (${rows.length} contacts):`);
 for (const [k, v] of Object.entries(tally).sort()) console.log(`  ${k}: ${v}`);
 console.log("note: 'eligible' = passed company + title; LinkedIn (§6.1) and CRM 6-mo suppression (§6.2) are DEFERRED — data not in staging.");
+
+if (runId) await markDone(runId, "contacts_screen", { total: rows.length, ...tally });
