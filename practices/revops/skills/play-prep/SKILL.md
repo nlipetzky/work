@@ -45,12 +45,31 @@ provenance, it didn't happen.
 ## What exists (use; do not rebuild)
 - Play bundle: `accounts/clients/<client>/plays/<play>/` — `playbook-*.md` (criteria),
   `client-guidance.md` (the executable rule set), `classifier/` (the play's stage1 SQL + semantic
-  prompt), `prep-plans/` (the artifacts).
-- Runners in `systems/revops-engine/`: `run-stage1.mjs` (deterministic), `classify-runner.mjs`
-  (semantic, isolated per-row API calls), `generate-prep-plan.mjs` (the artifact).
+  prompt + the dedup/route/contacts-screen config files), `prep-plans/` (the artifacts).
+- **The plan is data, not prose.** `<play>/prep-recipe.json` declares the ordered `stages` and the
+  `inputs` the run needs. The funnel is whatever the recipe says — you never hardcode the stage list.
+- The machinery in `systems/revops-engine/`:
+  - `lib/recipe.mjs` — `loadRecipe` / `resolveStages` / `buildPlan` (recipe → concrete commands).
+  - `lib/stage-registry.mjs` — the safety boundary: a recipe can only name a known stage type.
+  - `lib/readiness.mjs` — the input-readiness report (a report, not a gate).
+  - `lib/run-status.mjs` — the run-progress primitive + its CLI (`seed` / `set` / `msg`). **This CLI is
+    how the agent drives.** Each run writes `public.prep_run_status`, which the projection-ui Runs strip
+    reads live.
+  - `run-prep.mjs` — the deterministic sibling driver (headless/cron). `--print-plan` makes it emit the
+    readiness report + the resolved plan JSON for the agent to drive. The runners: `run-stage1.mjs`
+    (deterministic), `classify-runner.mjs` (semantic, isolated per-row), `dedup-runner.mjs`,
+    `route-runner.mjs`, `contacts-screen-runner.mjs`, `generate-prep-plan.mjs` (the artifact). Each
+    accepts `--run-id` and writes its own status.
 - On-rails: `promote_staging_batch` (provenance-aware), `staging_batch_preview`,
   `list_staging_batches`. Validity guard: `projection-ui/lib/validity.ts`.
 - Schema of the artifact: `practices/revops/skills/play-prep/schema.md`.
+
+## How the agent drives
+The **play-prep-planner** sub-agent runs `run-prep.mjs --print-plan` to get the readiness report + the
+plan, then drives each stage itself via the `run-status.mjs` CLI (seed once, `set ... running` per
+stage, run the stage's command with `--run-id`, let the runner mark its own `done`/`error`). It is the
+interactive driver; `run-prep.mjs` (no flag) is the deterministic one. Both read the same recipe and
+write the same status table.
 
 ## Parked / pending (say so honestly in the artifact)
 - Research lane (gap re-enrichment with source-cites) — designed, not wired.
