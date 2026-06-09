@@ -13,7 +13,7 @@ import { existsSync } from "fs";
 import { randomUUID } from "crypto";
 import { spawnSync } from "child_process";
 import { seedPlan, markRunning, markError } from "./lib/run-status.mjs";
-import { loadRecipe, resolveStages } from "./lib/recipe.mjs";
+import { loadRecipe, resolveStages, buildPlan } from "./lib/recipe.mjs";
 import { checkReadiness, formatReadiness } from "./lib/readiness.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +35,17 @@ const stages = resolveStages(recipe, playDir); // throws on a malformed recipe (
 
 const readiness = checkReadiness(recipe, playDir);
 console.log(formatReadiness(readiness, path.basename(playDir)));
+
+// Dry run: emit the plain-English readiness report (above) + a parseable plan of the resolved
+// concrete commands, then stop. This is the agent-driver seam — the play-prep skill reads this,
+// then drives each command itself via the run-status.mjs CLI (it appends --run-id per stage).
+// We print the plan even when inputs are missing (a dry run should always show the plan).
+if (argv.includes("--print-plan")) {
+  console.log(`\n--- PLAN JSON ---`);
+  console.log(JSON.stringify(buildPlan(stages, batchId)));
+  process.exit(0);
+}
+
 if (!readiness.allNowPresent) {
   if (strict) {
     console.error("--strict: stopping — an input needed for this run is missing.");
