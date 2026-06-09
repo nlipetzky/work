@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
 import StatCards from "@/components/StatCards";
+import PrepRunStrip from "@/components/PrepRunStrip";
 import { toCell, shortDate, money } from "@/lib/format";
 
 const COLS = [
@@ -31,6 +32,11 @@ export default function RunsPage() {
   return (
     <div className="flex h-full flex-col gap-3 p-4">
       <h1 className="text-lg font-semibold text-white">Runs</h1>
+
+      {/* Live prep-funnel run progress (prep_run_status). Tails the active run and shows the
+          stages move: pending -> running -> done/error, with counts + elapsed. */}
+      <PrepRunStrip />
+
       <StatCards
         stats={[
           { label: "Enrichment runs", value: rows.length },

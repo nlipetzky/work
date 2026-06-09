@@ -1,0 +1,20 @@
+{
+  "system": "revops-engine",
+  "configDir": "classifier",
+  "inputs": [
+    { "name": "offer",              "path": "../../artifacts/revops-offer-ngabs.md",        "when": "now" },
+    { "name": "segment",            "path": "../../artifacts/revops-segment-ngabs.md",      "when": "now" },
+    { "name": "screening criteria", "path": "classifier/classifier-prompt.md",              "when": "now" },
+    { "name": "client guidance",    "path": "client-guidance.md",                           "when": "now" },
+    { "name": "contact titles",     "path": "../../artifacts/revops-icp-titles-ngabs.md",   "when": "later" },
+    { "name": "sender voice",       "path": "../../artifacts/revops-sender-voice-ngabs.md", "when": "later" },
+    { "name": "outreach copy",      "path": "../../artifacts/revops-copy-ngabs.md",         "when": "later" }
+  ],
+  "stages": [
+    { "stage": "stage1",          "entity": "companies", "config": "stage1-deterministic.sql" },
+    { "stage": "classify",        "entity": "companies" },
+    { "stage": "dedup",           "entity": "companies", "config": "dedup-rules.json" },
+    { "stage": "route",           "entity": "contacts",  "config": "routing-rules.json" },
+    { "stage": "contacts_screen", "entity": "contacts",  "config": "contacts-screen-rules.json" }
+  ]
+}

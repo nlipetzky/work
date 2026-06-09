@@ -1,0 +1,27 @@
+{
+  "_comment": "ngAbs contact screen (playbook §4.2/§6/§7). Deterministic title check + company-verdict inheritance. APPROVED terms override EXCLUSION terms (so 'Strategic Sourcing', 'Drug Product Development', 'Technology Transfer' survive). role_segment is a hint, NOT truth: a null segment is unsegmented, not out-of-scope, so titles are always re-checked. LinkedIn (§6.1) and CRM suppression (§6.2) require data not in staging — deferred and flagged, never silently passed.",
+  "approved_segments": ["R&D/Science", "Process/Manufacturing", "Procurement"],
+  "approved_terms": [
+    "Process Development", "Process Scientist", "Bioprocess", "Bioprocessing", "Manufacturing",
+    "MSAT", "Manufacturing Sciences", "Downstream", "Upstream", "Tech Transfer",
+    "Technology Transfer", "Technical Operations", "Formulation", "Drug Product",
+    "Pharmaceutical Development", "Production", "Factory Operations", "CMC",
+    "CSO", "Chief Scientific", "R&D", "Research and Development", "Research & Development",
+    "Research Development", "Antibody Engineering", "Biologics", "Protein Sciences",
+    "ADC", "Conjugation", "Cell Line", "Cell Culture", "Analytical Development",
+    "Analytical Research", "Discovery Biology", "Biology", "Scientist",
+    "Procurement", "Sourcing", "Strategic Sourcing", "Raw Materials", "Supply Chain", "Bioprocessing Lab"
+  ],
+  "exclusion_terms": [
+    "Sales", "Territory", "Strategy", "Forecast", "Forecasting", "Field", "Learning",
+    "Medical Affairs", "Talent Acquisition", "Recruiter", "Recruiting", "Finance",
+    "Advertising", "Quality Assurance", "QA", "QA/RA", "Regulatory", "Communications",
+    "Information Technology", "Data Science", "Digital", "Informatics", "Intelligence",
+    "Marketing", "Support", "Patient", "Account Manager", "HR", "Human Resources",
+    "Portfolio", "Project Manager", "Project Management", "Customer", "Consumer",
+    "Brand", "Analytics", "Engagement", "Statistics", "Franchise", "Safety",
+    "Change Readiness", "Legal", "Counsel", "Policy", "Accounting", "Payer", "Payroll",
+    "Economics", "Collaborations", "Biometrics", "Scouting", "Reimbursement",
+    "Compliance", "Liaison", "Enablement", "Patent", "Recruiting"
+  ]
+}

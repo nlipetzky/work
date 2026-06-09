@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listRecords } from "@/lib/queries/records";
+import { listRecords, listPlays } from "@/lib/queries/records";
 import type { Entity } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -12,12 +12,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "bad entity" }, { status: 400 });
   }
   try {
+    if (sp.get("plays")) {
+      return NextResponse.json({ plays: await listPlays(entity) });
+    }
     const result = await listRecords(entity, {
       search: sp.get("search") ?? undefined,
       page: sp.get("page") ? Number(sp.get("page")) : 0,
       pageSize: sp.get("pageSize") ? Number(sp.get("pageSize")) : 50,
       sort: sp.get("sort") ?? undefined,
       desc: sp.get("desc") ? sp.get("desc") === "true" : true,
+      play: sp.get("play") ?? undefined,
+      fit: sp.get("fit") ?? undefined,
     });
     return NextResponse.json(result);
   } catch (e) {

@@ -14,6 +14,9 @@ export default function RecordsPage() {
   const [page, setPage] = useState(0);
   const [sort, setSort] = useState("updated_at");
   const [desc, setDesc] = useState(true);
+  const [play, setPlay] = useState("");   // "" = all records; otherwise a play segment
+  const [fit, setFit] = useState("");      // "" = all; "IN" / "NARROW" within a play
+  const [plays, setPlays] = useState<string[]>([]);
 
   const [data, setData] = useState<ListResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,6 +37,14 @@ export default function RecordsPage() {
     return () => clearTimeout(t);
   }, [search]);
 
+  // available play segments for this entity (plays that have promoted records)
+  useEffect(() => {
+    fetch(`/api/records?plays=1&entity=${entity}`)
+      .then((r) => r.json())
+      .then((j) => setPlays(j.plays ?? []))
+      .catch(() => setPlays([]));
+  }, [entity]);
+
   const load = useCallback(async () => {
     setLoading(true);
     setErr(null);
@@ -46,6 +57,8 @@ export default function RecordsPage() {
         sort,
         desc: String(desc),
       });
+      if (play) qs.set("play", play);
+      if (fit) qs.set("fit", fit);
       const res = await fetch(`/api/records?${qs}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "load failed");
@@ -55,7 +68,7 @@ export default function RecordsPage() {
     } finally {
       setLoading(false);
     }
-  }, [entity, debounced, page, sort, desc]);
+  }, [entity, debounced, page, sort, desc, play, fit]);
 
   useEffect(() => {
     load();
@@ -114,6 +127,8 @@ export default function RecordsPage() {
                 setEntity(e);
                 setPage(0);
                 setSort("updated_at");
+                setPlay("");
+                setFit("");
               }}
               className={`px-3 py-1 text-sm ${
                 entity === e ? "bg-accent text-black" : "bg-ink-800 text-muted hover:text-white"
@@ -144,6 +159,28 @@ export default function RecordsPage() {
           placeholder={`Search ${entity}…`}
           className="w-80 rounded border border-ink-700 bg-ink-800 px-3 py-1.5 text-sm outline-none focus:border-accent"
         />
+        <select
+          value={play}
+          onChange={(e) => { setPlay(e.target.value); setFit(""); setPage(0); }}
+          title="View one play's promoted records as a segment"
+          className="rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-white outline-none focus:border-accent"
+        >
+          <option value="">All records</option>
+          {plays.map((p) => <option key={p} value={p}>{p}</option>)}
+        </select>
+        {play && entity === "companies" && (
+          <div className="flex overflow-hidden rounded border border-ink-700 text-xs">
+            {([["", "All"], ["IN", "In scope"], ["NARROW", "Narrow"]] as [string, string][]).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => { setFit(v); setPage(0); }}
+                className={`px-2 py-1 ${fit === v ? "bg-accent text-black" : "bg-ink-800 text-muted hover:text-white"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
         {loading && <span className="text-xs text-muted">loading…</span>}
         {err && <span className="text-xs text-bad">{err}</span>}
         <div className="ml-auto flex items-center gap-2 text-sm">

@@ -1,0 +1,31 @@
+{
+  "_comment": "Company dedup/hierarchy rules for the ngAbs play. SME-cited mappings + general exact-dup detection. The runner writes staging labels only (prep_dedup_*); nothing is deleted. Rules are the current iteration — surfaced as labels for operator review, not silently merged.",
+  "exact_dedup_by": ["normalized_name"],
+  "mappings": [
+    {
+      "match": "fujifilm diosynth",
+      "canonical": "FUJIFILM Biotechnologies",
+      "kind": "acquired",
+      "cite": "client SME 2026-06-05: FUJIFILM Diosynth -> FUJIFILM"
+    },
+    {
+      "match": "^lsne",
+      "canonical": "PCI Pharma Services",
+      "kind": "acquired",
+      "cite": "client SME gold: LSNE no longer independent -> PCI (domain in use is pci.com; no separate PCI row in batch)"
+    },
+    {
+      "match": "^probio$",
+      "canonical": "GenScript ProBio",
+      "kind": "alias",
+      "cite": "client SME 2026-06-05: ProBio = GenScript ProBio (already consolidated in this batch)"
+    }
+  ],
+  "hierarchy": [
+    {
+      "child": "kbi biopharma",
+      "parent": "SK pharmteco",
+      "cite": "client SME gold: SK pharmteco is the parent of KBI Biopharma (keep both, do not collapse)"
+    }
+  ]
+}
