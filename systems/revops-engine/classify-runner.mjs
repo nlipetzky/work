@@ -19,6 +19,7 @@
 
 import fs from "fs";
 import { markDone } from "./lib/run-status.mjs";
+import { resolveReadFields } from "./lib/read-fields.mjs";
 
 const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
@@ -47,13 +48,9 @@ if (!ANTHROPIC_KEY) { console.error("missing ANTHROPIC_API_KEY (set in env or wo
 
 const SYSTEM_PROMPT = fs.readFileSync(`${PLAY_DIR}/classifier-prompt.md`, "utf8");
 
-// fields the classifier reads (self-describing + SME gold). Kept narrow on purpose.
-const READ_FIELDS = [
-  "id", "name", "biotech_modality_types", "biotech_role", "company_focus",
-  "explorium_company_focus", "explorium_business_description",
-  "explorium_company_product_development", "classification_notes",
-  "client_sme_note", "strategic_notes",
-];
+// fields the classifier reads (self-describing + SME gold). Kept narrow on purpose. Play-configurable
+// via <classifier_dir>/read-fields.json; absent => the ngabs default (see lib/read-fields.mjs).
+const READ_FIELDS = resolveReadFields(PLAY_DIR);
 
 const sqlEsc = (s) => String(s).replace(/'/g, "''");
 
