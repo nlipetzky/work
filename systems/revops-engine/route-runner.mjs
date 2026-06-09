@@ -40,6 +40,7 @@ await sql(`alter table ${tbl} add column if not exists prep_route_status text;
 
 const rows = await sql(`select id, email, company_name, company_domain from ${tbl} where email like '%@%'`);
 let ok = 0, matched = 0, review = 0;
+const tuples = [];
 
 for (const r of rows) {
   const ed = dom(r.email);
@@ -59,10 +60,20 @@ for (const r of rows) {
       status = "review"; note = `This contact's email uses @${ed}, but the company is listed under ${cd || "an unknown domain"}. Confirm whether the company was acquired or renamed.`; review++;
     }
   }
-  const sets = [`prep_route_status='${esc(status)}'`, `prep_routed_domain='${esc(ed)}'`];
-  if (company) sets.push(`prep_routed_company='${esc(company)}'`);
-  if (note) sets.push(`prep_route_note='${esc(note)}'`);
-  await sql(`update ${tbl} set ${sets.join(", ")} where id='${r.id}'`);
+  tuples.push(`('${esc(r.id)}','${esc(status)}','${esc(ed)}','${esc(company ?? "")}','${esc(note ?? "")}')`);
+}
+
+// Single batched write. The per-row UPDATE loop (one call per contact, ~173 of them) tripped the
+// Management-API rate limit (429) under load; one set-based UPDATE is atomic and avoids the throttle.
+// nullif preserves the NULL semantics of the old conditional-column write for company/note.
+if (tuples.length) {
+  await sql(`update ${tbl} t set
+      prep_route_status = v.status,
+      prep_routed_domain = v.routed_domain,
+      prep_routed_company = nullif(v.routed_company, ''),
+      prep_route_note = nullif(v.note, '')
+    from (values ${tuples.join(",\n")}) as v(id, status, routed_domain, routed_company, note)
+    where t.id = v.id::uuid`);
 }
 
 console.log(`routing labels written to ${tbl}: ok=${ok}, matched=${matched}, review=${review}`);

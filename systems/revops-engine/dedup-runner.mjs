@@ -68,11 +68,31 @@ for (const h of cfg.hierarchy || []) {
   for (const r of rows) if (re.test(r.name)) updates.push({ id: r.id, parent: h.parent, kind: "hierarchy", note: h.cite });
 }
 
+// Merge updates by id before writing. A single row can match more than one rule (e.g. exact_dup
+// then hierarchy); the old per-row loop applied them sequentially (last write wins per column).
+// A batched VALUES write needs one tuple per id, so collapse here preserving that ordering.
+const byId = new Map();
 for (const u of updates) {
-  const sets = [`prep_dedup_kind='${esc(u.kind)}'`, `prep_dedup_note='${esc(u.note)}'`];
-  if (u.target) sets.push(`prep_dedup_target='${esc(u.target)}'`);
-  if (u.parent) sets.push(`prep_hierarchy_parent='${esc(u.parent)}'`);
-  await sql(`update ${tbl} set ${sets.join(", ")} where id='${u.id}'`);
+  const cur = byId.get(u.id) || { id: u.id, kind: null, note: null, target: null, parent: null };
+  cur.kind = u.kind;
+  cur.note = u.note;
+  if (u.target) cur.target = u.target;
+  if (u.parent) cur.parent = u.parent;
+  byId.set(u.id, cur);
+}
+
+// Single batched write. Avoids one Management-API call per row (the 429 throttle failure mode);
+// nullif preserves the NULL semantics of the old conditional-column write for target/parent.
+const tuples = [...byId.values()].map((u) =>
+  `('${esc(u.id)}','${esc(u.kind)}','${esc(u.note)}','${esc(u.target ?? "")}','${esc(u.parent ?? "")}')`);
+if (tuples.length) {
+  await sql(`update ${tbl} t set
+      prep_dedup_kind = v.kind,
+      prep_dedup_note = v.note,
+      prep_dedup_target = nullif(v.target, ''),
+      prep_hierarchy_parent = nullif(v.parent, '')
+    from (values ${tuples.join(",\n")}) as v(id, kind, note, target, parent)
+    where t.id = v.id::uuid`);
 }
 
 const summ = await sql(`select prep_dedup_kind kind, count(*) n from ${tbl} where prep_dedup_kind is not null group by 1 order by 1`);
