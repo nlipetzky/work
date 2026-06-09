@@ -1,6 +1,6 @@
 # Owned Execution Engine Roadmap
 
-> *Last touched: 2026-06-09. Active focus: none active — Phase 2 (Execution plan as data) is next. Phases 0-1 done.*
+> *Last touched: 2026-06-09. Active focus: Phase 3 (Input-document contract) is next. Phases 0-2 done.*
 
 **Scope & authority.** This is the authoritative, build-level roadmap for the owned execution engine — Nick's
 Deepline-equivalent tactical layer (references input documents, works a GTM funnel through stages, shows the
@@ -23,13 +23,12 @@ reconciling them is a tracked open thread below, deferred.
 - The status primitive mirrors `deepline session` (`seed/set/msg`) so a skill can drive it agent-side later
   - → The progress-writing tool was built so a future autonomous agent can use it without any rewrite.
 
-### Phase 2 — Execution plan as data *(deferred — next up)*
-**Done when:** a run is defined by a stored/declared plan the engine reads (stages, order, entity, required inputs); adding or removing a stage needs no code edit to `run-prep.mjs`.
-**Model hint:** Opus — this is the data-model design that the autonomous driver and the input contract both build on; getting the abstraction right matters more than speed.
-- Replace the hardcoded `stages` array in `run-prep.mjs` with a plan the engine consumes
-  - → Right now the five steps are baked into a script. To "work through plans," the plan has to become data the engine reads, so plans can vary per play without editing code.
-- Decide the plan's home (per-play file vs a `plays`/`execution_plan` row) and its shape
-  - → Pick where a play's recipe lives and what it looks like, so both humans and agents author runs the same way.
+### Phase 2 — Execution plan as data *(done)*
+**Done when:** a run is defined by a stored/declared plan the engine reads (stages, order, entity); adding or removing a stage needs no code edit to `run-prep.mjs`. *(Required-inputs gating moved to Phase 3.)*
+- Shipped: per-play `prep-recipe.json` (run-as-data) + `lib/stage-registry.mjs` (safety boundary, recipe can only name known stages) + `lib/recipe.mjs` (loader/validator, fail-fast); `run-prep.mjs` reads the recipe instead of a hardcoded array
+  - → The five steps are no longer baked into a script. A play's funnel lives in a recipe file next to its config; reorder or drop a stage by editing the file, no code change.
+- Binding folded in: new `systems/revops-engine/CLAUDE.md` + an `@import` in `accounts/clients/teknova/CLAUDE.md` so account-launched sessions load system context
+  - → Fixes the "launch from an account, get no engine context" gap. Verified on `ngabs_2026_06_05`: 5/5 recipe-driven run; removing a stage yields a 4-stage run with no code change.
 
 ### Phase 3 — Input-document contract + pre-flight gate *(sequenced after Phase 2)*
 **Done when:** a run refuses to start (or clearly flags) when the play's required input documents are missing, checked against a declared input contract.
