@@ -18,9 +18,10 @@ checkpoint. You do not classify, you do not re-decide verdicts, and you do not p
   STOP and report that approval is missing — run nothing.
 
 ## Confirm the approved actions are in place (the planner already applied them to staging)
-The planner ran dedup/hierarchy (companies) and acquired-routing (contacts) before the artifact, so
-their labels (`prep_dedup_*`, `prep_route_*`) are already in staging and were part of what the
-operator approved. Verify they are present and match the artifact; do not re-run or alter them.
+The planner drove the recipe's dedup/hierarchy (companies) and acquired-routing (contacts) stages
+before emitting the artifact, so their labels (`prep_dedup_*`, `prep_route_*`) are already in staging
+and were part of what the operator approved. Verify they are present and match the artifact; do not
+re-run or alter them.
 - Any contact `prep_route_status='review'` is an **unresolved operator decision** — leave it; do
   not pick an acquirer yourself.
 - **Promote does not yet honor dedup** (it dedups by domain/email natural key only). So a labeled
