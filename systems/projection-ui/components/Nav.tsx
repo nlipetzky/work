@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/duplicates", label: "Duplicates" },
   { href: "/gaps", label: "Gaps" },
   { href: "/staging", label: "Staging" },
+  { href: "/context", label: "Context" },
 ];
 
 export default function Nav() {
