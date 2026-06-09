@@ -21,28 +21,40 @@ load the table into your context — only counts, the artifact path, and a few s
 - `<play>/client-guidance.md` and `playbook-*.md` — the criteria you are classifying against.
 - `<play>/classifier/` — the play's `stage1-deterministic.sql` and `classifier-prompt.md`.
 
-## Run the funnel (each step is a runner in systems/revops-engine/; capture only its stdout)
+## Drive the funnel (recipe-driven, via the run-status CLI)
 
-**Companies** use the modality funnel (steps 1–2). **Contacts** use a single deterministic screen
-instead (the playbook §7 gates are deterministic, no LLM): run
-`node contacts-screen-runner.mjs <batch_id> contacts <play>/classifier/contacts-screen-rules.json`
-→ inherits each contact's company verdict, runs the §4.2 title check (approved overrides exclusion;
-`role_segment` is a hint, never trusted — null is unsegmented, not out-of-scope), and DEFERS
-LinkedIn/CRM (data not in staging). Then skip to step 3.
+You do not hardcode the stage list. You ask the machinery what the steps are, then drive them one at a
+time, recording progress to `public.prep_run_status` so the Runs strip in projection-ui shows the run
+live. `run-prep.mjs` is the deterministic sibling driver; you are the interactive one over the same
+recipe + the same status table. Run everything from `/Users/nplmini/code/work/systems/revops-engine/`.
 
-1. **Stage-1 deterministic.** `node run-stage1.mjs <batch_id> companies <play>/classifier/stage1-deterministic.sql`
-   → auto-decides the safe cases, leaves the rest residual. Report the distribution.
-2. **Semantic verification.** `node classify-runner.mjs <batch_id> companies --play <play>/classifier`
-   → classifies every residual row in isolated per-row API calls, writes per-criterion verdicts +
-   needs_evidence flags to staging. Report ok/errors + the verdict distribution.
-3. **Dedup / hierarchy + acquired-routing** (so the operator reviews them in the artifact):
-   - companies: `node dedup-runner.mjs <batch_id> companies <play>/classifier/dedup-rules.json`
-     → labels exact-dups, SME-cited acquired/alias maps, parent/child hierarchy (both kept).
-   - contacts: `node route-runner.mjs <batch_id> contacts <play>/classifier/routing-rules.json`
-     → applies SME-confirmed routes; flags every other email-vs-company domain mismatch for review.
-   Report the label counts; the review set is the operator's call, not yours to resolve.
+1. **Resolve the plan.**
+   `node run-prep.mjs <batch_id> --play <playDir> --print-plan`
+   This prints a plain-English readiness report and, after a `--- PLAN JSON ---` marker, a JSON array
+   of steps `[{ stage, entity, order, command }]`. Narrate the readiness report plainly and **proceed**
+   unless an input is genuinely fatal to the run (honor `feedback_no_blocker_overbuild` — inform, don't
+   wall). Do not pass `--strict`; that is the script's opt-in, not your default. Keep the JSON plan.
+
+2. **Seed the run.**
+   Mint a run id: `runId=$(uuidgen)`.
+   Seed the whole plan once (the JSON from step 1 is seed-safe — `seed` reads only stage/entity/order):
+   `node lib/run-status.mjs seed --run-id "$runId" --batch <batch_id> --plan '<the JSON plan array>'`
+
+3. **Drive each step in `order`.** For each step:
+   - mark it running: `node lib/run-status.mjs set --run-id "$runId" --stage <stage> --status running`
+   - run the step's `command` with the run id appended:
+     `<command> --run-id "$runId"`
+     (the runner writes its own `done` + counts on success, `error` on a nonzero exit — you do not
+     re-mark `done` yourself).
+   - narrate the counts from the runner's own stdout (you ran it, so you have them; the status table is
+     the durable record the Runs strip reads — there is no read CLI and you do not need one). Surface
+     any rule-vs-evidence conflict the runner flagged; do not resolve it by guessing.
+   - if the runner exits nonzero: `node lib/run-status.mjs set --run-id "$runId" --stage <stage>
+     --status error --message "<short reason>"` and **stop the run** (a failed stage is red, not
+     skipped — mirrors `run-prep.mjs`).
+
 4. **Emit the artifact.** `node generate-prep-plan.mjs <batch_id> <entity>` → writes
-   `<play>/prep-plans/<batch_id>-<entity>-prep-plan.md`. Report the path.
+   `<playDir>/prep-plans/<batch_id>-<entity>-prep-plan.md`. Report the path.
 
 ## Honor the mandate
 - If the runners report rows that are present-but-unverified or needs_evidence, that is correct
