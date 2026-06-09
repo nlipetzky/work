@@ -60,7 +60,7 @@ export function formatReadiness(report, playName) {
     lines.push("  All inputs for this run are present. Proceeding.");
   } else {
     const names = report.missingNow.map((i) => i.name).join(", ");
-    lines.push(`  Missing for this run: ${names}. Proceeding anyway — add --strict to stop on missing inputs.`);
+    lines.push(`  Missing for this run: ${names}.`);
   }
   return lines.join("\n");
 }

@@ -14,12 +14,14 @@ import { randomUUID } from "crypto";
 import { spawnSync } from "child_process";
 import { seedPlan, markRunning, markError } from "./lib/run-status.mjs";
 import { loadRecipe, resolveStages } from "./lib/recipe.mjs";
+import { checkReadiness, formatReadiness } from "./lib/readiness.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const argv = process.argv.slice(2);
 const batchId = argv[0];
 const flag = (name, def) => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : def; };
+const strict = argv.includes("--strict");
 const playDir = flag("--play",
   "/Users/nplmini/code/work/accounts/clients/teknova/plays/ngabs-next-gen-antibodies");
 
@@ -30,6 +32,17 @@ if (!batchId) {
 
 const recipe = loadRecipe(playDir);
 const stages = resolveStages(recipe, playDir); // throws on a malformed recipe (fail fast, before any run)
+
+const readiness = checkReadiness(recipe, playDir);
+console.log(formatReadiness(readiness, path.basename(playDir)));
+if (!readiness.allNowPresent) {
+  if (strict) {
+    console.error("--strict: stopping — an input needed for this run is missing.");
+    process.exit(1);
+  }
+  console.log("  Proceeding anyway — add --strict to stop on missing inputs.");
+}
+
 const runId = randomUUID();
 
 console.log(`prep run ${runId}  batch=${batchId}  play=${playDir}  recipe=${recipe._source}`);

@@ -67,5 +67,6 @@ test("formatReadiness shows the missing closing line when a now input is absent"
   };
   const out = formatReadiness(report, "ngabs");
   assert.match(out, /✗ segment/);
-  assert.match(out, /Missing for this run: segment\. Proceeding anyway — add --strict/);
+  assert.match(out, /Missing for this run: segment\./);
+  assert.doesNotMatch(out, /Proceeding|--strict/); // the report states facts; run-prep states the action
 });
