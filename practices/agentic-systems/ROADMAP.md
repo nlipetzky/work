@@ -1,13 +1,14 @@
 # Owned Execution Engine Roadmap
 
-> *Last touched: 2026-06-09. Active focus: Phase 4 (Skill hierarchy / agent-driven driver) is next. Phases 0-3 done.*
+> *Last touched: 2026-06-09. Active focus: Phase 7 (Context collection hub) — the keystone of the SME context loop. Phases 0-4 done. Phase 5 (approval gate) is newly live-relevant after tonight's ungated provider spend.*
 
 **Scope & authority.** This is the authoritative, build-level roadmap for the owned execution engine — Nick's
 Deepline-equivalent tactical layer (references input documents, works a GTM funnel through stages, shows the
-work move on a trust surface). It spans `systems/revops-engine` + `systems/projection-ui` + a future strategic
-layer. **This file is the source of truth for build phases.** The two Airtable roadmaps (system registry, work
-roadmap) are higher-altitude operator/registry surfaces and should roll up from this, not compete with it —
-reconciling them is a tracked open thread below, deferred.
+work move on a trust surface). It spans `systems/revops-engine` + `systems/projection-ui` + the strategic layer.
+The strategic end (Phases 7-9) now realizes the **SME context loop** — see
+`practices/agentic-systems/reference/sme-context-loop.md`. **This file is the source of truth for build phases.**
+The two Airtable roadmaps (system registry, work roadmap) are higher-altitude operator/registry surfaces and
+should roll up from this, not compete with it — reconciling them is a tracked open thread below, deferred.
 
 ---
 
@@ -37,18 +38,22 @@ reconciling them is a tracked open thread below, deferred.
 - Honors `feedback_no_blocker_overbuild`: zero new default hard-stops, plain-English output (no acronyms), the contract visible in the recipe
   - → Built to inform, not obstruct — the report reads like a human checklist, and nothing is hidden in code.
 
-### Phase 4 — Skill hierarchy / agent-driven driver *(sequenced after Phase 3)*
+### Phase 4 — Agent-driven driver + play-agnostic funnel *(done)*
 **Done when:** the play-prep skill can drive the funnel end-to-end (agent issuing the status-primitive CLI), not `run-prep.mjs`.
-**Model hint:** Opus — designing the meta-skill + phase-doc + recipe hierarchy is the core "borrow from Deepline" architecture work.
-- Owned meta-skill + phase docs + recipes that operate the funnel, mirroring Deepline's skill bundle
-  - → Your own version of Deepline's instruction set, so an agent (not a fixed script) decides how to run a play.
-- The agent drives the same status primitive the CLI exposes; `run-prep.mjs` becomes one driver, not the only one
-  - → The manual script and the autonomous agent share the same machinery — the manual→autonomous step you described.
+**Model hint:** Opus — the seam design (what the agent owns vs the script) and making the funnel genuinely play-agnostic is multi-system reasoning.
+- Shipped: `run-prep.mjs --print-plan` emitter (`lib/recipe.mjs buildPlan`) + the `play-prep-planner` rewired to drive each stage via the `run-status.mjs` CLI (seed → set running → runner self-marks done). `run-prep.mjs` is now one driver, the agent the other, over the same recipe + status table
+  - → An agent, not a fixed script, now runs a play — reading the recipe and reporting progress as it goes. The manual→autonomous step.
+- Made the funnel play-agnostic (surfaced by running a second play): `lib/read-fields.mjs` (classifier read-fields per play) + `generate-prep-plan.mjs` optional `prep_verified` + `--play`
+  - → The funnel no longer assumes the one original play. Two hardcodes that only broke on a new play were removed.
+- Validated end-to-end on two plays: `ngabs_2026_06_05` and the CIPO `patent-portfolio-mgmt` motions batches (Apollo + Explorium), each driven recipe → readiness → seed → stages → artifact → approval stop
+  - → Proven on a play it had never seen, which is the whole point of the recipe-driven design.
 
-### Phase 5 — Approval gate + cost discipline *(sequenced after Phase 4)*
+### Phase 5 — Approval gate + cost discipline *(sequenced after Phase 4; newly live-relevant)*
 **Done when:** any paid-provider stage halts for an explicit pilot → approve → full-run confirmation before spending.
 - Port Deepline's approval-gate state machine (pilot, 4-section approval, spend cap) ahead of paid stages
   - → Before the engine spends money on data providers, it stops and asks — the safety catch that separates a tool from a loaded gun.
+- Newly concrete: tonight's CIPO sourcing spent Apollo + Explorium credits with no gate; the moment list-building touches paid providers in the loop, this matters
+  - → We already proved the spend happens. This phase makes it deliberate instead of incidental.
 
 ### Phase 6 — Full funnel beyond prep *(sequenced after Phase 4; likely splits)*
 **Done when:** the engine runs discovery → enrich → personalize → activate → capture → analyze for a play, not just prep/screen.
@@ -56,9 +61,24 @@ reconciling them is a tracked open thread below, deferred.
 - Extend past today's prep/screen stages to the rest of the GTM funnel
   - → Today the engine only sorts and screens existing rows. This is the big expansion: finding companies, enriching them, writing the outreach, pushing to activation, and reading results back.
 
-### Phase 7 — Strategic layer *(open-ended; separate build, on the radar)*
-- A separate system that authors and iterates the input documents Phase 3 consumes (offer, segment, ICP, copy, ...)
-  - → The "decides who and why" brain you said you'd build separately. It lives on this map because the execution engine is useless without the inputs it produces, but it is its own project.
+### Phase 7 — Context collection hub *(open question — keystone of the SME loop; design next)*
+**Done when:** a batch references one context-collection object the projection-ui surface renders — play, ICP criteria, data criteria, offer, sourcing definition, client/SME feedback, run history — replacing `staging_batch_meta`'s flat file-path pointers.
+**Model hint:** Opus — data-model + trust-surface design, and it's the contract both Hermes and the engine attach to.
+- New first-class context object the batch links to (`campaign`/`input-set`/TBD name); resolves play + recipe `inputs[]` + sourcing definition + feedback + runs; surfaced as a per-batch "Context" panel
+  - → One place that shows everything guiding a list: the criteria, the offer, the expert's feedback, where the data came from. The batch points at it with a single link instead of scattered file paths.
+- Replaces `staging_batch_meta` (flat pointers, populated only by the old pipeline — CSV-loaded batches are context-orphaned today, which is why the CIPO prep-plan header showed "?")
+  - → Fixes the gap where a batch loaded any way but the original pipeline has no recorded context at all.
+
+### Phase 8 — Feedback return path *(sequenced after Phase 7)*
+**Done when:** list-building results (what qualified, gaps, where the ICP was wrong) are captured back into the context collection and routed to Hermes as expert questions / approval asks.
+- Close the loop: engine results → context collection → Hermes → expert → iterated inputs
+  - → Today list-building is one-way. This is the return leg — what the data taught us flows back to sharpen the expert's input. The long-missing "keep-live" layer.
+
+### Phase 9 — Autonomous expert-fed synthesis *(open-ended; routes through Hermes)*
+**Done when:** an autonomous loop ingests expert signal (emails, transcripts, documents) and drafts/iterates the strategic documents, with the human approval gate intact.
+**Model hint:** Opus — authoring under the expert's name; the hardest, safety-sensitive leg.
+- Ingest [A] expert signal → draft/iterate [C] the strategic documents; authoring is **Hermes craft**, orchestration is the meta-practice; expert signs off before anything is load-bearing
+  - → The "decides who and why" brain, fed automatically from the expert's own emails and calls — but it never speaks for the expert without sign-off. (Was the old open-ended Phase 7; now sharpened by the SME-loop vision.)
 
 ---
 
@@ -66,3 +86,4 @@ reconciling them is a tracked open thread below, deferred.
 
 - **Roadmap & registry consolidation** *(deferred — explicitly not this session, per Nick 2026-06-09)*. Three roadmaps exist with no source-of-truth rule: this file (build phases), the **system-registry roadmap** (Airtable `apppQjlZiktpbO4aX/tblt6pQ3Snu7qkMGb`), and the **work roadmap** (Airtable `appz7I91uNxWBnly8/tblGOhsxLL0dKhAHZ`). They overlap and carry stale items. Future work: decide source-of-truth-by-altitude (file = build phases, Airtable = portfolio/registry rollup), define how they sync, and clean up old items in both bases.
 - **DB infra hygiene** (from the 2026-06-09 cron fix). The four audit-matview *definitions* are still out-of-band (not in tracked migrations) — capture them. And `v_contact_field_completeness` (~7.4KB def) scans 26k rows in 12-19s — rework the query (per-row jsonb / self-join smell). Neither blocks; see migration 0012 + memory `project_revops_db_micro_cron_saturation`.
+- **CIPO criteria are provisional.** The `patent-portfolio-mgmt` classifier-prompt + stage1 SQL were operator-authored as a motions cut; the real ICP comes from the 2026-06-10 CMO intake. The sourcing query (Explorium `website_keywords`) is a content match, not an industry filter — add a `linkedin_category`/`naics_category` filter for the real run.
