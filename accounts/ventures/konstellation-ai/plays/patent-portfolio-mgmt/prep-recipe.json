@@ -1,0 +1,16 @@
+{
+  "system": "revops-engine",
+  "configDir": "classifier",
+  "_note": "PROVISIONAL. Companies-only motions recipe for the fractional-CIPO / patent-portfolio-mgmt play. Criteria are a first cut from the offering understanding + the segment scaffold; the real ICP comes from the 2026-06-10 CMO intake. Contacts stages (route, contacts_screen) are omitted until contacts are sourced.",
+  "inputs": [
+    { "name": "play brief",         "path": "../../artifacts/revops-play-brief-patent-portfolio-mgmt.md", "when": "now" },
+    { "name": "segment",            "path": "../../artifacts/revops-segment-patent-portfolio-mgmt.md",    "when": "now" },
+    { "name": "screening criteria", "path": "classifier/classifier-prompt.md",                            "when": "now" },
+    { "name": "ICP titles",         "path": "../../artifacts/revops-icp-titles-patent-portfolio-mgmt.md", "when": "later" }
+  ],
+  "stages": [
+    { "stage": "stage1",  "entity": "companies", "config": "stage1-deterministic.sql" },
+    { "stage": "classify", "entity": "companies" },
+    { "stage": "dedup",   "entity": "companies", "config": "dedup-rules.json" }
+  ]
+}

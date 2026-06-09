@@ -1,0 +1,6 @@
+{
+  "_comment": "PROVISIONAL dedup/hierarchy rules for the patent-portfolio-mgmt motions run. No SME-cited mappings yet (the real ones come post-intake). Exact-duplicate detection by normalized name only; the runner writes prep_dedup_* labels for operator review, nothing is deleted.",
+  "exact_dedup_by": ["normalized_name"],
+  "mappings": [],
+  "hierarchy": []
+}
