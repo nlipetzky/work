@@ -1,5 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import nodePath from "node:path";
 import { loadRecipe, resolveStages, DEFAULT_RECIPE } from "./recipe.mjs";
 
 const PLAY = "/tmp/__nonexistent_play_dir__";
@@ -33,4 +36,14 @@ test("resolveStages throws when a stage is missing entity", () => {
 
 test("resolveStages throws on an empty stage list", () => {
   assert.throws(() => resolveStages({ stages: [] }, "/play"), /no stages/);
+});
+
+test("loadRecipe throws a clean error on malformed prep-recipe.json", () => {
+  const dir = fs.mkdtempSync(nodePath.join(os.tmpdir(), "recipe-test-"));
+  try {
+    fs.writeFileSync(nodePath.join(dir, "prep-recipe.json"), "{ not valid json");
+    assert.throws(() => loadRecipe(dir), /invalid JSON in prep-recipe\.json/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
 });

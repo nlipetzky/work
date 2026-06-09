@@ -25,7 +25,12 @@ export const DEFAULT_RECIPE = {
 export function loadRecipe(playDir) {
   const p = path.join(playDir, "prep-recipe.json");
   if (!fs.existsSync(p)) return { ...DEFAULT_RECIPE, _source: "default" };
-  const recipe = JSON.parse(fs.readFileSync(p, "utf8"));
+  let recipe;
+  try {
+    recipe = JSON.parse(fs.readFileSync(p, "utf8"));
+  } catch (e) {
+    throw new Error(`invalid JSON in prep-recipe.json (${p}): ${e.message}`);
+  }
   return { ...recipe, _source: p };
 }
 
