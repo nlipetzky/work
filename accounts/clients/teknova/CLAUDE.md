@@ -1,5 +1,8 @@
 # Client: Teknova
 
+> This engagement's plays execute on the revops-engine system. Its context is imported here:
+> @../../../systems/revops-engine/CLAUDE.md
+
 ## READ STATE.md FIRST
 
 Before producing ANY client-facing artifact (email draft, status update, meeting brief, scope note, list, plan), read `/Users/nplmini/code/work/accounts/clients/teknova/STATE.md`. The active commitments, hard rules, and read-list there override default behavior. STATE.md is the session-bootstrapping file.
