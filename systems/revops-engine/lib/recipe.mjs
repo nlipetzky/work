@@ -55,3 +55,14 @@ export function resolveStages(recipe, playDir) {
     };
   });
 }
+
+// buildPlan: turn resolved stage descriptors into the concrete `node <runner> <args>` command per
+// stage (WITHOUT --run-id — the driver appends that). Pure (no fs/spawn) so the agent-facing emitter
+// and the deterministic run-prep.mjs both build commands the same way. The registry stays the single
+// source of truth for what command a stage maps to.
+export function buildPlan(stages, batchId) {
+  return stages.map((s) => {
+    const argv = s.buildArgs({ batchId, entity: s.entity, configDir: s.configDir, configPath: s.configPath });
+    return { stage: s.stage, entity: s.entity, order: s.order, command: `node ${s.runner} ${argv.join(" ")}` };
+  });
+}

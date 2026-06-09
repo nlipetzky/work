@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import nodePath from "node:path";
-import { loadRecipe, resolveStages, DEFAULT_RECIPE } from "./recipe.mjs";
+import { loadRecipe, resolveStages, buildPlan, DEFAULT_RECIPE } from "./recipe.mjs";
 
 const PLAY = "/tmp/__nonexistent_play_dir__";
 
@@ -46,4 +46,16 @@ test("loadRecipe throws a clean error on malformed prep-recipe.json", () => {
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test("buildPlan emits one concrete command per stage matching the registry argv", () => {
+  const stages = resolveStages(DEFAULT_RECIPE, "/play");
+  const plan = buildPlan(stages, "batch123");
+  assert.equal(plan.length, 5);
+  assert.deepEqual(plan.map((p) => p.order), [1, 2, 3, 4, 5]);
+  assert.equal(plan[0].command, "node run-stage1.mjs batch123 companies /play/classifier/stage1-deterministic.sql");
+  assert.equal(plan[1].command, "node classify-runner.mjs batch123 companies --play /play/classifier");
+  assert.equal(plan[3].command, "node route-runner.mjs batch123 contacts /play/classifier/routing-rules.json");
+  // seed-safe: carries stage/entity/order for run-status.mjs seed --plan
+  assert.deepEqual(plan[0], { stage: "stage1", entity: "companies", order: 1, command: plan[0].command });
 });
