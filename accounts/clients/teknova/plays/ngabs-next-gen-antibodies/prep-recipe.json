@@ -1,0 +1,11 @@
+{
+  "system": "revops-engine",
+  "configDir": "classifier",
+  "stages": [
+    { "stage": "stage1",          "entity": "companies", "config": "stage1-deterministic.sql" },
+    { "stage": "classify",        "entity": "companies" },
+    { "stage": "dedup",           "entity": "companies", "config": "dedup-rules.json" },
+    { "stage": "route",           "entity": "contacts",  "config": "routing-rules.json" },
+    { "stage": "contacts_screen", "entity": "contacts",  "config": "contacts-screen-rules.json" }
+  ]
+}
