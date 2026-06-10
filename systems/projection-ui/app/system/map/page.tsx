@@ -12,7 +12,14 @@ const CLASS_LETTER: Record<string, string> = { core: "C", supporting: "S", gener
 
 export default function SystemMap() {
   const [data, setData] = useState<List | null>(null);
-  useEffect(() => { fetch("/api/system/list").then((r) => r.json()).then(setData); }, []);
+  const [err, setErr] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/system/list")
+      .then(async (r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then(setData)
+      .catch((e) => setErr(String(e)));
+  }, []);
+  if (err) return <main className="p-6 text-red-400">{err}</main>;
   if (!data) return <main className="p-6 text-muted">Loading…</main>;
 
   const byHome = new Map<string, Sys[]>();

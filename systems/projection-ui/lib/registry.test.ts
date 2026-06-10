@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseSystemMd, validateRecord, loadRegistry } from "./registry";
+import { parseSystemMd, validateRecord, loadRegistry, CONSTELLATIONS } from "./registry";
 import { mkdtempSync, mkdirSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
@@ -53,6 +53,11 @@ describe("parseSystemMd", () => {
   it("throws on an unknown lifecycle value", () => {
     const broken = VALID.replace("lifecycle: defined", "lifecycle: shipping");
     expect(() => parseSystemMd(broken, "f")).toThrow(/lifecycle/);
+  });
+
+  it("throws on an unknown home constellation", () => {
+    const broken = VALID.replace("home: signal", "home: revops");
+    expect(() => parseSystemMd(broken, "f")).toThrow(/home constellation/);
   });
 
   it("defaults optional sections", () => {

@@ -17,12 +17,18 @@ export async function GET() {
   const reg = loadRegistry(ROOT);
 
   const queueDir = path.join(ROOT, "_review");
+  const queueErrors: string[] = [];
   const queue = !existsSync(queueDir) ? [] :
-    readdirSync(queueDir).filter((f) => f.endsWith(".md")).sort().map((f) => {
-      const { data, content } = matter(readFileSync(path.join(queueDir, f), "utf8"));
-      return { file: f, type: data.type ?? "decision", system: data.system ?? null,
-               evidence: data.evidence ?? null, proposed: data.proposed ?? "",
-               created: String(data.created ?? ""), body: content.trim() };
+    readdirSync(queueDir).filter((f) => f.endsWith(".md")).sort().flatMap((f) => {
+      try {
+        const { data, content } = matter(readFileSync(path.join(queueDir, f), "utf8"));
+        return [{ file: f, type: data.type ?? "decision", system: data.system ?? null,
+                  evidence: data.evidence ?? null, proposed: data.proposed ?? "",
+                  created: String(data.created ?? ""), body: content.trim() }];
+      } catch (e) {
+        queueErrors.push(`_review/${f}: ${e instanceof Error ? e.message : String(e)}`);
+        return [];
+      }
     });
 
   let diff: { hash: string; date: string; subject: string }[] = [];
@@ -40,5 +46,5 @@ export async function GET() {
     } catch { /* empty diff if git fails */ }
   }
 
-  return NextResponse.json({ lastReviewed: reg.lastReviewed, queue, diff, errors: reg.errors });
+  return NextResponse.json({ lastReviewed: reg.lastReviewed, queue, diff, errors: [...reg.errors, ...queueErrors] });
 }

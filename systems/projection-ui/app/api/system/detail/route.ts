@@ -22,8 +22,13 @@ export async function GET(req: NextRequest) {
   if (!file.startsWith(ROOT) || !existsSync(file))
     return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const record = parseSystemMd(readFileSync(file, "utf8"), file);
-  const warnings = validateRecord(record);
+  let record, warnings;
+  try {
+    record = parseSystemMd(readFileSync(file, "utf8"), file);
+    warnings = validateRecord(record);
+  } catch (e) {
+    return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 422 });
+  }
 
   let history: { hash: string; date: string; subject: string }[] = [];
   try {

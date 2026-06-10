@@ -39,6 +39,7 @@ const LIFECYCLES: Lifecycle[] = ["defined", "designed", "architected", "engineer
 const AUTONOMY: Autonomy[] = ["manual", "assisted", "supervised", "autonomous"];
 const CLASSES: SystemClass[] = ["core", "supporting", "generic"];
 const REQUIRED = ["name", "slug", "home", "class", "lifecycle", "autonomy", "outcome"] as const;
+export const CONSTELLATIONS = ["canon", "compass", "signal", "forge", "voice", "pulse", "guard", "garden"];
 
 function fail(file: string, msg: string): never {
   throw new Error(`${file}: ${msg}`);
@@ -56,6 +57,8 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
     fail(file, `unknown autonomy "${data.autonomy}" (allowed: ${AUTONOMY.join(", ")})`);
   if (!CLASSES.includes(data.class))
     fail(file, `unknown class "${data.class}" (allowed: ${CLASSES.join(", ")})`);
+  if (!CONSTELLATIONS.includes(data.home))
+    fail(file, `unknown home constellation "${data.home}" (allowed: ${CONSTELLATIONS.join(", ")})`);
 
   for (const [key, rows] of [["assets", data.assets], ["context", data.context]] as const) {
     if (rows !== undefined && !Array.isArray(rows)) fail(file, `"${key}" must be a list`);
