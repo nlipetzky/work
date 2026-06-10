@@ -82,8 +82,8 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
     stub: data.stub === true,
     runs_surface: data.runs_surface ?? null,
     contract,
-    assets: (data.assets ?? []).map((a: AssetRow) => ({ verified_by: null, ...a })),
-    context: (data.context ?? []).map((c: ContextRow) => ({ verified_by: null, version: null, ...c })),
+    assets: (data.assets ?? []).map((a: AssetRow) => ({ ...a, verified_by: a.verified_by ?? null })),
+    context: (data.context ?? []).map((c: ContextRow) => ({ ...c, verified_by: c.verified_by ?? null, version: c.version ?? null })),
     body: body.trim(),
     file,
   };
