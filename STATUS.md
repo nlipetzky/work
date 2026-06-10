@@ -35,13 +35,10 @@
 5. **Context reader is live but on an ephemeral dev server** (`localhost:4180/context`, detached process).
    → **Resume:** `cd systems/projection-ui && npm run dev` if it's down.
 
-6. **The build-registry / PM model is undesigned — NEXT SESSION'S FIRST PICKUP.** → **Resume:** brainstorm
-   it. Must include: curated **Active / Parked / Dead** states (Nick owns curation), a *proportional*
-   surfacing rule (show Active + relevant-to-today, never dump the backlog), an exit-log that writes new
-   bridges to an **inbox** (no auto-promote), a **rendered HTML view** (Nick's instinct — not a raw .md;
-   either a generated standalone `STATUS.html` from this source, or a projection-ui page), and only THEN a
-   tuned SessionStart hook. Do NOT wire enforcement before the model exists (enforcement-before-curation
-   was the rejected approach).
+6. ~~**The build-registry / PM model is undesigned.**~~ **RESOLVED 2026-06-10:** designed and built —
+   the system registry (`registry/`, 25 systems, emit contracts + inventories + lifecycle) rendered at
+   `localhost:4180/system`. Spec: `practices/agentic-systems/specs/2026-06-10-system-registry-design.md`.
+   The SessionStart hook remains deliberately unbuilt until the registry proves itself in use.
 
 ---
 
