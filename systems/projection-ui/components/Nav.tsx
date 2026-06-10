@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/gaps", label: "Gaps" },
   { href: "/staging", label: "Staging" },
   { href: "/context", label: "Context" },
+  { href: "/system", label: "System" },
 ];
 
 export default function Nav() {
