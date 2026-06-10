@@ -70,7 +70,7 @@ The common move: every claim becomes a checkable fact.
 ```yaml
 name: Demand context
 slug: demand-context
-home: canon                     # ONE home constellation (by shared substrate)
+home: signal                    # ONE home constellation (by shared substrate)
 clusters: [revops]              # sales tags, many allowed
 class: core                     # core | supporting | generic
 lifecycle: defined              # defined | designed | architected | engineering | operating
@@ -156,9 +156,13 @@ chores; resolved by Nick's call in-session.
 - Editing/curation from the UI (v1).
 - Work-item tracking of any kind.
 
-## Open questions
+## Resolved questions (2026-06-10, Nick)
 
-- **Demand-context home**: Canon recommended (shares the corpus substrate); Nick to confirm —
-  it's the first test of the substrate guardrail on a new system.
-- Whether ROADMAP.md (build phases) folds into per-system roadmap.md files or stays as the
-  cross-system build sequence. Default: stays, references registry slugs.
+- **Demand-context home**: Nick's call — it lives in the RevOps engine. Recorded per the locked
+  taxonomy (RevOps is a Cluster, `home` takes a constellation) as `home: signal`,
+  `clusters: [revops]`; the system page displays the RevOps engine association prominently.
+  Demand context's example record above updates from `home: canon` accordingly.
+- **Roadmaps are per-system** (`roadmap.md` in each system dir). Intertwined work is handled by
+  dependency lines: a roadmap item may reference another system's slug. The existing build-level
+  ROADMAP.md dissolves into per-system roadmaps gradually as systems get registered; until then it
+  stays authoritative for the phases it covers.
