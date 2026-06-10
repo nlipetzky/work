@@ -5,21 +5,18 @@
 > This is the v0 seed of the build registry (the real one — per-system status, how-to-use, resume
 > pointers, with entry/exit hooks — is the next design; see `project_studio_keep_live_registry` in memory).
 >
-> *Last updated: 2026-06-09 (end of the Phase-4 / CIPO / context-loop session).*
+> *Last updated: 2026-06-10 (merge session; bridges 1-2 resolved).*
 
 ---
 
 ## This session's open bridges (freshest — resume here)
 
-1. **Unmerged branch `phase-4-agent-driven-driver`** (off `main`, ~14 commits, NOT merged).
-   Holds: Phase 4 agent-driven driver, the play-agnostic funnel fixes, the CIPO play bundle + Explorium
-   sourcing scripts, the SME-context-loop vision docs + roadmap update, and the projection-ui Context reader.
-   → **Resume:** decide merge vs PR to `main`. Phase 4's plan Task 6 (live parity) is satisfied by the
-   two-play motions run, so it's mergeable.
+1. ~~**Unmerged branch `phase-4-agent-driven-driver`**~~ **RESOLVED 2026-06-10:** fast-forwarded into
+   `main` (567a681), pushed to origin, local branch deleted.
 
-2. **projection-ui `package.json` / `package-lock.json` uncommitted.** They carry the markdown deps
-   (`react-markdown`, `remark-gfm`) the Context reader needs, tangled with pre-existing inngest changes.
-   → **Resume:** untangle and commit those deps at merge, or the reader breaks on a clean `npm ci`.
+2. ~~**projection-ui `package.json` / `package-lock.json` uncommitted.**~~ **RESOLVED 2026-06-10:**
+   manifest committed (567a681) with markdown deps + inngest dep (inngest app code still uncommitted,
+   see HANDOFF-inngest-sync.md).
 
 3. **Roadmap active-focus decision (open).** Next phase is either Phase 7 (context-collection hub, the
    keystone) or Phase 5 (approval gate — now live-relevant after this session spent Apollo + Explorium
