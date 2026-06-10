@@ -57,6 +57,14 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
   if (!CLASSES.includes(data.class))
     fail(file, `unknown class "${data.class}" (allowed: ${CLASSES.join(", ")})`);
 
+  for (const [key, rows] of [["assets", data.assets], ["context", data.context]] as const) {
+    if (rows !== undefined && !Array.isArray(rows)) fail(file, `"${key}" must be a list`);
+    for (const row of rows ?? []) {
+      if (!row || typeof row !== "object" || !row.name || !row.status)
+        fail(file, `every "${key}" row needs name and status`);
+    }
+  }
+
   const contract: Contract | null = data.contract
     ? {
         inputs: data.contract.inputs ?? [],
@@ -131,7 +139,8 @@ export function loadRegistry(root: string): Registry {
         const record = parseSystemMd(readFileSync(file, "utf8"), file);
         systems.push({ record, warnings: validateRecord(record) });
       } catch (e) {
-        errors.push(e instanceof Error ? e.message : String(e));
+        const msg = e instanceof Error ? e.message : String(e);
+        errors.push(msg.startsWith(file) ? msg : `${file}: ${msg}`);
       }
     }
   }

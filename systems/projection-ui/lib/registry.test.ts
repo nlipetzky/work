@@ -63,6 +63,11 @@ describe("parseSystemMd", () => {
     expect(r.context).toEqual([]);
     expect(r.flags).toEqual([]);
   });
+
+  it("rejects rows missing name or status", () => {
+    const broken = VALID.replace("{name: Extraction skill, version: null, status: to-write, verified_by: null}", "{version: null}");
+    expect(() => parseSystemMd(broken, "f")).toThrow(/context.*name and status/);
+  });
 });
 
 describe("validateRecord", () => {
@@ -84,18 +89,24 @@ describe("validateRecord", () => {
 });
 
 describe("loadRegistry", () => {
-  it("walks constellation dirs, collects records, errors and meta", () => {
+  it("walks constellation dirs, collects records, errors and meta; all errors carry file path", () => {
     const root = mkdtempSync(path.join(tmpdir(), "reg-"));
     writeFileSync(path.join(root, "_meta.yml"), "last_reviewed: 2026-06-09T17:54:00-05:00\n");
     mkdirSync(path.join(root, "signal", "demand-context"), { recursive: true });
     writeFileSync(path.join(root, "signal", "demand-context", "system.md"), VALID);
     mkdirSync(path.join(root, "canon", "broken"), { recursive: true });
     writeFileSync(path.join(root, "canon", "broken", "system.md"), "---\nname: B\n---\n");
+    mkdirSync(path.join(root, "voice", "badrows"), { recursive: true });
+    writeFileSync(
+      path.join(root, "voice", "badrows", "system.md"),
+      "---\nname: V\nslug: v\nhome: voice\nclass: core\nlifecycle: defined\nautonomy: manual\noutcome: x\nassets: notalist\n---\n"
+    );
     const reg = loadRegistry(root);
     expect(reg.systems).toHaveLength(1);
     expect(reg.systems[0].record.slug).toBe("demand-context");
-    expect(reg.errors).toHaveLength(1);
-    expect(reg.errors[0]).toMatch(/broken/);
+    expect(reg.errors).toHaveLength(2);
+    expect(reg.errors.every((e) => e.includes(root))).toBe(true);
     expect(reg.lastReviewed).toBe("2026-06-09T17:54:00-05:00");
+    expect(reg.systems.map((s) => s.record.slug)).toEqual(["demand-context"]);
   });
 });
