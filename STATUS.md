@@ -6,6 +6,11 @@
 > pointers, with entry/exit hooks — is the next design; see `project_studio_keep_live_registry` in memory).
 >
 > *Last updated: 2026-06-10 (merge session; bridges 1-2 resolved).*
+>
+> **The registry now exists** (2026-06-10): `registry/` (source of truth, 25 systems) rendered at
+> `localhost:4180/system` (review surface · /system/map · per-system pages). Spec:
+> `practices/agentic-systems/specs/2026-06-10-system-registry-design.md`.
+> This file is now a consumer; new session-exit items go to `registry/_review/`, not here.
 
 ---
 
