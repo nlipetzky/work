@@ -13,6 +13,7 @@
 
 import fs from "fs";
 import path from "path";
+import { anthropicMessages, textFromContent, countToolUses, parseJsonLoose } from "./lib/ai-call.mjs";
 
 const ENV = "/Users/nplmini/code/work/.env";
 const REF = "mrmnyscurmkfppicqqhk";
@@ -44,30 +45,17 @@ async function sql(q) {
 }
 const esc = (v) => v == null ? "null" : `'${String(v).replace(/'/g, "''")}'`;
 
-// the AI call — Claude as a function, with web search
+// the AI call — Claude as a function, with web search. Shared path (lib/ai-call.mjs): same client +
+// 429/529 backoff + loose-JSON parse as verify-runner. The only difference is this one passes tools.
 async function research(filledPrompt) {
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": ANTHROPIC, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: cfg.model, max_tokens: 1500,
+  try {
+    const j = await anthropicMessages({
+      apiKey: ANTHROPIC, model: cfg.model, maxTokens: 1500,
       tools: [{ type: "web_search_20250305", name: "web_search", max_uses: cfg.maxSearchUses ?? 5 }],
       messages: [{ role: "user", content: filledPrompt }],
-    }),
-  });
-  const t = await r.text();
-  if (r.status >= 300) return { error: `${r.status}: ${t.slice(0, 200)}` };
-  const j = JSON.parse(t);
-  const text = (j.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n");
-  const searches = (j.content || []).filter((b) => b.type === "server_tool_use").length;
-  return { text, searches };
-}
-function parseJson(text) {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const raw = fenced ? fenced[1] : text;
-  const s = raw.indexOf("{"), e = raw.lastIndexOf("}");
-  if (s < 0 || e < 0) return null;
-  try { return JSON.parse(raw.slice(s, e + 1)); } catch { return null; }
+    });
+    return { text: textFromContent(j), searches: countToolUses(j) };
+  } catch (e) { return { error: String(e.message) }; }
 }
 
 // 1) ensure output columns
@@ -88,7 +76,7 @@ for (const row of rows) {
   for (const [ph, col] of Object.entries(cfg.inputs)) prompt = prompt.replaceAll(`{{${ph}}}`, row[col] ?? "");
   const res = await research(prompt);
   if (res.error) { console.log(`  ! ${row[cfg.inputs.Name] ?? row.id}: API ${res.error}`); continue; }
-  const out = parseJson(res.text);
+  const out = parseJsonLoose(res.text);
   const verdict = out?.[cfg.verdictField] ?? "parse_error";
   tally[verdict] = (tally[verdict] || 0) + 1;
   await sql(`update ${tbl} set ${cfg.outputColumn}=${esc(verdict)}, ${cfg.detailColumn}=${esc(JSON.stringify(out ?? { raw: res.text.slice(0, 500) }))} where id='${row.id}'`);

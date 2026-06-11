@@ -15,6 +15,7 @@
 
 import fs from "fs";
 import { flushBatched } from "./lib/db-batch.mjs";
+import { anthropicMessages, textFromContent, parseJsonLoose } from "./lib/ai-call.mjs";
 
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
@@ -83,19 +84,15 @@ async function verifyRow(row) {
   }
   const sys = PROMPT_TPL.replace("{{NAME}}", row.name).replace("{{DOMAIN}}", row.domain).replace("{{HAS_PROGRAM}}", hasProgram(row.prep_verdict));
   const content = pages.map((p) => `=== ${p.u} ===\n${p.text}`).join("\n\n").slice(0, 18000);
-  const body = JSON.stringify({ model: MODEL, max_tokens: 2000, system: sys, messages: [{ role: "user", content: `Fetched pages for ${row.name} (${row.domain}). Use ONLY this content. Return ONLY the JSON.\n\n${content}` }] });
-  let res, j;
-  for (let attempt = 0; ; attempt++) {
-    res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST", headers: { "x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" }, body,
-    });
-    if ((res.status === 429 || res.status === 529) && attempt < 8) { await new Promise((r) => setTimeout(r, Math.min(30000, 2000 * Math.pow(1.7, attempt)))); continue; }
-    j = await res.json();
-    break;
-  }
-  if (!res.ok) throw new Error(`anthropic ${res.status}: ${JSON.stringify(j).slice(0, 160)}`);
-  let txt = (j.content?.[0]?.text || "").trim().replace(/^```(json)?/i, "").replace(/```$/, "").trim();
-  return { fetched: pages.length, v: JSON.parse(txt) };
+  // Shared AI-call path (lib/ai-call.mjs) — same client + 429/529 backoff + loose-JSON parse as the
+  // gate-ai-research harness. No tools here: the evidence is the fetched site content, nothing else.
+  const j = await anthropicMessages({
+    apiKey: ANTHROPIC_KEY, model: MODEL, system: sys, maxTokens: 2000,
+    messages: [{ role: "user", content: `Fetched pages for ${row.name} (${row.domain}). Use ONLY this content. Return ONLY the JSON.\n\n${content}` }],
+  });
+  const v = parseJsonLoose(textFromContent(j));
+  if (!v) throw new Error("verify: model returned no parseable JSON");
+  return { fetched: pages.length, v };
 }
 
 // Batched-write adoption (§6.1 fix): accumulate per-row verify results, flush one UPDATE per 25.
