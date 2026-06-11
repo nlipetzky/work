@@ -32,6 +32,7 @@ const PLAY_DIR = flag("--play", "");
 const MODEL = flag("--model", "claude-sonnet-4-6");
 const LIMIT = parseInt(flag("--limit", "0"), 10);
 const CONCURRENCY = parseInt(flag("--concurrency", "3"), 10);
+const REVERIFY = argv.includes("--reverify");  // default is idempotent: only verify survivors not yet verified
 const stagingTbl = `staging.${entity}_${batchId}`;
 if (!TOKEN || !ANTHROPIC_KEY) { console.error("missing SupaBase_CLI_access_token / ANTHROPIC_API_KEY"); process.exit(1); }
 if (!batchId || !PLAY_DIR) { console.error("usage: verify-runner.mjs <batch_id> companies --play <classifier_dir> [--limit N]"); process.exit(1); }
@@ -91,7 +92,13 @@ async function verifyRow(row) {
     messages: [{ role: "user", content: `Fetched pages for ${row.name} (${row.domain}). Use ONLY this content. Return ONLY the JSON.\n\n${content}` }],
   });
   const v = parseJsonLoose(textFromContent(j));
-  if (!v) throw new Error("verify: model returned no parseable JSON");
+  if (!v) {
+    // Empty/unparseable output (same dual-use safety refusal seen in classify). No evidence was
+    // extracted, which is 'unclear' (recall lane) — NOT a hard error that strands the row, and NOT
+    // qualified. Keeps the row honestly in the not-yet-evidenced set.
+    return { fetched: pages.length, v: { verdict: "unclear", mrna_program_on_site: { status: "not_found" },
+      reasoning: `verifier returned no parseable output (stop_reason=${j.stop_reason || "?"}); routed to recall lane`, sites: [] } };
+  }
   return { fetched: pages.length, v };
 }
 
@@ -139,8 +146,9 @@ await sql(`alter table ${stagingTbl} add column if not exists prep_verify jsonb;
   alter table ${stagingTbl} add column if not exists prep_verify_note text;`);
 
 const limitClause = LIMIT > 0 ? `limit ${LIMIT}` : "";
+const onlyMissing = REVERIFY ? "" : "and prep_verify is null";  // idempotent by default; --reverify forces all
 const rows = await sql(`select id, name, domain, prep_verdict from ${stagingTbl}
-  where prep_verdict in ('IN','NARROW','NEEDS_REVIEW') and coalesce(domain,'') <> '' ${limitClause}`);
+  where prep_verdict in ('IN','NARROW','NEEDS_REVIEW') and coalesce(domain,'') <> '' ${onlyMissing} ${limitClause}`);
 console.log(`verifying ${rows.length} companies against the NA-site evidence gate (model=${MODEL}, conc=${CONCURRENCY})`);
 
 let ok = 0, err = 0, qual = 0; const verd = {}; const prog = {};
