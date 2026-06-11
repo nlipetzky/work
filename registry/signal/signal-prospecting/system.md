@@ -58,6 +58,19 @@ assets:
      note: "writes prep_flags work items + prep_attention on staging rows; v0 from the mRNA pilot"}
   - {name: Flag resolver (rule-gated), type: skill, ownership: own, status: to-build, verified_by: null,
      note: "resolves decision flags ONLY with a rule_ref cited; no rule -> escalate; see flag-resolve context rows"}
+  - {name: run-play.mjs (deterministic driver), type: script, ownership: own, status: built,
+     verified_by: "walks mrna_2026_06_11 -> stops at Flag-resolve gate (2026-06-11)",
+     path: "systems/revops-engine/run-play.mjs",
+     note: "THE SPINE. Code-driven, not agent-driven. --status reads real DB state (cannot narrate a
+     count); --execute runs auto-steps as subprocesses, re-verifies from the DB, stops at gates.
+     Reports each verification gate WIRED/NOT WIRED — cannot claim a screen that has no code. Next
+     layers: autonomy (Inngest schedule), AI-as-called-function for judgment steps."}
+  - {name: CRM-suppression gate, type: script, ownership: own, status: built,
+     verified_by: "ran on mrna_2026_06_11 -> 5 SF-matched, 3 open-opp (2026-06-11)",
+     path: "systems/revops-engine/gate-crm-suppression.mjs",
+     note: "first vapor gate made real: deterministic SF join (staging->Core sf_* by normalized
+     domain), no enrichment; stamps crm_status (dnc_suppress|open_opp_review|existing_customer|clear).
+     Remaining NOT-WIRED gates: NA-lab footprint, wet-lab ops, LinkedIn (need data we don't yet hold)."}
   - {name: Contact sourcing loader, type: script, ownership: own, status: to-build, verified_by: null,
      note: "people-at-company sourcing (Apollo people search) per the play's ICP-titles artifact, into
      staging.contacts_<batch>; play-folder-bound + --source stamped, same conventions as company loaders.
