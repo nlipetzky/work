@@ -11,6 +11,16 @@ Before producing ANY client-facing artifact (email draft, status update, meeting
 
 Read `artifacts/teknova-operations-inventory.md` before starting any work. It lists every active system, workflow, sync path, provider, and artifact for this client. If your session changes any of these (activates a workflow, runs a migration, exhausts a provider, ships a play), update the inventory before ending the session.
 
+## Ground truth hierarchy (inventory docs are snapshots)
+
+The inventory docs (`teknova-operations-inventory.md`, `teknova-n8n-workflow-inventory-*.md`) are dated snapshots and WILL disagree with each other and with reality. The hierarchy:
+
+1. **Live n8n is ground truth** for workflow existence and active/inactive state. Check it via n8n-mcp (read-only) before relying on any doc's claim about a workflow.
+2. **Live Supabase schema is ground truth** for what tables/fields exist and hold data.
+3. Inventory docs are orientation aids, newest date wins between them.
+
+**Hard rule: never declare a data source unavailable, missing, or a blocker based on a doc.** "Unavailable" claims require a live check first. Known trap this rule exists for: the SF read-path (account history, contact history, last-contacted, active-opportunity → Revops Surface) is live even though older docs marked SF sync workflows inactive — the inactive ones are the write-back direction only.
+
 ## Practice skills
 
 This client uses skills from the studio's RevOps practice. Practice skills live at `~/code/work/practices/revops/skills/`. Available skills include:

@@ -14,7 +14,7 @@ New play kickoff. You are in an empty play folder: the folder name is the play s
 
 3. Build the strategic input bundle with the lead-gen-strategist skill (offer, segment criteria, disqualifiers, ICP titles, sender identity, channel, volume, copy constraints). Surface missing inputs as questions, not assumptions.
 
-4. Delivery contract before transport. Derive the destination contract (required fields + screening pipeline) from the play docs BEFORE building any load or sync. Only fully-qualified records cross; "eligible" is not "qualified".
+4. Delivery contract before transport. Derive the destination contract (required fields + screening pipeline) from the play docs BEFORE building any load or sync. Only fully-qualified records cross; "eligible" is not "qualified". Before marking ANY contract input as unavailable, missing, or a blocker, verify against the live system (n8n active state via n8n-mcp read-only, Supabase schema) — inventory and state docs are dated snapshots and lose to live state. Missing from a doc is not absent from the system.
 
 5. Assemble the play bundle: criteria docs, classifier prompt + read-fields.json, dedup rules, stage1 SQL, prep-recipe.json (recipe may only name stages the stage registry knows).
 
