@@ -10,6 +10,8 @@ autonomy: manual
 outcome: >
   nothing goes cold; each relationship is progressed
 stub: true
+dates:
+  - {date: 2026-06-12, label: "crm-motions one-week green gate completes — provenance-writes work becomes eligible"}
 ---
 
 Stub seeded 2026-06-10 from `practices/agentic-systems/constellations/garden.md`.

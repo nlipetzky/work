@@ -49,6 +49,11 @@ assets:
      the batch (fix in flight with flag-resolve v0)"}
   - {name: Canon corpus, type: database, ownership: "shared:canon-ingestion", status: connected,
      verified_by: null, note: "bespoke read — engagement context for play sessions"}
+  - {name: Flag writer (flags-v0.sql), type: sql, ownership: own, status: built, verified_by: null,
+     path: "accounts/clients/teknova/plays/mrna-therapeutics/classifier/flags-v0.sql",
+     note: "writes prep_flags work items + prep_attention on staging rows; v0 from the mRNA pilot"}
+  - {name: Flag resolver (rule-gated), type: skill, ownership: own, status: to-build, verified_by: null,
+     note: "resolves decision flags ONLY with a rule_ref cited; no rule -> escalate; see flag-resolve context rows"}
 context:
   - {name: play-prep skill (planner + executor), version: phase-4, status: drafted, verified_by: null,
      note: "agent drives the funnel via the status CLI; validated on two plays"}
@@ -72,6 +77,24 @@ context:
      rule_refs); §10 over-provision-then-filter (stop-loss: data flags get ONE waterfall pass then
      the row drops; source ~1.4xN); §7 waterfall (two independent sources before ai_resolving
      anything that gates outreach); §6 one-flag pilot before working the batch"}
+flow:
+  - {node: Load, assets: ["Source loaders (Apollo, Explorium, CSV)"],
+     impl: load-companies-csv-to-staging.mjs, kind: node script}
+  - {node: Stage, assets: ["Staging schema + promote_staging_batch"],
+     impl: "staging.* + staging_batch_meta", kind: Postgres schema}
+  - {node: Screen, assets: ["Prep runners (stage1, classify, dedup, route, contacts-screen)", "run-prep orchestrator + --print-plan", "prep_run_status + run-status CLI"],
+     impl: run-prep.mjs + 5 stage runners, kind: node scripts (recipe-driven)}
+  - {node: Flag-resolve, assets: ["Flag writer (flags-v0.sql)", "Flag resolver (rule-gated)"],
+     impl: flags-v0.sql + resolver (to build), kind: SQL + skill}
+  - {node: Promote, assets: ["Staging schema + promote_staging_batch"],
+     impl: promote_staging_batch(), kind: SQL RPC (SECURITY DEFINER)}
+flow_outputs:
+  - {name: Qualified rows -> Core (promotion ledger keeps lineage), status: live}
+  - {name: Per-batch prep plan artifact (in the play folder), status: live}
+  - {name: Run status -> /runs (PrepRunStrip), status: live}
+now:
+  - "flag-resolve v0 — flags + decision packets landing on the staging surface"
+  - "source-column fix in the loader (source = provider, not batch)"
 ---
 
 The prep/screen funnel of the owned execution engine (systems/revops-engine + projection-ui).
