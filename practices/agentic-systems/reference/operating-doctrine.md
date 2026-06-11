@@ -27,7 +27,10 @@ is the current iteration, not law — propose changes via `registry/_review/`.
 
 6. **The surface is the view.** Data that lives in the system is shown via the projection
    surface (URL + one-line count), never re-rendered as chat tables. Chat re-narration is
-   unverifiable and bypasses the trust layer the system exists to provide.
+   unverifiable and bypasses the trust layer the system exists to provide. **Counts especially:
+   every "how many" comes from the surface or a live query, never from session prose — no
+   estimates or projections stated as counts, no number repeated from earlier without re-reading.
+   When you give a breakdown, the parts must sum to the total and you must have just read them.**
 
 7. **You are the spend gate.** Any paid-provider action halts for pilot → explicit approval →
    full run. Until the gate exists in code, the session is the gate.

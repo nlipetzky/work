@@ -72,6 +72,13 @@ assets:
      note: "staging -> reviewable CSV (client/expert review sheet, NOT the Airtable transport);
      read-only, --verdicts/--cols/--out flags, companies|contacts; output to <playDir>/output/"}
 context:
+  - {name: RUNBOOK (the authoritative step sequence), version: 2026-06-11, status: defined, verified_by: null,
+     path: "systems/revops-engine/RUNBOOK.md",
+     note: "per-node operating procedure: precondition -> registered action -> writes -> SURFACE
+     VERIFY (the count you must read, with URL) -> gate. Iron rule: every count comes from the
+     surface/query, never session prose; a step is done only when its surface check passes; done =
+     the Deliver gate, not a screened batch. The flow on this record is the canonical step index;
+     the runbook details each step and must not drift from it."}
   - {name: play-prep skill (planner + executor), version: phase-4, status: drafted, verified_by: null,
      note: "agent drives the funnel via the status CLI; validated on two plays"}
   - {name: Per-play classifier prompts, version: null, status: drafted, verified_by: null,
