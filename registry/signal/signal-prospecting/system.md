@@ -42,11 +42,15 @@ assets:
      verified_by: null, note: "the observability spine (migration 0011)"}
   - {name: PrepRunStrip + /api/runs/status, type: surface, ownership: own, status: operating,
      verified_by: null, note: "the live progress bar over a prep run"}
-  - {name: Source loaders (Apollo, Explorium, CSV), type: script, ownership: own, status: built,
-     verified_by: null, note: "context-bound 2026-06-11: loader requires the play folder, writes
-     staging_batch_meta + play_dir (--no-play is the explicit escape; migration 0013); explorium
-     pull needs industry filter before next real run; source column must name the provider, not
-     the batch (fix in flight with flag-resolve v0)"}
+  - {name: Source loaders (Apollo, Explorium, CSV), type: script, ownership: own, status: operating,
+     verified_by: "Apollo loader pulled 140 for mrna_2026_06_11 (2026-06-11)", note: "THREE dedicated
+     staging loaders, all play-folder-bound + staging_batch_meta + --source PROVIDER stamped + full
+     faithful capture + canonical screener columns ensured: load-companies-csv-to-staging.mjs (CSV),
+     load-apollo-to-staging.mjs (search+bulk_enrich via APOLLO_API_KEY; VERIFIED), load-explorium-to-staging.mjs
+     (POST /v1/businesses via EXPLORIUM_API_KEY; path-proven, has --naics industry filter + a pre-flight
+     /v1/credits check; the Konstellation Explorium account is credit-depleted, so unrun in production).
+     NAICS industry filter solved (Apollo organization_naics_codes / Explorium naics_category); source-column
+     fix shipped (--source). Both new loaders dedupe by domain via --dedupe-against."}
   - {name: Canon corpus, type: database, ownership: "shared:canon-ingestion", status: connected,
      verified_by: null, note: "bespoke read — engagement context for play sessions"}
   - {name: Flag writer (flags-v0.sql), type: sql, ownership: own, status: built, verified_by: null,
@@ -54,6 +58,14 @@ assets:
      note: "writes prep_flags work items + prep_attention on staging rows; v0 from the mRNA pilot"}
   - {name: Flag resolver (rule-gated), type: skill, ownership: own, status: to-build, verified_by: null,
      note: "resolves decision flags ONLY with a rule_ref cited; no rule -> escalate; see flag-resolve context rows"}
+  - {name: Contact sourcing loader, type: script, ownership: own, status: to-build, verified_by: null,
+     note: "people-at-company sourcing (Apollo people search) per the play's ICP-titles artifact, into
+     staging.contacts_<batch>; play-folder-bound + --source stamped, same conventions as company loaders.
+     PAID — pilot + approval before any scaled pull"}
+  - {name: Airtable export payload, type: script, ownership: own, status: built, verified_by: null,
+     path: "systems/revops-engine/export-airtable-payload.mjs",
+     note: "delivery transport; runs ONLY after delivery-contract validation and Nick's export approval —
+     only fully-qualified records cross"}
 context:
   - {name: play-prep skill (planner + executor), version: phase-4, status: drafted, verified_by: null,
      note: "agent drives the funnel via the status CLI; validated on two plays"}
@@ -79,7 +91,8 @@ context:
      anything that gates outreach); §6 one-flag pilot before working the batch"}
 flow:
   - {node: Load, assets: ["Source loaders (Apollo, Explorium, CSV)"],
-     impl: load-companies-csv-to-staging.mjs, kind: node script}
+     impl: "load-apollo-to-staging.mjs | load-explorium-to-staging.mjs | load-companies-csv-to-staging.mjs",
+     kind: node scripts (provider-direct, full faithful capture)}
   - {node: Stage, assets: ["Staging schema + promote_staging_batch"],
      impl: "staging.* + staging_batch_meta", kind: Postgres schema}
   - {node: Screen, assets: ["Prep runners (stage1, classify, dedup, route, contacts-screen)", "run-prep orchestrator + --print-plan", "prep_run_status + run-status CLI"],
@@ -88,6 +101,12 @@ flow:
      impl: flags-v0.sql + resolver (to build), kind: SQL + skill}
   - {node: Promote, assets: ["Staging schema + promote_staging_batch"],
      impl: promote_staging_batch(), kind: SQL RPC (SECURITY DEFINER)}
+  - {node: Contacts, assets: ["Prep runners (stage1, classify, dedup, route, contacts-screen)", "Contact sourcing loader"],
+     impl: "contact sourcing per ICP-titles artifact -> contacts staging -> contacts-screen runner",
+     kind: loader (to build) + node script}
+  - {node: Deliver, assets: ["Airtable export payload"],
+     impl: "validate vs play delivery-contract.md -> export-airtable-payload.mjs -> Nick approval",
+     kind: node script + approval gate}
 flow_outputs:
   - {name: Qualified rows -> Core (promotion ledger keeps lineage), status: live}
   - {name: Per-batch prep plan artifact (in the play folder), status: live}
