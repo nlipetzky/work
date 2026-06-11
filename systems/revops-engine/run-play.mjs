@@ -88,16 +88,46 @@ const STEPS = [
     advisory: true,
     async check() {
       // wired = actually executed by a code/classifier step; not-wired = promised in criteria, no implementation
+      // CRM gate is wired the moment its output column exists on the batch (it either ran or it didn't).
+      const t = `companies_${batchId}`;
+      const crmRan = !!(await scalar(`select 1 from information_schema.columns where table_schema='staging' and table_name='${t}' and column_name='crm_status'`));
+      let crmDetail = "deterministic SF join (gate-crm-suppression.mjs)";
+      if (crmRan) {
+        const r = await q(`select count(*) filter (where crm_status is not null) m, count(*) filter (where crm_status='open_opp_review') o, count(*) filter (where crm_status='dnc_suppress') d from staging.${t}`);
+        const x = r.rows?.[0] || {};
+        crmDetail = `ran: ${x.m} SF-matched (open-opp:${x.o} · dnc:${x.d}) — gate-crm-suppression.mjs`;
+      }
       const gates = [
         { name: "modality + exclusions (mRNA vs oligo/discovery/non-NA)", wired: true, by: "classifier (prep_verdict/prep_criteria)" },
+        { name: "CRM suppression / existing-customer (SF mirror)", wired: crmRan, by: crmDetail },
         { name: "North American LAB footprint (not just HQ)", wired: false, by: "criteria asks; source filter is HQ-only; no lab-location check exists" },
         { name: "active wet-lab / process operations", wired: false, by: "classifier infers from blurb; no verification step" },
         { name: "LinkedIn presence/identity", wired: false, by: "unwired-verification family" },
-        { name: "CRM suppression / existing-customer (SF mirror)", wired: false, by: "read path exists, not joined into the screen" },
       ];
       const wired = gates.filter((g) => g.wired).length;
       const detail = gates.map((g) => `\n      ${g.wired ? "WIRED   " : "NOT WIRED"}  ${g.name}\n                 (${g.by})`).join("");
       return { state: wired === gates.length ? "done" : "partial", detail: `${wired}/${gates.length} wired${detail}` };
+    },
+  },
+  {
+    node: "CRM suppression",
+    async check() {
+      const t = `companies_${batchId}`;
+      const ran = !!(await scalar(`select 1 from information_schema.columns where table_schema='staging' and table_name='${t}' and column_name='crm_status'`));
+      if (!ran) return { state: "not started", detail: "gate not run — wired, deterministic SF join" };
+      const r = await q(`select count(*) filter (where crm_status is not null) m, count(*) filter (where crm_status='open_opp_review') o, count(*) filter (where crm_status='dnc_suppress') d, count(*) filter (where crm_status='existing_customer') e from staging.${t}`);
+      const x = r.rows?.[0] || {};
+      return { state: "done", detail: `${x.m} SF-matched — open-opp:${x.o} (review), dnc:${x.d} (suppress), existing:${x.e} (keep+flag)`, count: Number(x.m) };
+    },
+    exec: {
+      runnableWhen: async () => {
+        const t = `companies_${batchId}`;
+        if (!(await tableExists("staging", t))) return false;
+        const scored = Number(await scalar(`select count(*) from staging.${t} where prep_verdict is not null`));
+        const ran = !!(await scalar(`select 1 from information_schema.columns where table_schema='staging' and table_name='${t}' and column_name='crm_status'`));
+        return scored > 0 && !ran;   // screened but CRM gate hasn't run yet
+      },
+      cmd: () => ["node", "gate-crm-suppression.mjs", batchId],
     },
   },
   {
