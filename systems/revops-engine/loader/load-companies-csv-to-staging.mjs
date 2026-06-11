@@ -56,6 +56,7 @@ if (playDir) {
     playbook_name: flag("--playbook") ?? (playbookFile ? playbookFile.replace(/\.md$/, "") : null),
     play_file_path: playbookFile ? path.join(dir, playbookFile) : null,
     guidance_file_path: guidanceFile ? path.join(dir, guidanceFile) : null,
+    play_dir: dir,
   };
 } else {
   console.log(`loading WITHOUT play context (--no-play: ${noPlayReason}) — staging header will show no links`);
@@ -149,8 +150,8 @@ for (let i = 0; i < data.length; i += CHUNK) {
 if (META) {
   const v = (x) => (x === null ? "null" : esc(x));
   await runSql(`delete from public.staging_batch_meta where batch_id = ${esc(batchId)} and entity = 'companies';
-insert into public.staging_batch_meta (batch_id, entity, segment_name, playbook_name, play_file_path, guidance_file_path, created_by)
-values (${esc(batchId)}, 'companies', ${v(META.segment_name)}, ${v(META.playbook_name)}, ${v(META.play_file_path)}, ${v(META.guidance_file_path)}, 'revops-loader');`);
+insert into public.staging_batch_meta (batch_id, entity, segment_name, playbook_name, play_file_path, guidance_file_path, play_dir, created_by)
+values (${esc(batchId)}, 'companies', ${v(META.segment_name)}, ${v(META.playbook_name)}, ${v(META.play_file_path)}, ${v(META.guidance_file_path)}, ${v(META.play_dir)}, 'revops-loader');`);
   console.log("batch meta:", META.segment_name, "|", META.playbook_name ?? "(no playbook name)");
 }
 

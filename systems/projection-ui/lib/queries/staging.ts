@@ -15,6 +15,7 @@ export interface StagingBatch {
   playbook_name: string | null;
   play_file_path: string | null;
   guidance_file_path: string | null;
+  play_dir: string | null;
 }
 
 export interface StagingState {
@@ -64,4 +65,66 @@ export async function promoteBatch(
   });
   if (error) throw new Error(error.message);
   return (Array.isArray(data) ? data[0] : data) ?? {};
+}
+
+export interface PromotionRef {
+  canonical_record_id: string;
+  verdict: string | null;
+  play_name: string | null;
+}
+
+export async function promotedRecords(
+  batchId: string,
+  sourceType: "staging_company" | "staging_contact",
+): Promise<PromotionRef[]> {
+  const { data, error } = await db
+    .from("staging_promotions")
+    .select("canonical_record_id, verdict, play_name")
+    .eq("batch_id", batchId)
+    .eq("source_record_type", sourceType);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as PromotionRef[];
+}
+
+export async function companiesByIds(
+  ids: string[],
+): Promise<Record<string, unknown>[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await db
+    .from("companies")
+    .select("*")
+    .in("id", ids);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Record<string, unknown>[];
+}
+
+export async function contactsByIds(
+  ids: string[],
+): Promise<Record<string, unknown>[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await db
+    .from("contacts")
+    .select("*")
+    .in("id", ids);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Record<string, unknown>[];
+}
+
+// public.contacts has company_id but NO company_name. The Airtable Company link resolves by
+// company name (typecast), so we resolve names from company_id to populate the link.
+export async function companyNamesByIds(
+  ids: string[],
+): Promise<Record<string, string>> {
+  const unique = [...new Set(ids.filter(Boolean))];
+  if (unique.length === 0) return {};
+  const { data, error } = await db
+    .from("companies")
+    .select("id, name")
+    .in("id", unique);
+  if (error) throw new Error(error.message);
+  const map: Record<string, string> = {};
+  for (const r of (data ?? []) as { id: string; name: string | null }[]) {
+    if (r.name) map[r.id] = r.name;
+  }
+  return map;
 }

@@ -14,6 +14,50 @@ interface StagingBatch {
   playbook_name: string | null;
   play_file_path: string | null;
   guidance_file_path: string | null;
+  play_dir: string | null;
+}
+
+// Enumerates the play folder so the operator sees ALL context governing a batch
+// (playbook, guidance, delivery contract, recipe, classifier bundle) — not just two links.
+function PlayContext({ dir }: { dir: string | null }) {
+  const [docs, setDocs] = useState<{ path: string; rel: string }[] | null>(null);
+  const [show, setShow] = useState(false);
+  if (!dir) return null;
+  const rel = dir.replace(/^\/Users\/nplmini\/code\/work\/accounts\//, "");
+  const toggle = async () => {
+    setShow((s) => !s);
+    if (!docs) {
+      const r = await fetch(`/api/context/list?root=${encodeURIComponent(rel)}&exts=md,json,sql`);
+      const j = await r.json();
+      setDocs(j.items ?? []);
+    }
+  };
+  return (
+    <>
+      {" · "}
+      <button onClick={toggle} className="text-accent underline">
+        {show ? "hide context" : "all context"}
+      </button>
+      {show && (
+        <span className="ml-1">
+          {(docs ?? []).map((d) => (
+            <a
+              key={d.path}
+              className="ml-2 text-xs text-muted underline hover:text-white"
+              href={`/api/playfile?path=${encodeURIComponent(d.path)}`}
+              target="_blank"
+              rel="noreferrer"
+              title={d.rel}
+            >
+              {d.path.split("/").slice(-1)[0]}
+            </a>
+          ))}
+          {docs && docs.length === 0 && <span className="ml-2 text-xs text-muted">no docs in play folder</span>}
+          {!docs && <span className="ml-2 text-xs text-muted">loading…</span>}
+        </span>
+      )}
+    </>
+  );
 }
 interface StagingState {
   batches: StagingBatch[];
@@ -359,6 +403,7 @@ export default function StagingPage() {
               <a className="rounded bg-ok/15 px-1.5 py-0.5 text-ok underline" href={`/api/playfile?path=${encodeURIComponent(open.guidance_file_path)}`} target="_blank" rel="noreferrer">Client Guidance</a>
             </>
           )}
+          <PlayContext dir={open.play_dir} />
         </div>
         <button disabled={busy} onClick={() => promote(open)} className="ml-auto rounded bg-accent px-4 py-1.5 text-sm text-black hover:bg-accent/80 disabled:opacity-40">
           {busy ? "Promoting…" : "Promote"}
