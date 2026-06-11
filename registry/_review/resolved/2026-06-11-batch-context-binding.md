@@ -12,3 +12,5 @@ surface renders an "all context" enumeration of the play folder per batch. Migra
 captured staging_batch_meta and list_staging_batches into tracked migrations (partial DB-hygiene
 win). Approving updates the signal-prospecting record's loader asset note and adds the context
 binding to its contract outputs.
+
+resolved: 2026-06-11 — approved by Nick in the Boris session; signal-prospecting record updated (loader asset note, flag-resolve context rows, roadmap).

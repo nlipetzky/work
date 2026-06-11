@@ -43,7 +43,10 @@ assets:
   - {name: PrepRunStrip + /api/runs/status, type: surface, ownership: own, status: operating,
      verified_by: null, note: "the live progress bar over a prep run"}
   - {name: Source loaders (Apollo, Explorium, CSV), type: script, ownership: own, status: built,
-     verified_by: null, note: "explorium pull needs industry filter before next real run"}
+     verified_by: null, note: "context-bound 2026-06-11: loader requires the play folder, writes
+     staging_batch_meta + play_dir (--no-play is the explicit escape; migration 0013); explorium
+     pull needs industry filter before next real run; source column must name the provider, not
+     the batch (fix in flight with flag-resolve v0)"}
   - {name: Canon corpus, type: database, ownership: "shared:canon-ingestion", status: connected,
      verified_by: null, note: "bespoke read — engagement context for play sessions"}
 context:
@@ -53,6 +56,22 @@ context:
      note: "hand-made today; demand context v2 generates these"}
   - {name: Play recipes (prep-recipe.json), version: phase-2, status: drafted, verified_by: null,
      note: "run-as-data; stage registry bounds what a recipe may name"}
+  - {name: Flag-resolve design decisions, version: 2026-06-11, status: defined, verified_by: null,
+     note: "handoff: practices/agentic-systems/HANDOFF-flag-resolve-system-2026-06-11.md. Boris
+     decisions: confidence gate is RULE-EXISTENCE-GATED (decision flags resolve only with rule_ref
+     cited, no rule -> escalate, first answer mints the rule; confidence recorded as telemetry,
+     never gates); prep_flags = one JSONB array + prep_attention scalar, shape locks after Nick
+     reacts to real rows; resolver = skill/sub-agent over runners, Inngest only after resolutions
+     prove deterministic; escalation packet payload owned by engine, presentation owned by Hermes"}
+  - {name: Deepline prior art (adopted into flag-resolve), version: 2026-06-11, status: defined,
+     verified_by: null,
+     note: "practices/agentic-systems/reference/deepline-tactical-execution-discipline.md — §8
+     approval gate (strict section contract -> escalation packet format: Assumptions incl. active
+     rule_refs / Evidence / Tentative read + options / Question; incomplete packet cannot escalate;
+     alert the surface); §17 defaults disclosure (every resolution/packet lists load-bearing
+     rule_refs); §10 over-provision-then-filter (stop-loss: data flags get ONE waterfall pass then
+     the row drops; source ~1.4xN); §7 waterfall (two independent sources before ai_resolving
+     anything that gates outreach); §6 one-flag pilot before working the batch"}
 ---
 
 The prep/screen funnel of the owned execution engine (systems/revops-engine + projection-ui).
@@ -60,6 +79,11 @@ Build phases 0-4 done; Phase 5 (approval gate) and Phase 6 (full funnel) pending
 practices/agentic-systems/ROADMAP.md until those phases migrate here.
 
 Roadmap:
+- **active** — flag-resolve layer v0 (building in the mrna-therapeutics session, 2026-06-11):
+  prep_flags work items + field-coverage gate + the three known rules on the live pilot 10;
+  then the resolver (rule-gated), then the escalation packet (payload here, presentation via
+  Hermes). Design context: see the two agent-context rows above (decisions + Deepline prior art).
 - **next** — approval gate ahead of paid stages (ROADMAP Phase 5); closes the ungated-spend hole.
+  The flag-resolve escalation packet adopts its four-section contract — build them coherently.
 - **later** — full funnel beyond prep (ROADMAP Phase 6).
 - **later** — consume generated artifacts from demand-context v2 instead of hand-made criteria.
