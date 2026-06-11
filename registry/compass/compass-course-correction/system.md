@@ -43,7 +43,10 @@ assets:
   - {name: /api/system routes (list, detail, review), type: script, ownership: own, status: operating,
      verified_by: null, note: "read-only; detail includes per-system git history, review derives the diff feed"}
   - {name: System pages (/system, /system/map, per-system), type: surface, ownership: own, status: operating,
-     verified_by: null, note: "review surface is the landing; map is navigation; pages render the contract"}
+     verified_by: null, note: "review surface is the landing; /system/map is the constellation
+     dashboard (attention strip + state-colored grid, 2026-06-12); per-system pages render the
+     flow dashboard (implementation-labeled pipeline + build gap) when the record declares flow,
+     else the contract layout"}
   - {name: launchd LaunchAgent, type: infrastructure, ownership: own, status: operating,
      verified_by: null, note: "com.nick.projection-ui.plist — login start + auto-restart (kill-tested 2026-06-11); logs in ~/Library/Logs/"}
   - {name: Registry smoke test, type: script, ownership: own, status: operating,
