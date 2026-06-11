@@ -13,6 +13,7 @@ export async function GET() {
     clusters: record.clusters, class: record.class, lifecycle: record.lifecycle,
     autonomy: record.autonomy, flags: record.flags, stub: record.stub,
     outcome: record.outcome, warnings,
+    dates: record.dates, now: record.now,
   }));
   return NextResponse.json({ count: systems.length, systems, errors: reg.errors });
 }
