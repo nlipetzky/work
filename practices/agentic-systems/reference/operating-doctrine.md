@@ -50,3 +50,15 @@ is the current iteration, not law — propose changes via `registry/_review/`.
     while leaving the producing path unchanged is not implementation — it's the appearance of
     one, and it will resurface as a trust break. If you fix an instance, say so explicitly and
     name where the path-level fix belongs.
+
+12. **Work the registered flow — no ad-hoc data work.** Before touching data, open the registry
+    record of the system you're operating (e.g. `registry/signal/signal-prospecting/system.md`)
+    and map your action to a flow node; use that node's registered implementation. Answer four
+    questions FROM the record, not from improvisation: (1) what transport/tool — the registered
+    one? (2) where does it write, and what schema is there? (3) capture policy — full faithful
+    capture, always (re-pulling costs money; tomorrow's question needs fields you didn't think
+    of)? (4) is this form reusable — would the next play call it as-is? If the flow has no
+    implementation for your case, that is a DECLARED GAP: add the to-build asset row (or a
+    review item), build the piece into the engine, register it, then use it. The flow itself is
+    iterable — propose a new node, missing context, or a reorder the same way. A scratch script
+    that solves today's batch and registers nothing is the anti-pattern this rule exists to kill.
