@@ -1,0 +1,12 @@
+{
+  "name": "wetlab",
+  "description": "North American wet-lab / process-dev / GMP site presence, researched from the company's own website.",
+  "promptFile": "gates/wetlab.prompt.md",
+  "model": "claude-sonnet-4-6",
+  "inputs": { "Name": "name", "Domain": "domain" },
+  "runConditionSql": "prep_verdict in ('IN','NARROW')",
+  "outputColumn": "gate_wetlab",
+  "detailColumn": "gate_wetlab_detail",
+  "verdictField": "verdict",
+  "maxSearchUses": 5
+}

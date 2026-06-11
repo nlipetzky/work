@@ -97,12 +97,20 @@ const STEPS = [
         const x = r.rows?.[0] || {};
         crmDetail = `ran: ${x.m} SF-matched (open-opp:${x.o} · dnc:${x.d}) — gate-crm-suppression.mjs`;
       }
+      // wet-lab / NA-lab gate: the generic AI-research runner (gate-ai-research.mjs + gates/wetlab).
+      // Wired the moment its output column exists; paid, so operator-triggered, not auto-run.
+      const wetRan = !!(await scalar(`select 1 from information_schema.columns where table_schema='staging' and table_name='${t}' and column_name='gate_wetlab'`));
+      let wetDetail = "generic AI-research gate (gate-ai-research.mjs + gates/wetlab) — PAID, operator-run";
+      if (wetRan) {
+        const r = await q(`select count(*) filter (where gate_wetlab is not null) done, count(*) filter (where gate_wetlab='yes') y, count(*) filter (where gate_wetlab='no') n from staging.${t}`);
+        const x = r.rows?.[0] || {};
+        wetDetail = `ran on ${x.done} (yes:${x.y} NA wet-lab/process/GMP, no:${x.n}) — gate-ai-research.mjs`;
+      }
       const gates = [
         { name: "modality + exclusions (mRNA vs oligo/discovery/non-NA)", wired: true, by: "classifier (prep_verdict/prep_criteria)" },
         { name: "CRM suppression / existing-customer (SF mirror)", wired: crmRan, by: crmDetail },
-        { name: "North American LAB footprint (not just HQ)", wired: false, by: "criteria asks; source filter is HQ-only; no lab-location check exists" },
-        { name: "active wet-lab / process operations", wired: false, by: "classifier infers from blurb; no verification step" },
-        { name: "LinkedIn presence/identity", wired: false, by: "unwired-verification family" },
+        { name: "NA lab footprint + wet-lab/process/GMP ops", wired: wetRan, by: wetDetail },
+        { name: "LinkedIn presence/identity", wired: false, by: "unwired — a generic AI-research gate config away (swap the prompt)" },
       ];
       const wired = gates.filter((g) => g.wired).length;
       const detail = gates.map((g) => `\n      ${g.wired ? "WIRED   " : "NOT WIRED"}  ${g.name}\n                 (${g.by})`).join("");
