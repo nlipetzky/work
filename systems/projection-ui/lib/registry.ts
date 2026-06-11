@@ -19,12 +19,14 @@ export interface Contract {
 }
 export interface AssetRow {
   name: string; type: string; ownership: string;
-  status: string; verified_by: string | null; note?: string;
+  status: string; verified_by: string | null; note?: string; path?: string;
 }
 export interface ContextRow {
   name: string; version: string | null;
-  status: string; verified_by: string | null; note?: string;
+  status: string; verified_by: string | null; note?: string; path?: string;
 }
+export interface FlowNode { node: string; assets: string[]; impl?: string; kind?: string }
+export interface DatedItem { date: string; label: string }
 export interface SystemRecord {
   name: string; slug: string; home: string; clusters: string[];
   class: SystemClass; lifecycle: Lifecycle; flags: string[];
@@ -32,6 +34,8 @@ export interface SystemRecord {
   runs_surface: string | null;
   contract: Contract | null;
   assets: AssetRow[]; context: ContextRow[];
+  flow: FlowNode[]; flow_inputs: ContractIO[]; flow_outputs: ContractIO[];
+  dates: DatedItem[]; now: string[];
   body: string; file: string;
 }
 
@@ -68,6 +72,16 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
     }
   }
 
+  for (const node of data.flow ?? []) {
+    if (!node || typeof node !== "object" || !node.node)
+      fail(file, `every flow node needs a non-empty "node" string`);
+  }
+
+  for (const item of data.dates ?? []) {
+    if (!item || typeof item !== "object" || !item.date || !item.label)
+      fail(file, `every dates item needs "date" and "label"`);
+  }
+
   const contract: Contract | null = data.contract
     ? {
         inputs: data.contract.inputs ?? [],
@@ -95,6 +109,11 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
     contract,
     assets: (data.assets ?? []).map((a: AssetRow) => ({ ...a, verified_by: a.verified_by ?? null })),
     context: (data.context ?? []).map((c: ContextRow) => ({ ...c, verified_by: c.verified_by ?? null, version: c.version ?? null })),
+    flow: (data.flow ?? []).map((n: FlowNode) => ({ ...n, assets: n.assets ?? [] })),
+    flow_inputs: data.flow_inputs ?? [],
+    flow_outputs: data.flow_outputs ?? [],
+    dates: (data.dates ?? []).map((d: any) => ({ ...d, date: d.date instanceof Date ? (d.date as Date).toISOString().slice(0, 10) : String(d.date) }) as DatedItem),
+    now: data.now ?? [],
     body: body.trim(),
     file,
   };

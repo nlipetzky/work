@@ -3,6 +3,7 @@ import { parseSystemMd, validateRecord, loadRegistry, CONSTELLATIONS } from "./r
 import { mkdtempSync, mkdirSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
+import type { FlowNode, DatedItem } from "./registry";
 
 const VALID = `---
 name: Demand context
@@ -72,6 +73,65 @@ describe("parseSystemMd", () => {
   it("rejects rows missing name or status", () => {
     const broken = VALID.replace("{name: Extraction skill, version: null, status: to-write, verified_by: null}", "{version: null}");
     expect(() => parseSystemMd(broken, "f")).toThrow(/context.*name and status/);
+  });
+
+  it("flow + dates + now parse and round-trip; asset path round-trips", () => {
+    const rich = `---
+name: Demand context
+slug: demand-context
+home: signal
+clusters: [revops]
+class: core
+lifecycle: defined
+flags: []
+autonomy: manual
+outcome: does x
+flow:
+  - {node: Load, assets: ["Source loaders"], impl: load.mjs, kind: node script}
+  - {node: Stage, assets: [], impl: staging.*, kind: Postgres schema}
+dates:
+  - {date: 2026-06-12, label: "green gate completes"}
+now: ["flag-resolve v0 in progress"]
+assets:
+  - {name: Observation store, type: database, ownership: own, status: to-build, verified_by: null,
+     path: "accounts/clients/foo/bar.sql"}
+context:
+  - {name: Extraction skill, version: null, status: to-write, verified_by: null}
+---
+body
+`;
+    const r = parseSystemMd(rich, "f");
+    expect(r.flow).toHaveLength(2);
+    expect(r.flow[0]).toEqual({ node: "Load", assets: ["Source loaders"], impl: "load.mjs", kind: "node script" });
+    expect(r.flow[1].assets).toEqual([]);
+    expect(r.dates).toHaveLength(1);
+    expect(r.dates[0]).toEqual({ date: "2026-06-12", label: "green gate completes" });
+    expect(r.now).toEqual(["flag-resolve v0 in progress"]);
+    expect((r.assets[0] as any).path).toBe("accounts/clients/foo/bar.sql");
+  });
+
+  it("defaults flow/dates/now to [] when absent", () => {
+    const r = parseSystemMd(VALID, "f");
+    expect(r.flow).toEqual([]);
+    expect(r.dates).toEqual([]);
+    expect(r.now).toEqual([]);
+  });
+
+  it("throws naming the file when a flow node is missing node string", () => {
+    const broken = `---
+name: X
+slug: x
+home: canon
+class: core
+lifecycle: defined
+autonomy: manual
+outcome: does x
+flow:
+  - {assets: [], impl: foo.mjs}
+---
+`;
+    expect(() => parseSystemMd(broken, "registry/x/system.md"))
+      .toThrow(/registry\/x\/system\.md.*flow node/);
   });
 });
 
