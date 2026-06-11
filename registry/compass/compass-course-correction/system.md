@@ -67,8 +67,9 @@ surface. Built 2026-06-10 from the spec after the STATUS.md flat-list approach w
 noise. This system is Compass's missing Core from the constellation doc — the present tense in
 "decides" — and the registry it maintains is its own substrate.
 
-Roadmap:
-- **v0 (shipped 2026-06-10)** — registry + parser + three read-only views; launchd keep-alive (2026-06-11).
-- **next** — prove the loop: first review item resolved in-session (demand-context definition is queued), last_reviewed advancing, exit-proposals becoming routine.
-- **later** — SessionStart hook (only after the loop proves itself; enforcement-before-curation was rejected).
+Roadmap (the determinism ratchet — sequence set with Nick 2026-06-12):
+- **active** — prove the loop on the mRNA play: registered-flow run end-to-end, queued review items decided at /system/review, last_reviewed advancing.
+- **next** — SessionStart hook ("build the hook"): every workspace session auto-loads doctrine + the relevant registry record. Moves remember-to-read into delivered-by-default.
+- **next** — play-brief gate in run-prep ("gate the brief"): the engine refuses an un-briefed play; bundle-first moves from prompt to code.
+- **later** — standard system kit written as the template (record/rails/surface/gates/memory/hooks) AFTER demand-context instantiates it as the third proof.
 - **later** — curation actions in the UI (approve/park/kill); Airtable roadmap consolidation/retirement.
