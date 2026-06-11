@@ -68,9 +68,16 @@ assets:
   - {name: CRM-suppression gate, type: script, ownership: own, status: built,
      verified_by: "ran on mrna_2026_06_11 -> 5 SF-matched, 3 open-opp (2026-06-11)",
      path: "systems/revops-engine/gate-crm-suppression.mjs",
-     note: "first vapor gate made real: deterministic SF join (staging->Core sf_* by normalized
-     domain), no enrichment; stamps crm_status (dnc_suppress|open_opp_review|existing_customer|clear).
-     Remaining NOT-WIRED gates: NA-lab footprint, wet-lab ops, LinkedIn (need data we don't yet hold)."}
+     note: "deterministic SF join (staging->Core sf_* by normalized domain), no enrichment; stamps
+     crm_status (dnc_suppress|open_opp_review|existing_customer|clear)."}
+  - {name: Generic AI-research gate runner, type: script, ownership: own, status: built,
+     verified_by: "wetlab gate piloted on 2 mRNA rows, web research real (2026-06-11)",
+     path: "systems/revops-engine/gate-ai-research.mjs",
+     note: "ONE harness, swap the prompt. Program selects rows, fills a prompt template per row,
+     calls Claude (web-search) as a function, parses the structured verdict, writes it back. Every
+     soft gate is a CONFIG in gates/ (prompt + io map + run condition). PAID -> --limit pilot,
+     operator-run. Gates built: gates/wetlab (NA lab + wet-lab/process/GMP). Next swaps: LinkedIn,
+     lab-location detail — each a config, not code. This is the AI-as-called-function layer."}
   - {name: Contact sourcing loader, type: script, ownership: own, status: to-build, verified_by: null,
      note: "people-at-company sourcing (Apollo people search) per the play's ICP-titles artifact, into
      staging.contacts_<batch>; play-folder-bound + --source stamped, same conventions as company loaders.
