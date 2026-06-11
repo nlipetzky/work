@@ -66,6 +66,11 @@ assets:
      path: "systems/revops-engine/export-airtable-payload.mjs",
      note: "delivery transport; runs ONLY after delivery-contract validation and Nick's export approval —
      only fully-qualified records cross"}
+  - {name: Staging CSV exporter, type: script, ownership: own, status: built,
+     verified_by: "ran on mrna_2026_06_11 -> 42-row review CSV (2026-06-11)",
+     path: "systems/revops-engine/export-staging-csv.mjs",
+     note: "staging -> reviewable CSV (client/expert review sheet, NOT the Airtable transport);
+     read-only, --verdicts/--cols/--out flags, companies|contacts; output to <playDir>/output/"}
 context:
   - {name: play-prep skill (planner + executor), version: phase-4, status: drafted, verified_by: null,
      note: "agent drives the funnel via the status CLI; validated on two plays"}
@@ -104,9 +109,9 @@ flow:
   - {node: Contacts, assets: ["Prep runners (stage1, classify, dedup, route, contacts-screen)", "Contact sourcing loader"],
      impl: "contact sourcing per ICP-titles artifact -> contacts staging -> contacts-screen runner",
      kind: loader (to build) + node script}
-  - {node: Deliver, assets: ["Airtable export payload"],
-     impl: "validate vs play delivery-contract.md -> export-airtable-payload.mjs -> Nick approval",
-     kind: node script + approval gate}
+  - {node: Deliver, assets: ["Airtable export payload", "Staging CSV exporter"],
+     impl: "validate vs play delivery-contract.md -> export-staging-csv.mjs (review sheet) | export-airtable-payload.mjs (transport) -> Nick approval",
+     kind: node scripts + approval gate}
 flow_outputs:
   - {name: Qualified rows -> Core (promotion ledger keeps lineage), status: live}
   - {name: Per-batch prep plan artifact (in the play folder), status: live}
