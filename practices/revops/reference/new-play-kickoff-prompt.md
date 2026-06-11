@@ -8,7 +8,7 @@ never add engagement-specific lines here; those belong in the engagement's CLAUD
 
 New play kickoff. You are in an empty play folder: the folder name is the play slug, the path above it identifies the engagement. Work in this order and do not skip ahead.
 
-1. Orient. Read the engagement CLAUDE.md (walk up to `accounts/<type>/<name>/`), the revops practice context, and `~/code/work/systems/revops-engine/` CLAUDE.md + PLAY-AGENT-BRIEF.md. Use `~/code/work/accounts/clients/teknova/plays/ngabs-next-gen-antibodies/` as the structural reference for a complete play bundle — copy its shape, never its content.
+1. Orient. Read `~/code/work/practices/agentic-systems/reference/operating-doctrine.md` FIRST — it defines how decisions are made in every session here (recommend-then-ratify, conflict handling, escalation routes). Then the engagement CLAUDE.md (walk up to `accounts/<type>/<name>/`), the revops practice context, and `~/code/work/systems/revops-engine/` CLAUDE.md + PLAY-AGENT-BRIEF.md. Use `~/code/work/accounts/clients/teknova/plays/ngabs-next-gen-antibodies/` as the structural reference for a complete play bundle — copy its shape, never its content.
 
 2. Intake first. Ask me for the play's source material: what the client/expert actually asked for, plus any docs, emails, or lists. Everything downstream must trace to provided material — if you find yourself inventing the offer or the targeting, stop and ask. Clarifying questions come one at a time, as plain chat text.
 
