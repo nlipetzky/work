@@ -21,6 +21,7 @@ import fs from "fs";
 import { markDone } from "./lib/run-status.mjs";
 import { resolveReadFields } from "./lib/read-fields.mjs";
 import { flushBatched } from "./lib/db-batch.mjs";
+import { parseJsonLoose } from "./lib/ai-call.mjs";
 
 const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
@@ -102,9 +103,17 @@ async function classifyRow(row) {
     break;
   }
   if (!res.ok) throw new Error(`anthropic ${res.status}: ${JSON.stringify(j).slice(0, 200)}`);
-  let txt = (j.content?.[0]?.text || "").trim();
-  txt = txt.replace(/^```(json)?/i, "").replace(/```$/, "").trim();
-  return JSON.parse(txt);
+  const txt = (j.content?.[0]?.text || "").trim();
+  const parsed = txt ? parseJsonLoose(txt) : null;
+  if (!parsed) {
+    // The model returned empty/unparseable output — observed on dual-use bio rows (broad-spectrum
+    // antiviral / pandemic-prep / vaccine) where a safety refusal yields no text. Do NOT drop the
+    // row into a silent error: route it to NEEDS_REVIEW so the Verify node (which reads the company's
+    // own site) makes the real evidence call. Path fix — every future batch gets this, not just these.
+    return { verdict: "NEEDS_REVIEW", confidence: "LOW", needs_evidence: true,
+      rationale: `classifier returned ${txt ? "unparseable" : "empty"} output (stop_reason=${j.stop_reason || "?"}); routed to Verify/review` };
+  }
+  return parsed;
 }
 
 // Batched-write adoption (§6.1 fix). Per-row Management-API writes 429-wall over a 500-row batch;
