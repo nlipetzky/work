@@ -81,10 +81,21 @@ assets:
      verified_by: "wetlab gate piloted on 2 mRNA rows, web research real (2026-06-11)",
      path: "systems/revops-engine/gate-ai-research.mjs",
      note: "ONE harness, swap the prompt. Program selects rows, fills a prompt template per row,
-     calls Claude (web-search) as a function, parses the structured verdict, writes it back. Every
+     calls Claude (web-search) as a function via the shared AI-call path (lib/ai-call.mjs, same client +
+     backoff + parse as verify-runner), parses the structured verdict, writes it back. Every
      soft gate is a CONFIG in gates/ (prompt + io map + run condition). PAID -> --limit pilot,
      operator-run. Gates built: gates/wetlab (NA lab + wet-lab/process/GMP). Next swaps: LinkedIn,
      lab-location detail — each a config, not code. This is the AI-as-called-function layer."}
+  - {name: Evidence-verification gate (verify-runner), type: script, ownership: own, status: built,
+     verified_by: "prior 140-batch -> 12 evidence-qualified of 42 classifier-survivors (2026-06-11)",
+     path: "systems/revops-engine/verify-runner.mjs",
+     note: "THE Verify node. classify INFERS from a blurb; this CONFIRMS — fetches the company's own
+     site, extracts every North-American site, classifies each (rnd_wetlab|process_dev|gmp_mfg|
+     qc_analytical|sales_admin|unclear) with an evidence URL, reconfirms the mRNA program. prep_qualified
+     is recomputed DETERMINISTICALLY (a real NA lab site evidenced AND mRNA not contradicted) — never
+     trusted from the model; no fetched evidence => not qualified. Shares the one AI-call path
+     (lib/ai-call.mjs) + batched writes (lib/db-batch.mjs) with gate-ai-research. 'Qualified' means
+     evidence-verified, everywhere (surface, counts, client artifacts)."}
   - {name: Contact sourcing loader, type: script, ownership: own, status: to-build, verified_by: null,
      note: "people-at-company sourcing (Apollo people search) per the play's ICP-titles artifact, into
      staging.contacts_<batch>; play-folder-bound + --source stamped, same conventions as company loaders.
@@ -138,6 +149,9 @@ flow:
      impl: run-prep.mjs + 5 stage runners, kind: node scripts (recipe-driven)}
   - {node: Flag-resolve, assets: ["Flag writer (flags-v0.sql)", "Flag resolver (rule-gated)"],
      impl: flags-v0.sql + resolver (to build), kind: SQL + skill}
+  - {node: Verify, assets: ["Evidence-verification gate (verify-runner)"],
+     impl: "verify-runner.mjs — fetch own site -> classify NA sites w/ evidence URL -> deterministic prep_qualified; recall lane = a gate-ai-research search config for the 'unclear' set",
+     kind: node script (shared AI-call path, evidence-gated; only prep_qualified rows may promote)}
   - {node: Promote, assets: ["Staging schema + promote_staging_batch"],
      impl: promote_staging_batch(), kind: SQL RPC (SECURITY DEFINER)}
   - {node: Contacts, assets: ["Prep runners (stage1, classify, dedup, route, contacts-screen)", "Contact sourcing loader"],
@@ -151,6 +165,8 @@ flow_outputs:
   - {name: Per-batch prep plan artifact (in the play folder), status: live}
   - {name: Run status -> /runs (PrepRunStrip), status: live}
 now:
+  - "Verify node registered (verify-runner) — evidence-gated qualification between Flag-resolve and Promote"
+  - "engine hardened: batched writes (lib/db-batch.mjs) survive 500+ row batches; one AI-call path (lib/ai-call.mjs)"
   - "flag-resolve v0 — flags + decision packets landing on the staging surface"
   - "source-column fix in the loader (source = provider, not batch)"
 ---
