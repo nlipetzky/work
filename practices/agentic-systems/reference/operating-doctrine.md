@@ -44,3 +44,9 @@ is the current iteration, not law — propose changes via `registry/_review/`.
 10. **Hold it loosely.** This is an emerging business. Name judgment calls as judgment calls,
     flag rule-vs-evidence conflicts instead of auto-resolving toward the rule, and write in
     provisional language where reality hasn't voted yet.
+
+11. **Fix the path, not the instance.** When Nick asks for a capability, the test is: does the
+    NEXT batch / play / session get it for free? Patching the current view, row, or artifact
+    while leaving the producing path unchanged is not implementation — it's the appearance of
+    one, and it will resurface as a trust break. If you fix an instance, say so explicitly and
+    name where the path-level fix belongs.
