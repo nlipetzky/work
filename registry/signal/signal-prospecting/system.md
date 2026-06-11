@@ -61,10 +61,17 @@ assets:
   - {name: run-play.mjs (deterministic driver), type: script, ownership: own, status: built,
      verified_by: "walks mrna_2026_06_11 -> stops at Flag-resolve gate (2026-06-11)",
      path: "systems/revops-engine/run-play.mjs",
-     note: "THE SPINE. Code-driven, not agent-driven. --status reads real DB state (cannot narrate a
-     count); --execute runs auto-steps as subprocesses, re-verifies from the DB, stops at gates.
-     Reports each verification gate WIRED/NOT WIRED — cannot claim a screen that has no code. Next
-     layers: autonomy (Inngest schedule), AI-as-called-function for judgment steps."}
+     note: "THE SPINE. Code-driven, not agent-driven. --status/--json reads real DB state (cannot
+     narrate a count); --execute runs auto-steps as subprocesses, re-verifies from the DB, stops at
+     gates. Reports each verification gate WIRED/NOT WIRED — cannot claim a screen that has no code."}
+  - {name: run-play-all + launchd autonomy, type: infrastructure, ownership: own, status: operating,
+     verified_by: "launchd-fired clean on 4 in-flight batches (2026-06-11)",
+     path: "systems/revops-engine/run-play-all.mjs",
+     note: "the OUT-OF-CHAT layer. Discovers in-flight batches from staging_batch_meta (play_dir
+     bound at load), runs the driver on each, writes .run-status.json; scheduled every 15min via
+     com.nick.run-play-all.plist. Read-only (reports + parks at gates); auto-advance + Inngest
+     event-driven are the next increments. Remaining build-sequence layer: AI-as-function is DONE
+     (gate-ai-research); the full out-of-chair endgame is auto-advance once proven safe on spend."}
   - {name: CRM-suppression gate, type: script, ownership: own, status: built,
      verified_by: "ran on mrna_2026_06_11 -> 5 SF-matched, 3 open-opp (2026-06-11)",
      path: "systems/revops-engine/gate-crm-suppression.mjs",
