@@ -141,7 +141,7 @@ export default function SystemDashboard() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <main className="mx-auto max-w-6xl p-6">
+      <main className="mx-auto max-w-6xl p-6 min-h-full flex flex-col">
         {/* header */}
         <div className="mb-4 flex items-baseline justify-between">
           <h1 className="text-xl font-semibold text-white">Agentic System</h1>
@@ -178,11 +178,11 @@ export default function SystemDashboard() {
         ) : null}
 
         {/* constellation grid */}
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="flex-1 grid grid-cols-2 gap-3 md:grid-cols-4">
           {ORDER.map((home) => (
-            <div key={home} className="rounded border border-ink-700 bg-ink-900 p-3">
+            <div key={home} className="flex flex-col rounded border border-ink-700 bg-ink-900 p-3">
               <h2 className="mb-2 text-sm font-semibold capitalize text-white">{home}</h2>
-              <div className="space-y-0.5">
+              <div className="flex-1 space-y-0.5">
                 {(byHome.get(home) ?? []).map((s) => (
                   <SysChip key={s.slug} s={s} reviewSlugs={reviewSlugs} />
                 ))}
