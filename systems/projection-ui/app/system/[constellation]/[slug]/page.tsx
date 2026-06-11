@@ -201,16 +201,16 @@ function FlowBand({
       <p className="mb-3 text-center text-sm text-muted">↓</p>
 
       {/* pipeline nodes */}
-      <div className="flex flex-wrap items-stretch gap-1 overflow-x-auto">
+      <div className="flex flex-wrap items-stretch gap-1 md:flex-nowrap">
         {flow.map((node, idx) => {
           const state = nodeState(node, allRows);
           const isOpen = openNode === node.node;
           return (
-            <div key={node.node} className="flex items-center">
-              {idx > 0 && <span className="mx-1 text-sm text-muted">→</span>}
+            <div key={node.node} className="flex min-w-0 flex-1 items-center">
+              {idx > 0 && <span className="mx-1 shrink-0 text-sm text-muted">→</span>}
               <button
                 onClick={() => setOpenNode(isOpen ? null : node.node)}
-                className={`rounded border px-3 py-2 text-left transition-colors hover:opacity-80 ${NODE_STATE_CLASSES[state]}`}
+                className={`h-full w-full rounded border px-3 py-2 text-left transition-colors hover:opacity-80 ${NODE_STATE_CLASSES[state]}`}
                 style={{ minWidth: "7rem" }}
               >
                 <p className="text-sm font-medium text-white">{node.node}</p>
@@ -365,7 +365,7 @@ export default function SystemPage() {
   const flowOutputs: IO[] = r.flow_outputs?.length ? r.flow_outputs : (r.contract?.outputs ?? []);
 
   return (
-    <main className="mx-auto max-w-3xl p-6">
+    <main className="mx-auto max-w-screen-xl p-6">
       {/* breadcrumb */}
       <p className="mb-1 text-xs text-ink-600">
         <Link href="/system/map" className="hover:underline">map</Link> / {r.home}
@@ -407,7 +407,7 @@ export default function SystemPage() {
       </div>
 
       {/* outcome */}
-      <p className="mb-4 text-sm text-muted"><span className="text-white">One outcome:</span> {r.outcome}</p>
+      <p className="mb-4 max-w-prose text-sm text-muted"><span className="text-white">One outcome:</span> {r.outcome}</p>
 
       {/* flow band — gated on flow presence */}
       {hasFlow && (
@@ -432,7 +432,7 @@ export default function SystemPage() {
       {/* emit contract */}
       {r.contract ? (
         <Section title="Emit contract">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             <div className="rounded border border-ink-700 bg-ink-900 p-3">
               <p className="mb-1 text-xs text-ink-600">Inputs</p>
               {r.contract.inputs.map((x) => (
@@ -486,7 +486,7 @@ export default function SystemPage() {
 
       {r.body && (
         <Section title="Notes & roadmap">
-          <div id="roadmap" className="md-prose text-sm">
+          <div id="roadmap" className="md-prose max-w-3xl text-sm">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{r.body}</ReactMarkdown>
           </div>
         </Section>
