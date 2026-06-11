@@ -108,7 +108,13 @@ export function parseSystemMd(content: string, file: string): SystemRecord {
     runs_surface: data.runs_surface ?? null,
     contract,
     assets: (data.assets ?? []).map((a: AssetRow) => ({ ...a, verified_by: a.verified_by ?? null })),
-    context: (data.context ?? []).map((c: ContextRow) => ({ ...c, verified_by: c.verified_by ?? null, version: c.version ?? null })),
+    context: (data.context ?? []).map((c: ContextRow) => ({
+      ...c,
+      verified_by: c.verified_by ?? null,
+      version: c.version == null ? null
+        : (c.version as unknown) instanceof Date ? ((c.version as unknown) as Date).toISOString().slice(0, 10)
+        : String(c.version),
+    })),
     flow: (data.flow ?? []).map((n: FlowNode) => ({ ...n, assets: n.assets ?? [] })),
     flow_inputs: data.flow_inputs ?? [],
     flow_outputs: data.flow_outputs ?? [],
