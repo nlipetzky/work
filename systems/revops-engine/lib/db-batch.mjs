@@ -23,11 +23,14 @@ const sqlLit = (v) => v === null || v === undefined ? "null" : `'${String(v).rep
  * @param {string[]} cols     columns to set (text)
  * @param {object[]} rows     each row has keyCol + every col in `cols`
  * @param {string} keyCast    SQL cast for the key in VALUES, default "uuid"
+ * @param {object} casts      optional per-column SQL cast for the SET, e.g. {prep_criteria:"jsonb"}.
+ *                            VALUES literals are always text; a cast coerces them into the dst type
+ *                            (jsonb/boolean/int). Omitted columns stay text. Default {}.
  * @returns {string|null}     SQL, or null when rows is empty
  */
-export function buildBatchUpdate(table, keyCol, cols, rows, keyCast = "uuid") {
+export function buildBatchUpdate(table, keyCol, cols, rows, keyCast = "uuid", casts = {}) {
   if (!rows || rows.length === 0) return null;
-  const setClause = cols.map((c) => `"${c}" = src."${c}"`).join(", ");
+  const setClause = cols.map((c) => `"${c}" = src."${c}"${casts[c] ? "::" + casts[c] : ""}`).join(", ");
   const values = rows.map((r) =>
     `(${sqlLit(r[keyCol])}, ${cols.map((c) => sqlLit(r[c])).join(", ")})`
   ).join(",\n    ");
@@ -44,11 +47,11 @@ export function buildBatchUpdate(table, keyCol, cols, rows, keyCast = "uuid") {
  * Chunk rows and flush each chunk as one UPDATE via a caller-supplied async runSql(sql).
  * Returns the number of rows flushed. runSql should already carry the 429 retry-backoff.
  */
-export async function flushBatched(runSql, table, keyCol, cols, rows, { chunk = 25, keyCast = "uuid" } = {}) {
+export async function flushBatched(runSql, table, keyCol, cols, rows, { chunk = 25, keyCast = "uuid", casts = {} } = {}) {
   let n = 0;
   for (let i = 0; i < rows.length; i += chunk) {
     const slice = rows.slice(i, i + chunk);
-    const sql = buildBatchUpdate(table, keyCol, cols, slice, keyCast);
+    const sql = buildBatchUpdate(table, keyCol, cols, slice, keyCast, casts);
     if (sql) { await runSql(sql); n += slice.length; }
   }
   return n;

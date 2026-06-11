@@ -31,6 +31,23 @@ test("escapes single quotes and nulls", () => {
   assert.match(sql, /, null\)/);
 });
 
+test("per-column casts coerce text VALUES into dst type; uncast cols stay text", () => {
+  const sql = buildBatchUpdate("staging.t", "id", ["prep_criteria", "prep_needs_evidence", "prep_rationale"],
+    [{ id: "u1", prep_criteria: '{"x":1}', prep_needs_evidence: "true", prep_rationale: "ok" }],
+    "uuid", { prep_criteria: "jsonb", prep_needs_evidence: "boolean" });
+  assert.match(sql, /"prep_criteria" = src\."prep_criteria"::jsonb/);
+  assert.match(sql, /"prep_needs_evidence" = src\."prep_needs_evidence"::boolean/);
+  assert.match(sql, /"prep_rationale" = src\."prep_rationale"(?!::)/);   // no cast on text col
+});
+
+test("flushBatched passes casts through to each chunk", async () => {
+  const calls = [];
+  const n = await flushBatched(async (sql) => calls.push(sql), "staging.t", "id", ["v"],
+    [{ id: "u1", v: "1" }], { casts: { v: "int" } });
+  assert.equal(n, 1);
+  assert.match(calls[0], /"v" = src\."v"::int/);
+});
+
 test("flushBatched chunks rows and counts flushed", async () => {
   const calls = [];
   const fakeRun = async (sql) => calls.push(sql);

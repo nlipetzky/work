@@ -20,6 +20,7 @@
 import fs from "fs";
 import { markDone } from "./lib/run-status.mjs";
 import { resolveReadFields } from "./lib/read-fields.mjs";
+import { flushBatched } from "./lib/db-batch.mjs";
 
 const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
@@ -52,15 +53,19 @@ const SYSTEM_PROMPT = fs.readFileSync(`${PLAY_DIR}/classifier-prompt.md`, "utf8"
 // via <classifier_dir>/read-fields.json; absent => the ngabs default (see lib/read-fields.mjs).
 const READ_FIELDS = resolveReadFields(PLAY_DIR);
 
-const sqlEsc = (s) => String(s).replace(/'/g, "''");
-
-async function sql(query) {
+async function sql(query, attempt = 0) {
   const res = await fetch(`https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`, {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
     body: JSON.stringify({ query }),
   });
   const text = await res.text();
+  // Survive the Management-API rate limit (429) and instance saturation (544/503): back off and retry
+  // instead of throwing the row into a permanent error. The per-row write pattern trips these on big batches.
+  if ((res.status === 429 || res.status === 503 || res.status === 544) && attempt < 9) {
+    await new Promise((r) => setTimeout(r, Math.min(20000, 1500 * Math.pow(1.7, attempt))));
+    return sql(query, attempt + 1);
+  }
   if (!res.ok) throw new Error(`mgmt-api ${res.status}: ${text.slice(0, 300)}`);
   try { return JSON.parse(text); } catch { return text; }
 }
@@ -77,41 +82,75 @@ async function classifyRow(row) {
   const userMsg =
     `Classify this company against the ngAbs play. Return ONLY the JSON object.\n\n${lines.join("\n")}`;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": ANTHROPIC_KEY,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL, max_tokens: 1024, system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userMsg }],
-    }),
+  const body = JSON.stringify({
+    model: MODEL, max_tokens: 1024, system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: userMsg }],
   });
-  const j = await res.json();
+  let res, j;
+  for (let attempt = 0; ; attempt++) {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body,
+    });
+    // survive Anthropic rate-limit (429) and overload (529): back off and retry
+    if ((res.status === 429 || res.status === 529) && attempt < 8) {
+      await new Promise((r) => setTimeout(r, Math.min(30000, 2000 * Math.pow(1.7, attempt))));
+      continue;
+    }
+    j = await res.json();
+    break;
+  }
   if (!res.ok) throw new Error(`anthropic ${res.status}: ${JSON.stringify(j).slice(0, 200)}`);
   let txt = (j.content?.[0]?.text || "").trim();
   txt = txt.replace(/^```(json)?/i, "").replace(/```$/, "").trim();
   return JSON.parse(txt);
 }
 
-async function persist(row, v) {
+// Batched-write adoption (§6.1 fix). Per-row Management-API writes 429-wall over a 500-row batch;
+// instead accumulate per-row results and flush one UPDATE … FROM (VALUES …) per 25. Buffer access is
+// race-free: the push→length-check→splice runs synchronously before any await, and JS is single-threaded.
+const PREP_COLS = ["prep_verdict", "prep_confidence", "prep_criteria", "prep_rationale",
+  "prep_evidence", "prep_role", "prep_needs_evidence", "prep_stage"];
+const PREP_CASTS = { prep_criteria: "jsonb", prep_needs_evidence: "boolean" };
+const FLUSH_AT = 25;
+let buffer = [], flushed = 0;
+
+function okRow(row, v) {
   const cites = []
     .concat(v.source ? [`source:${v.source}`] : [])
     .concat(v.evidence_wanted ? [`wants:${v.evidence_wanted}`] : [])
     .join("; ");
-  const q = `update ${stagingTbl} set
-    prep_verdict = '${sqlEsc(v.verdict || "NEEDS_REVIEW")}',
-    prep_confidence = '${sqlEsc(v.confidence || "LOW")}',
-    prep_criteria = '${sqlEsc(JSON.stringify(v.criteria || {}))}'::jsonb,
-    prep_rationale = '${sqlEsc(v.rationale || "")}',
-    prep_evidence = '${sqlEsc(cites)}',
-    prep_role = '${sqlEsc(v.role || "unknown")}',
-    prep_needs_evidence = ${v.needs_evidence ? "true" : "false"},
-    prep_stage = 'semantic'
-    where id = '${row.id}'`;
-  await sql(q);
+  return {
+    id: row.id,
+    prep_verdict: v.verdict || "NEEDS_REVIEW",
+    prep_confidence: v.confidence || "LOW",
+    prep_criteria: JSON.stringify(v.criteria || {}),
+    prep_rationale: v.rationale || "",
+    prep_evidence: cites,
+    prep_role: v.role || "unknown",
+    prep_needs_evidence: v.needs_evidence ? "true" : "false",
+    prep_stage: "semantic",
+  };
+}
+function errRow(row, msg) {
+  return {
+    id: row.id, prep_verdict: null, prep_confidence: null, prep_criteria: null,
+    prep_rationale: String(msg).slice(0, 200), prep_evidence: null, prep_role: null,
+    prep_needs_evidence: null, prep_stage: "semantic_error",
+  };
+}
+async function enqueue(r) {
+  buffer.push(r);
+  if (buffer.length >= FLUSH_AT) {
+    const slice = buffer.splice(0, FLUSH_AT);
+    flushed += await flushBatched(sql, stagingTbl, "id", PREP_COLS, slice, { casts: PREP_CASTS });
+  }
+}
+async function flushRest() {
+  if (buffer.length) {
+    flushed += await flushBatched(sql, stagingTbl, "id", PREP_COLS, buffer.splice(0), { casts: PREP_CASTS });
+  }
 }
 
 async function pool(items, k, fn) {
@@ -137,19 +176,19 @@ const tally = {}; let needs = 0;
 await pool(rows, CONCURRENCY, async (row) => {
   try {
     const v = await classifyRow(row);
-    await persist(row, v);
+    await enqueue(okRow(row, v));
     tally[v.verdict] = (tally[v.verdict] || 0) + 1;
     if (v.needs_evidence) needs++;
     ok++;
-    if (ok % 10 === 0) console.log(`  ...${ok}/${rows.length}`);
+    if (ok % 25 === 0) console.log(`  ...${ok}/${rows.length} (flushed ${flushed})`);
   } catch (e) {
     err++;
-    await sql(`update ${stagingTbl} set prep_stage='semantic_error',
-               prep_rationale='${sqlEsc(String(e.message).slice(0, 200))}' where id='${row.id}'`);
+    await enqueue(errRow(row, e.message));
   }
 });
+await flushRest();
 
-console.log(`\nclassified ok: ${ok}, errors: ${err}`);
+console.log(`\nclassified ok: ${ok}, errors: ${err}, rows flushed: ${flushed}`);
 console.log("verdict distribution:", JSON.stringify(tally));
 console.log(`needs_evidence (research-lane candidates): ${needs}`);
 
