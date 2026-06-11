@@ -26,6 +26,7 @@ const args = process.argv.slice(2);
 const batchId = args.find((a) => !a.startsWith("--"));
 const playDir = args.filter((a) => !a.startsWith("--"))[1];
 const EXECUTE = args.includes("--execute");
+const JSON_OUT = args.includes("--json");
 
 if (!batchId) { console.error("usage: run-play.mjs <batchId> <playDir> [--execute]"); process.exit(1); }
 
@@ -179,23 +180,33 @@ const STEPS = [
 ];
 
 const DONE = new Set(["done", "artifact built"]);
-const line = (step, v) => {
-  const mark = DONE.has(v.state) ? "[x]" : v.state.startsWith("waiting") || v.state === "partial" ? "[!]" : "[ ]";
-  console.log(`  ${mark} ${step.node.padEnd(20)} ${v.state.toUpperCase()}`);
-  console.log(`      ${v.detail}`);
-  if (step.gate) console.log(`      ⛔ gate: ${step.gate}`);
+const line = (step, v) => renderLine({ node: step.node, state: v.state, detail: v.detail, gate: step.gate || null });
+const renderLine = (r) => {
+  const mark = DONE.has(r.state) ? "[x]" : r.state.startsWith("waiting") || r.state === "partial" ? "[!]" : "[ ]";
+  console.log(`  ${mark} ${r.node.padEnd(20)} ${r.state.toUpperCase()}`);
+  console.log(`      ${r.detail}`);
+  if (r.gate) console.log(`      ⛔ gate: ${r.gate}`);
 };
 
 // ── STATUS: read-only truth ──────────────────────────────────────────────────────────────────
 async function status() {
-  console.log(`\n  PLAY DRIVER — batch ${batchId}   (STATUS, read-only)`);
-  console.log(`  ${"─".repeat(72)}`);
+  const results = [];
   let next = null;
   for (const step of STEPS) {
     const v = await step.check();
-    line(step, v);
-    if (!next && !DONE.has(v.state)) next = { step, v };
+    results.push({ node: step.node, state: v.state, detail: v.detail, gate: step.gate || null, count: v.count ?? null });
+    if (!next && !DONE.has(v.state) && !step.advisory) next = { step, v };  // advisory panels never count as "next"
   }
+  if (JSON_OUT) {                       // machine-readable for the autonomous wrapper / a surface
+    console.log(JSON.stringify({
+      batchId, readAt: new Date().toISOString(), steps: results,
+      next: next ? { node: next.step.node, state: next.v.state, gate: next.step.gate || null } : null,
+    }));
+    return;
+  }
+  console.log(`\n  PLAY DRIVER — batch ${batchId}   (STATUS, read-only)`);
+  console.log(`  ${"─".repeat(72)}`);
+  for (const r of results) renderLine(r);
   console.log(`  ${"─".repeat(72)}`);
   if (next) {
     console.log(`  NEXT: ${next.step.node} — ${next.v.state}`);

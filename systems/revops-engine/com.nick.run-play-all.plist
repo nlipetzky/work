@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.nick.run-play-all</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/nplmini/.nvm/versions/node/v25.8.0/bin/node</string>
+    <string>run-play-all.mjs</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/nplmini/code/work/systems/revops-engine</string>
+  <key>StartInterval</key>
+  <integer>900</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/nplmini/Library/Logs/run-play-all.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/nplmini/Library/Logs/run-play-all.err.log</string>
+</dict>
+</plist>
