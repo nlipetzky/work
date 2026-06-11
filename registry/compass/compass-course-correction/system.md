@@ -42,11 +42,8 @@ assets:
      note: "lib/registry.ts — emit-contract schema, verified_by + runs-visibility warnings, home validation"}
   - {name: /api/system routes (list, detail, review), type: script, ownership: own, status: operating,
      verified_by: null, note: "read-only; detail includes per-system git history, review derives the diff feed"}
-  - {name: System pages (/system, /system/map, per-system), type: surface, ownership: own, status: operating,
-     verified_by: null, note: "review surface is the landing; /system/map is the constellation
-     dashboard (attention strip + state-colored grid, 2026-06-12); per-system pages render the
-     flow dashboard (implementation-labeled pipeline + build gap) when the record declares flow,
-     else the contract layout"}
+  - {name: System pages (/system, /system/review, /system/inventory, per-system), type: surface, ownership: own, status: operating,
+     verified_by: null, note: "landing = constellation dashboard (/system); /system/review = queue + diff; /system/inventory = every part of every system; per-system pages render the flow dashboard when the record declares flow"}
   - {name: launchd LaunchAgent, type: infrastructure, ownership: own, status: operating,
      verified_by: null, note: "com.nick.projection-ui.plist — login start + auto-restart (kill-tested 2026-06-11); logs in ~/Library/Logs/"}
   - {name: Registry smoke test, type: script, ownership: own, status: operating,
