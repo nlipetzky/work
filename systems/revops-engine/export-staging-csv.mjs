@@ -25,6 +25,7 @@ const batchId = positional[0];
 const playDir = positional[1];
 const entity = flag("--entity", "companies");
 const verdicts = (flag("--verdicts", "") || "").split(",").map((s) => s.trim()).filter(Boolean);
+const qualifiedOnly = args.includes("--qualified");  // evidence-verified set (prep_qualified=true)
 
 if (!batchId || !playDir) {
   console.error("usage: export-staging-csv.mjs <batchId> <playDir> [--entity companies|contacts] [--verdicts IN,NARROW] [--cols ...] [--out path]");
@@ -59,9 +60,10 @@ const cols = wanted.filter((c) => present.includes(c));
 const dropped = wanted.filter((c) => !present.includes(c));
 if (dropped.length) console.log(`note: columns not on this batch, skipped: ${dropped.join(", ")}`);
 
-const where = verdicts.length
-  ? `where prep_verdict in (${verdicts.map((v) => `'${v.replace(/'/g, "''")}'`).join(",")})`
-  : "";
+const conds = [];
+if (verdicts.length) conds.push(`prep_verdict in (${verdicts.map((v) => `'${v.replace(/'/g, "''")}'`).join(",")})`);
+if (qualifiedOnly) conds.push(`prep_qualified is true`);
+const where = conds.length ? `where ${conds.join(" and ")}` : "";
 const orderBy = present.includes("prep_verdict") ? "order by prep_verdict, name" : "order by 1";
 const data = await q(`select ${cols.map((c) => `"${c}"`).join(", ")} from ${stagingTbl} ${where} ${orderBy};`);
 
