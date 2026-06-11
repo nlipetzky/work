@@ -12,7 +12,9 @@ New play kickoff. You are in an empty play folder: the folder name is the play s
 
 2. Intake first. Ask me for the play's source material: what the client/expert actually asked for, plus any docs, emails, or lists. Everything downstream must trace to provided material — if you find yourself inventing the offer or the targeting, stop and ask. Clarifying questions come one at a time, as plain chat text.
 
-3. Build the strategic input bundle with the lead-gen-strategist skill (offer, segment criteria, disqualifiers, ICP titles, sender identity, channel, volume, copy constraints). Surface missing inputs as questions, not assumptions.
+3. Build the strategic input bundle with the lead-gen-strategist skill (offer, segment criteria, disqualifiers, ICP titles, sender identity, channel, volume, copy constraints). Surface missing inputs as questions, not assumptions. **This step is a gate, not a suggestion: no sourcing, no staging load, and no spend until the play brief exists and I have approved it.** The bundle is where rule conflicts get settled — where play docs disagree with standing engagement rules (ICP caps, exclusions), raise it HERE, in one batched pass; per-play artifacts supersede standing engagement defaults once I confirm. A decision that surfaces mid-run instead of in the bundle means this step was shortcut.
+
+If I ask for something out of sequence (a peek at data, a side question), serve it, then say where you are in the sequence and return to it — do not let my ad-hoc asks silently replace the process.
 
 4. Delivery contract before transport. Derive the destination contract (required fields + screening pipeline) from the play docs BEFORE building any load or sync. Only fully-qualified records cross; "eligible" is not "qualified". Before marking ANY contract input as unavailable, missing, or a blocker, verify against the live system (n8n active state via n8n-mcp read-only, Supabase schema) — inventory and state docs are dated snapshots and lose to live state. Missing from a doc is not absent from the system.
 
