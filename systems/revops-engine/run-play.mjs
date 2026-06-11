@@ -15,6 +15,7 @@
 //             Stops before any gate (paid / approval) and prints what it's waiting on.
 
 import fs from "fs";
+import { spawnSync } from "child_process";
 
 const ENV_PATH = "/Users/nplmini/code/work/.env";
 const PROJECT_REF = "mrmnyscurmkfppicqqhk";
@@ -67,11 +68,24 @@ const STEPS = [
       const ok = sum === total ? "sums ✓" : `SUM MISMATCH (${sum}≠${total})`;
       return { state: scored === total ? "done" : "partial", detail: `${total} = ${parts}  [${ok}]`, count: total };
     },
+    // Auto-executable: deterministic, free compute. Runs only when there are unscreened rows.
+    exec: {
+      runnableWhen: async () => {
+        const t = `companies_${batchId}`;
+        if (!(await tableExists("staging", t))) return false;
+        const total = Number(await scalar(`select count(*) from staging.${t}`));
+        const scored = Number(await scalar(`select count(*) from staging.${t} where prep_verdict is not null`));
+        return total > 0 && scored < total;
+      },
+      cmd: () => ["node", "run-prep.mjs", batchId, ...(playDir ? ["--play", playDir] : [])],
+    },
   },
   {
     // The honesty core: declared screens vs WIRED screens. A criterion with no wired check is
     // reported NOT WIRED so the system can never imply a verification it didn't perform.
+    // Advisory: always reports, never blocks the driver — it's a truth panel, not a step to run.
     node: "Verification gates",
+    advisory: true,
     async check() {
       // wired = actually executed by a code/classifier step; not-wired = promised in criteria, no implementation
       const gates = [
@@ -126,24 +140,62 @@ const STEPS = [
   },
 ];
 
-// ── run ────────────────────────────────────────────────────────────────────────────────────────
-console.log(`\n  PLAY DRIVER — batch ${batchId}   (${EXECUTE ? "EXECUTE" : "STATUS, read-only"})`);
-console.log(`  ${"─".repeat(72)}`);
-let firstUnfinished = null;
-for (const step of STEPS) {
-  const v = await step.check();
-  const mark = v.state === "done" || v.state === "artifact built" ? "[x]"
-    : v.state.startsWith("waiting") || v.state === "partial" ? "[!]" : "[ ]";
+const DONE = new Set(["done", "artifact built"]);
+const line = (step, v) => {
+  const mark = DONE.has(v.state) ? "[x]" : v.state.startsWith("waiting") || v.state === "partial" ? "[!]" : "[ ]";
   console.log(`  ${mark} ${step.node.padEnd(20)} ${v.state.toUpperCase()}`);
   console.log(`      ${v.detail}`);
   if (step.gate) console.log(`      ⛔ gate: ${step.gate}`);
-  if (!firstUnfinished && !["done", "artifact built"].includes(v.state)) firstUnfinished = { step, v };
+};
+
+// ── STATUS: read-only truth ──────────────────────────────────────────────────────────────────
+async function status() {
+  console.log(`\n  PLAY DRIVER — batch ${batchId}   (STATUS, read-only)`);
+  console.log(`  ${"─".repeat(72)}`);
+  let next = null;
+  for (const step of STEPS) {
+    const v = await step.check();
+    line(step, v);
+    if (!next && !DONE.has(v.state)) next = { step, v };
+  }
+  console.log(`  ${"─".repeat(72)}`);
+  if (next) {
+    console.log(`  NEXT: ${next.step.node} — ${next.v.state}`);
+    if (next.step.gate) console.log(`  (gated — needs you: ${next.step.gate})`);
+  } else console.log(`  Flow complete through Deliver.`);
+  console.log(`  Every line above was read from the database now. Nothing here is a claim.\n`);
 }
-console.log(`  ${"─".repeat(72)}`);
-if (firstUnfinished) {
-  console.log(`  NEXT: ${firstUnfinished.step.node} — ${firstUnfinished.v.state}`);
-  if (firstUnfinished.step.gate) console.log(`  (gated: ${firstUnfinished.step.gate})`);
-} else {
-  console.log(`  Flow complete through Deliver.`);
+
+// ── EXECUTE: the driver runs auto-executable steps itself, re-verifies, stops at gates ─────────
+async function execute() {
+  console.log(`\n  PLAY DRIVER — batch ${batchId}   (EXECUTE — code-driven, stops at gates)`);
+  console.log(`  ${"─".repeat(72)}`);
+  for (const step of STEPS) {
+    let v = await step.check();
+    if (DONE.has(v.state)) { line(step, v); continue; }
+    if (step.advisory) { line(step, v); continue; }   // truth panel — reports, never halts the walk
+    // not done. Three cases: a gate (stop), auto-executable (run + re-verify), or needs-operator/config (stop).
+    if (step.gate) { line(step, v); console.log(`  ${"─".repeat(72)}`);
+      console.log(`  STOPPED at ${step.node} — this gate needs you: ${step.gate}\n`); return; }
+    if (step.exec && await step.exec.runnableWhen()) {
+      const cmd = step.exec.cmd();
+      console.log(`  [>] ${step.node.padEnd(20)} RUNNING  ${cmd.join(" ")}`);
+      const r = spawnSync(cmd[0], cmd.slice(1), { cwd: "/Users/nplmini/code/work/systems/revops-engine", stdio: "inherit" });
+      if (r.status !== 0) { console.log(`  ${"─".repeat(72)}`);
+        console.log(`  STOPPED — ${step.node} exited ${r.status}. Fix and re-run.\n`); return; }
+      v = await step.check();          // re-verify from the DB, never trust the command's own word
+      line(step, v);
+      if (!DONE.has(v.state)) { console.log(`  ${"─".repeat(72)}`);
+        console.log(`  STOPPED — ${step.node} ran but DB does not show it done. Investigate.\n`); return; }
+      continue;
+    }
+    // not done, not a gate, not auto-runnable → needs operator decision or config
+    line(step, v);
+    console.log(`  ${"─".repeat(72)}`);
+    console.log(`  STOPPED at ${step.node} — needs you (decision or config), then re-run.\n`); return;
+  }
+  console.log(`  ${"─".repeat(72)}`);
+  console.log(`  Flow complete through Deliver.\n`);
 }
-console.log(`  Every line above was read from the database now. Nothing here is a claim.\n`);
+
+await (EXECUTE ? execute() : status());
