@@ -32,8 +32,9 @@
    needs an industry filter (`linkedin_category` / `naics_category`), not `website_keywords` (content match
    pulled media/staffing noise → all-OUT batch). → **Resume:** after the intake locks the ICP.
 
-5. **Context reader is live but on an ephemeral dev server** (`localhost:4180/context`, detached process).
-   → **Resume:** `cd systems/projection-ui && npm run dev` if it's down.
+5. ~~**Context reader is live but on an ephemeral dev server.**~~ **RESOLVED 2026-06-11:** projection-ui
+   now runs under launchd (`~/Library/LaunchAgents/com.nick.projection-ui.plist` — starts at login,
+   auto-restarts on kill/crash; logs at `~/Library/Logs/projection-ui.log`).
 
 6. ~~**The build-registry / PM model is undesigned.**~~ **RESOLVED 2026-06-10:** designed and built —
    the system registry (`registry/`, 25 systems, emit contracts + inventories + lifecycle) rendered at
