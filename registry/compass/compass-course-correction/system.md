@@ -55,6 +55,11 @@ context:
      note: "entry: read _review/ + relevant records, surface proportionally; exit: proposals to _review/, never direct edits without Nick's call"}
   - {name: UI protocol, version: v1, status: defined, verified_by: null,
      note: "job -> mockup with real data in chat -> approved mockup is the spec -> then code"}
+  - {name: Prior art — system-overview snapshot, version: 2026-06-05, status: defined, verified_by: null,
+     note: "reference/system-overview-2026-06-05.html — the first locally hosted whole-system view
+     (static plain-English narrative, pre-projection-ui). Superseded by this registry (snapshots
+     rot; live-derived state doesn't), but keep its idea: a generated walk-in-cold narrative
+     overview rendered FROM registry records is the v1 candidate this registry still lacks"}
 ---
 
 The keep-live layer: a contract-first registry of the studio's systems rendered as a review
