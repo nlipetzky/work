@@ -138,6 +138,7 @@ export default function SystemMap() {
   const allErrors = [...(list.errors ?? []), ...(review?.errors ?? [])];
 
   return (
+    <div className="h-full overflow-y-auto">
     <main className="mx-auto max-w-6xl p-6">
       {/* header */}
       <div className="mb-4 flex items-baseline justify-between">
@@ -189,5 +190,6 @@ export default function SystemMap() {
         green operating · amber engineering · blue designed · gray defined · ● active work · ◌ awaiting review · 📅 dated · ⚠ gate warning
       </p>
     </main>
+    </div>
   );
 }

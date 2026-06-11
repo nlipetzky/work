@@ -365,6 +365,7 @@ export default function SystemPage() {
   const flowOutputs: IO[] = r.flow_outputs?.length ? r.flow_outputs : (r.contract?.outputs ?? []);
 
   return (
+    <div className="h-full overflow-y-auto">
     <main className="mx-auto max-w-screen-xl p-6">
       {/* breadcrumb */}
       <p className="mb-1 text-xs text-ink-600">
@@ -504,5 +505,6 @@ export default function SystemPage() {
         </div>
       </Section>
     </main>
+    </div>
   );
 }

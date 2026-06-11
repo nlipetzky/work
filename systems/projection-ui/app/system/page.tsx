@@ -22,6 +22,7 @@ export default function SystemHome() {
   if (!data) return <main className="p-6 text-muted">Loading…</main>;
 
   return (
+    <div className="h-full overflow-y-auto">
     <main className="mx-auto max-w-3xl p-6">
       <div className="mb-6 flex items-baseline justify-between">
         <h1 className="text-xl font-semibold text-white">Agentic System</h1>
@@ -72,5 +73,6 @@ export default function SystemHome() {
         <Link href="/system/map" className="text-sky-400 hover:underline">Constellation map</Link>
       </div>
     </main>
+    </div>
   );
 }
