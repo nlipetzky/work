@@ -3,7 +3,10 @@
 **Status:** Triaged
 **Opened:** 2026-06-04
 **Last updated:** 2026-06-04
-**Current label:** Collaborator (prospective venture partner)
+**Current label:** Collaborator (prospective SME channel)
+
+> Relationship stage + full communication log live in the spine:
+> `relationship-tracker-larry.md`. This brief is the Absolute *opportunity* overview.
 
 ## What this is
 

@@ -1,0 +1,32 @@
+{
+  "_comment": "mRNA Therapeutics contact screen (playbook §3.2 / §5 / §6 / §7). Deterministic title check + company-verdict inheritance. APPROVED terms override EXCLUSION terms (so 'Strategic Sourcing', 'Drug Product', 'Technology Transfer' survive a 'Strategy'/'Product'/'Technology' exclusion). role_segment is a hint, NOT truth: a null segment is unsegmented, not out-of-scope, so titles are always re-checked. LinkedIn verification (§5.2) and CRM 6-month suppression (§5.3) require data not in staging — DEFERRED and FLAGGED, never silently passed. A contact's best status without that data is 'eligible', which the delivery contract forbids from crossing.",
+  "approved_segments": ["R&D/Science", "Process/Manufacturing", "Procurement"],
+  "approved_terms": [
+    "Process Development", "Process Scientist", "Bioprocess", "Bioprocessing", "Manufacturing",
+    "MSAT", "Manufacturing Sciences", "Downstream", "Upstream", "Tech Transfer",
+    "Technology Transfer", "Technical Operations", "Formulation", "LNP", "Lipid Nanoparticle",
+    "Drug Substance", "Drug Product", "Pharmaceutical Development", "Production", "CMC",
+    "mRNA Production", "mRNA Platform", "mRNA", "RNA", "Nucleic Acid", "IVT", "In Vitro Transcription",
+    "CSO", "Chief Scientific", "R&D", "Research and Development", "Research & Development",
+    "Research Development", "Analytical Development", "Analytical Research", "Scientist",
+    "Principal Scientist", "Process Engineer", "Manufacturing Engineer",
+    "Procurement", "Sourcing", "Strategic Sourcing", "Raw Materials", "Supply Chain",
+    "Materials Management", "Bioprocess Materials"
+  ],
+  "exclusion_terms": [
+    "Sales", "Territory", "Strategy", "Forecast", "Forecasting", "Field", "Learning",
+    "Medical Affairs", "Talent Acquisition", "Recruiter", "Recruiting", "Finance",
+    "Advertising", "Quality Assurance", "QA", "QA/RA", "Regulatory", "Communications",
+    "Information Technology", "Data Science", "Digital", "Informatics", "Intelligence",
+    "Marketing", "Support", "Patient", "Account Manager", "HR", "Human Resources",
+    "Portfolio", "Project Manager", "Project Management", "Customer", "Consumer",
+    "Brand", "Analytics", "Engagement", "Statistics", "Franchise", "Safety",
+    "Change Readiness", "Legal", "Counsel", "Policy", "Accounting", "Payer", "Payroll",
+    "Economics", "Collaborations", "Biometrics", "Scouting", "Reimbursement",
+    "Compliance", "Liaison", "Enablement", "Patent", "Access", "Planner"
+  ],
+  "defer_flags": {
+    "linkedin_verification": "playbook §5.2 — verify current employer + title when a profile exists; linkedin_verified true/false/null. Data not in staging; flag, do not pass.",
+    "crm_6mo_suppression": "playbook §5.3 HARD RULE — suppress any contact/account with logged activity in trailing 180 days. Data not in staging; flag, do not pass."
+  }
+}

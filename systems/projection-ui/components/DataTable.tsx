@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { classifyValue } from "@/lib/validity";
 import { toCell } from "@/lib/format";
 
@@ -13,6 +14,10 @@ export interface DataTableProps {
   onRowClick?: (row: Record<string, unknown>) => void;
   rowKey?: (row: Record<string, unknown>, i: number) => string;
   rowAccent?: (row: Record<string, unknown>) => string | undefined;
+  // Custom cell renderer. Return a node to override the default rendering for a column,
+  // or undefined to fall back to the default Cell (validity-aware). Used for prep_flags /
+  // prep_attention chips on the staging surface.
+  renderCell?: (col: string, value: unknown, row: Record<string, unknown>) => ReactNode | undefined;
   showRowNumbers?: boolean;
   startIndex?: number;
 }
@@ -40,6 +45,7 @@ export default function DataTable({
   onRowClick,
   rowKey,
   rowAccent,
+  renderCell,
   showRowNumbers,
   startIndex = 0,
 }: DataTableProps) {
@@ -96,11 +102,14 @@ export default function DataTable({
                   {startIndex + i + 1}
                 </td>
               )}
-              {columns.map((c) => (
-                <td key={c} className="whitespace-nowrap px-3 py-1.5">
-                  <Cell value={r[c]} />
-                </td>
-              ))}
+              {columns.map((c) => {
+                const custom = renderCell?.(c, r[c], r);
+                return (
+                  <td key={c} className="whitespace-nowrap px-3 py-1.5">
+                    {custom !== undefined ? custom : <Cell value={r[c]} />}
+                  </td>
+                );
+              })}
             </tr>
           ))}
           {rows.length === 0 && (

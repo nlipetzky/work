@@ -3,8 +3,12 @@
 // matches a `companies` column are promoted by promote_staging_batch; the rest are review-only.
 // Runs through the Supabase Management API (chunked) so row data never enters an agent context.
 //
-// Usage: node load-companies-csv-to-staging.mjs <csvPath> <batchId> <playDir> [--segment NAME] [--playbook NAME]
+// Usage: node load-companies-csv-to-staging.mjs <csvPath> <batchId> <playDir> [--source PROVIDER] [--segment NAME] [--playbook NAME]
 //        node load-companies-csv-to-staging.mjs <csvPath> <batchId> --no-play "<reason>"
+//
+// --source names the DATA PROVIDER/ORIGIN (e.g. "apollo", "explorium", "clay"), stamped on every
+// row's `source` column. It is distinct from <batchId>. Defaults to <batchId> for backward compat,
+// but pass it — the source column exists to name where the data came from, not to repeat the batch.
 //
 // Every batch declares its play at load time (staging_batch_meta row -> the projection-ui
 // staging header renders the play + Client Guidance links). A batch with no play context is
@@ -63,7 +67,7 @@ if (playDir) {
 }
 
 const stagingTbl = `staging.companies_${batchId}`;
-const SOURCE = batchId; // stamp provenance at load time (avoids the manual source backfill)
+const SOURCE = flag("--source") || batchId; // data PROVIDER/origin (apollo|explorium|clay|…), not the batch id
 const CONST = {
   engine_account_id: "00000000-0000-0000-0000-000000000001",
   account_id: "00000000-0000-0000-0000-000000000010",

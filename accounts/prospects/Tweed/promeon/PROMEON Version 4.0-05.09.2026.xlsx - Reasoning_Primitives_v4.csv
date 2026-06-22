@@ -1,0 +1,28 @@
+PROMEON 4.0 Reasoning Primitives,,,,,
+Operational reasoning functions the runtime should activate when relevant.,,,,,
+,,,,,
+Family,Primitive,Trigger,Required Inputs,Output Shape,Guardrail
+Diagnostic,distinguish_symptom_from_root_cause,A reported problem may be proximate,"Symptom, actors, evidence",Root-cause hypotheses with confidence,Do not collapse to one cause without alternatives
+Diagnostic,identify_hidden_constraint,Observed actors do not respond as expected,"Actor behavior, incentives, constraints",Candidate hidden constraints,Avoid awareness-first explanations
+Diagnostic,identify_equilibrium_structure,A dysfunction persists despite apparent incentives to solve it,"Actor benefits, risks, rules, relationships",Stable equilibrium map,Name who benefits
+Diagnostic,identify_reinforcing_feedback_loop,Behavior repeats or intensifies over time,"Events, incentives, narratives, relationships",Loop description and leverage points,Separate reinforcing from balancing loops
+Incentive,identify_actor_incentives,Any actor behavior needs explanation,"Actor, payoffs, risks, alternatives",Incentive profile,Assume rationality under constraints
+Incentive,identify_risk_adjusted_behavior,Actors avoid apparently profitable changes,"Risk exposure, trust, capital, enforcement",Risk-adjusted behavior logic,Do not label behavior irrational prematurely
+Incentive,identify_incentive_misalignment,Coordination fails or exchanges break down,Actor incentives and transaction requirements,Misalignment map,Check mutuality of incentives
+Institutional,compare_formal_vs_informal_rules,Rules on paper differ from practice,"Formal rule, informal norm, enforcement",Rule conflict assessment,Avoid legalistic diagnosis
+Institutional,identify_enforcement_gap,Rules exist but do not shape behavior,"Enforcers, sanctions, legitimacy",Enforcement gap and consequences,Separate rule absence from rule non-enforcement
+Institutional,identify_legitimacy_structure,Compliance depends on perceived authority,"Authorities, norms, trust, history",Legitimacy map,Do not assume formal authority is accepted
+Behavioral,identify_trust_barrier,Actors avoid exchange or information sharing,"Relationship history, perceived risk, recourse",Trust barrier and repair pathway,Do not substitute communication for trust
+Behavioral,identify_behavioral_memory,Past experience shapes present response,"Past interventions, shocks, losses, broken promises",Behavioral memory explanation,Account for path dependence
+Behavioral,identify_perceived_risk,Objective benefit does not lead to uptake,"Actor perception, downside exposure, coping logic",Perceived risk map,Respect subjective risk as real
+Power,identify_hidden_beneficiaries,Dysfunction persists with visible losers,"Rent flows, access control, informal influence",Beneficiary and rent map,"Trace gains, not only losses"
+Power,identify_veto_actors,Change could be blocked or redirected,"Authority, dependence, legitimacy, coercion",Veto actor list and resistance pathways,Assess power before feasibility
+Power,identify_exclusionary_structures,Groups are systematically excluded,"Identity axes, norms, costs, access rules",Exclusion mechanism diagnosis,Avoid generic inclusion language
+Facilitation,identify_minimum_viable_intervention,A change pathway is plausible but uncertain,"Leverage point, actor incentives, risk",Smallest catalytic move and test,"Must alter incentives, relationships, or system behavior"
+Facilitation,assess_substitution_risk,Project proposes doing a market function,"Function, local providers, payment logic",Substitution risk rating,Design exit before delivery
+Facilitation,assess_dependency_risk,Support may become expected or recurring,"Support type, actor investment, alternatives",Dependency risk and mitigation,Avoid permanent donor role
+Facilitation,assess_crowding_in_potential,A pilot or partner model is proposed,"Commercial incentives, imitability, capability, risks",Crowding-in pathway and blockers,Replication by others is the test
+Adaptive Learning,generate_competing_hypotheses,"Evidence is weak, mixed, or ambiguous",Observed pattern and candidate mechanisms,2-4 testable hypotheses,Rank by testability when confidence is low
+Adaptive Learning,identify_evidence_gap,A claim lacks direct support,"Claim, evidence base, context conditions",Evidence gap and collection plan,Do not overstate certainty
+Adaptive Learning,identify_signals_to_monitor,Intervention is treated as hypothesis,"Change pathway, risks, time horizon",Leading/lagging signals,Include disconfirming signals
+Adaptive Learning,identify_adaptation_trigger,Probe or intervention is launched,"Expected signals, thresholds, alternatives",Trigger for adapt/stop/scale,Define before confirmation bias sets in

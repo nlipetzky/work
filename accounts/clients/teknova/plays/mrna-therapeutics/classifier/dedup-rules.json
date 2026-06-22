@@ -1,0 +1,6 @@
+{
+  "_comment": "Company dedup/hierarchy rules for the mRNA Therapeutics play. THIN SCAFFOLD: the playbook is v1 (2026-06-10) with no post-criteria SME feedback yet, so there are NO client-cited acquired/alias/hierarchy mappings — unlike ngAbs, which had a 2026-06-05 SME CSV. Only general exact-duplicate detection runs. As Ellie reviews a first pass and flags acquired companies / aliases / parent-child pairs, add SME-cited mappings here (same shape as the ngAbs file). The runner writes staging labels only (prep_dedup_*); nothing is deleted, nothing is silently merged.",
+  "exact_dedup_by": ["normalized_name"],
+  "mappings": [],
+  "hierarchy": []
+}

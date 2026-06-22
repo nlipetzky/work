@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promoteBatch } from "@/lib/queries/staging";
+import { inngest } from "@/lib/inngest/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "need batchId and entity (contacts|companies)" }, { status: 400 });
     }
     const result = await promoteBatch(batchId, entity, "projection-ui");
+
+    // Emit Inngest event — non-fatal. Promote already succeeded; sync recovers via re-emit.
+    try {
+      await inngest.send({
+        name: "revops/batch.promoted",
+        data: {
+          batchId,
+          entity,
+          promotedBy: "projection-ui",
+          promotedAt: new Date().toISOString(),
+          counts: result,
+        },
+      });
+    } catch (sendErr) {
+      console.error("[inngest] send failed — re-emit via /api/staging/resync to recover:", sendErr);
+    }
+
     return NextResponse.json({ ok: true, result });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

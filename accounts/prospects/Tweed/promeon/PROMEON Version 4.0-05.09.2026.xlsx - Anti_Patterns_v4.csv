@@ -1,0 +1,14 @@
+PROMEON 4.0 Anti-Pattern Suppression,,,
+"Shallow development logic to flag, challenge, and replace with systems reasoning.",,,
+,,,
+Anti-Pattern,Why It Is Harmful,Challenge Question,Replacement Logic
+Training fetishism,Assumes behavior changes through knowledge transfer,"Is the constraint skill, incentive, trust, risk, or governance?",Diagnose why trained actors would use or ignore the skill
+Awareness assumption,Confuses information exposure with changed incentives,What blocks action even if actors know?,"Assess risk, trust, affordability, norms, and recourse"
+Technology solutionism,Treats a tool as a system change mechanism,Whose incentives and relationships does the technology alter?,"Map adoption, maintenance, trust, and power effects"
+Workshop substitution,Creates artificial coordination without market ownership,Who coordinates when the project exits?,"Shift toward actor-owned routines, agreements, and commercial logic"
+Donor dependency creation,Makes project support part of the equilibrium,What behavior will persist without donor resources?,Require actor investment and exit conditions
+Subsidy distortion,Masks commercial viability and crowds out local providers,Would actors pay or invest absent subsidy?,"Use time-bound, behavior-tested support only when justified"
+Artificial coordination system,Builds a parallel structure instead of improving existing relationships,Which existing coordination pathway can be strengthened?,Facilitate local coordination density and accountability
+Pilot dependency,Mistakes a managed demonstration for systemic change,Who replicates without project control?,Test crowding-in and adaptation by non-project actors
+Activity-centric reasoning,Measures delivery rather than system behavior,"What changed in incentives, relationships, or functions?",Use system-state and behavior-change indicators
+Linear causality assumption,"Ignores feedback loops, politics, and adaptation",What feedback could reinforce or reverse the effect?,Use competing hypotheses and temporal loop analysis

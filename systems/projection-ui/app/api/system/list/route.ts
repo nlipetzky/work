@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
-import { loadRegistry } from "@/lib/registry";
+import { listRegistrySystems } from "@/lib/queries/registry";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ROOT = "/Users/nplmini/code/work/registry";
-
+// The ecosystem map now reads from canon_engine (the canonical registry),
+// not the filesystem registry/. One source of truth.
 export async function GET() {
-  const reg = loadRegistry(ROOT);
-  const systems = reg.systems.map(({ record, warnings }) => ({
-    name: record.name, slug: record.slug, home: record.home,
-    clusters: record.clusters, class: record.class, lifecycle: record.lifecycle,
-    autonomy: record.autonomy, flags: record.flags, stub: record.stub,
-    outcome: record.outcome, warnings,
-    dates: record.dates, now: record.now,
-  }));
-  return NextResponse.json({ count: systems.length, systems, errors: reg.errors });
+  try {
+    const systems = await listRegistrySystems();
+    return NextResponse.json({ count: systems.length, systems, errors: [] });
+  } catch (e) {
+    return NextResponse.json({ count: 0, systems: [], errors: [String(e)] });
+  }
 }

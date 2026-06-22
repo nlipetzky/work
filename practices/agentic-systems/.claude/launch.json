@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "projection-ui",
+      "runtimeExecutable": "/Users/nplmini/code/work/systems/projection-ui/node_modules/.bin/next",
+      "runtimeArgs": ["dev", "/Users/nplmini/code/work/systems/projection-ui"],
+      "autoPort": true,
+      "port": 4181
+    }
+  ]
+}

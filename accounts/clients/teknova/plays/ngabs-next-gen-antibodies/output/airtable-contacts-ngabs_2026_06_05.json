@@ -1,0 +1,1876 @@
+{
+  "meta": {
+    "batch_id": "ngabs_2026_06_05",
+    "entity": "contacts",
+    "generated_at": "2026-06-09T15:36:28.557Z",
+    "source": "staging (contract-gated)",
+    "contract": "delivery-contract.md",
+    "discovery_source_tag": "agent_ngabs",
+    "merge_on": "Email",
+    "count": 133
+  },
+  "records": [
+    {
+      "fields": {
+        "Full Name": "Brian Blagg",
+        "First Name": "Brian",
+        "Last Name": "Blagg",
+        "Title": "General Manager and Global Head of Technical Operations",
+        "Company Name": "PCI Pharma Services",
+        "Email": "brian.blagg@pci.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/brian-blagg-5516833/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jared Wilson",
+        "First Name": "Jared",
+        "Last Name": "Wilson",
+        "Title": "Senior Scientist",
+        "Company Name": "Pfanstiehl, Inc.",
+        "Email": "jared.wilson@pfanstiehl.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/jared-wilson-68833814",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Emily Michael",
+        "First Name": "Emily",
+        "Last Name": "Michael",
+        "Title": "Associate Director, Preclinical Development",
+        "Company Name": "Visterra Inc.",
+        "Email": "emichael@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/emily-michael-017867ab",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Aaron Vining",
+        "First Name": "Aaron",
+        "Last Name": "Vining",
+        "Title": "Human Resources Manager",
+        "Company Name": "SpectronRx",
+        "Email": "avining@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/aaron-vining-32370b62",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Yeng Vang",
+        "First Name": "Yeng",
+        "Last Name": "Vang",
+        "Title": "Senior Technology Transfer Specialist",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "yvang@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/yeng-vang-260466a7",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Ben Chih",
+        "First Name": "Ben",
+        "Last Name": "Chih",
+        "Title": "CSO, Neuroscience",
+        "Company Name": "Harbour BioMed",
+        "Email": "ben.chih@harbourbiomed.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/benchih",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Yi-Fen Lu",
+        "First Name": "Yi-Fen",
+        "Last Name": "Lu",
+        "Title": "Associate Director, Research",
+        "Company Name": "Visterra Inc.",
+        "Email": "ylu@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/yi-fen-lu-a6b0ab49",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jack O'Neil",
+        "First Name": "Jack",
+        "Last Name": "O'Neil",
+        "Title": "Executive Director, Preclinical Development",
+        "Company Name": "Visterra Inc.",
+        "Email": "joneil@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/jack-o-neil-17560b3b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Erfan Rahman",
+        "First Name": "Erfan",
+        "Last Name": "Rahman",
+        "Title": "Senior Downstream Analyst",
+        "Company Name": "Sino Biological, Inc.",
+        "Email": "erfan_rahman@sinobiological.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/erfan-rahman-02b50289",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Thy Nguyen",
+        "First Name": "Thy",
+        "Last Name": "Nguyen",
+        "Title": "Laboratory Operations Manager",
+        "Company Name": "Avance Biosciences, Inc.",
+        "Email": "thy.nguyen@avancebio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/thy-h-nguyen-b1b8701a8",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Ana Carranco-Prescott",
+        "First Name": "Ana",
+        "Last Name": "Carranco-Prescott",
+        "Title": "Principal Research Associate I Antibody Engineering",
+        "Company Name": "Adimab",
+        "Email": "ana.carranco@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/ana-isabel-carranco-prescott-b91139134",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "David Lynch",
+        "First Name": "David",
+        "Last Name": "Lynch",
+        "Title": "Development Engineering Manager (RadioPharm)",
+        "Company Name": "BWXT Medical",
+        "Email": "dlynch@bwxt.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/david-lynch-62890096",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Sherry Boozer-Hobbs",
+        "First Name": "Sherry",
+        "Last Name": "Boozer-Hobbs",
+        "Title": "Sr. Director of Operations",
+        "Company Name": "Invenra",
+        "Email": "sboozerhobbs@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/sherry-boozer-hobbs-pmp-11a38015",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Trevor Calkins",
+        "First Name": "Trevor",
+        "Last Name": "Calkins",
+        "Title": "Chief Technical Officer",
+        "Company Name": "Pfanstiehl, Inc.",
+        "Email": "trevor.calkins@pfanstiehl.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/trevor-calkins-2b17699",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Todd Stahl",
+        "First Name": "Todd",
+        "Last Name": "Stahl",
+        "Title": "Vice President of Plasma Production",
+        "Company Name": "SAB BIO",
+        "Email": "tstahl@sab.bio",
+        "LinkedIn URL": "http://www.linkedin.com/in/todd-stahl-ab8472b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Rakesh Basavalingappa",
+        "First Name": "Rakesh",
+        "Last Name": "Basavalingappa",
+        "Title": "Senior Principal Scientist",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "rbasavalingappa@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/rakesh-h-basavalingappa",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Ian Barrett",
+        "First Name": "Ian",
+        "Last Name": "Barrett",
+        "Title": "Supply Chain Manager",
+        "Company Name": "BWXT Medical",
+        "Email": "ibarrett@bwxt.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/ian-barrett-cclmp-cclp-98971082",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "David Schaad",
+        "First Name": "David",
+        "Last Name": "Schaad",
+        "Title": "Director of Research and Development",
+        "Company Name": "Pfanstiehl, Inc.",
+        "Email": "david.schaad@pfanstiehl.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/david-schaad-1126a91b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Aoife Kelly",
+        "First Name": "Aoife",
+        "Last Name": "Kelly",
+        "Title": "Head of Technical Operations",
+        "Company Name": "PCI Pharma Services",
+        "Email": "akelly@pci.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/aoife-kelly-bb218451/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kim Scibelli",
+        "First Name": "Kim",
+        "Last Name": "Scibelli",
+        "Title": "Executive Director Supply Chain & Operations",
+        "Company Name": "AVS Bio",
+        "Email": "kim.scibelli@avsbio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/kimscibelli",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dwight Schwake",
+        "First Name": "Dwight",
+        "Last Name": "Schwake",
+        "Title": "Associate Director Production Operations",
+        "Company Name": "AVS Bio",
+        "Email": "dwight.schwake@avsbio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/dwight-schwake-79a2855b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hetal Bhatt",
+        "First Name": "Hetal",
+        "Last Name": "Bhatt",
+        "Title": "Method Development and Validation Senior Scientist",
+        "Company Name": "Pfanstiehl, Inc.",
+        "Email": "hetal.bhatt@pfanstiehl.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/hetal-bhatt-0aa1b012",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kaitlin Stachowiak",
+        "First Name": "Kaitlin",
+        "Last Name": "Stachowiak",
+        "Title": "Director of Operations",
+        "Company Name": "AVS Bio",
+        "Email": "kaitlin.stachowiak@avsbio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/kaitlin-stachowiak-mba-a7266a135",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Eddy Enowbi",
+        "First Name": "Eddy",
+        "Last Name": "Enowbi",
+        "Title": "Senior Manager - Biologics Operations",
+        "Company Name": "AVS Bio",
+        "Email": "eddy.enowbi@avsbio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/eddy-enowbi-mba-5a02661b5",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Brian Booth",
+        "First Name": "Brian",
+        "Last Name": "Booth",
+        "Title": "Director, Research",
+        "Company Name": "Visterra Inc.",
+        "Email": "bbooth@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/brianjohnbooth",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dawn Alderman",
+        "First Name": "Dawn",
+        "Last Name": "Alderman",
+        "Title": "Sr. Director of Product Development & Portfolio",
+        "Company Name": "AVS Bio",
+        "Email": "dawn.alderman@avsbio.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/dawn-alderman-39936615",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hua Wu",
+        "First Name": "Hua",
+        "Last Name": "Wu",
+        "Title": "Senior Vice President, Research and Product Development",
+        "Company Name": "SAB BIO",
+        "Email": "hwu@sabbiotherapeutics.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/hua-wu-phd-361ab8101",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Roland Kolbeck",
+        "First Name": "Roland",
+        "Last Name": "Kolbeck",
+        "Title": "Chief Scientific Officer",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "rkolbeck@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/rolandkolbeck",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dmitry Gumerov",
+        "First Name": "Dmitry",
+        "Last Name": "Gumerov",
+        "Title": "Senior Director Pharmaceutical Sciences and Technology (CMC)",
+        "Company Name": "Visterra Inc.",
+        "Email": "dgumerov@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/dmitry-r-gumerov-680653a",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Sandhya Padala",
+        "First Name": "Sandhya",
+        "Last Name": "Padala",
+        "Title": "Senior Formulation Specialist",
+        "Company Name": "Dalton Pharma Services",
+        "Email": "spadala@dalton.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/sandhya-naidu-padala-38057b13",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Christopher Kotoris",
+        "First Name": "Christopher",
+        "Last Name": "Kotoris",
+        "Title": "Senior Director of Operations",
+        "Company Name": "Dalton Pharma Services",
+        "Email": "ckotoris@dalton.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/christopherkotoris",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Xin Chen",
+        "First Name": "Xin",
+        "Last Name": "Chen",
+        "Title": "Principal Scientist",
+        "Company Name": "Invenra",
+        "Email": "xchen@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/xin-chen-96246431",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Moussa Elhawi",
+        "First Name": "Moussa",
+        "Last Name": "Elhawi",
+        "Title": "Senior Research Scientist",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "melhawi@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/moussa-elhawi-bba6b3209",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Vinod Ramanatham",
+        "First Name": "Vinod",
+        "Last Name": "Ramanatham",
+        "Title": "Head - R & D Services",
+        "Company Name": "Dalton Pharma Services",
+        "Email": "vramanatham@dalton.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/vinodramanatham",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Alina Kunytska",
+        "First Name": "Alina",
+        "Last Name": "Kunytska",
+        "Title": "Materials and Logistics Manager",
+        "Company Name": "Dalton Pharma Services",
+        "Email": "akunytska@dalton.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/alina-kunytska-4437a7b0",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hanlin Nie",
+        "First Name": "Hanlin",
+        "Last Name": "Nie",
+        "Title": "Principal Scientist, Process Development",
+        "Company Name": "Pfanstiehl, Inc.",
+        "Email": "hanlin.nie@pfanstiehl.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/hanlin-nie-7855ab5",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Karen Moberg",
+        "First Name": "Karen",
+        "Last Name": "Moberg",
+        "Title": "Laboratory Manager, Center for Bioprocessing, Sino Biological US Inc.",
+        "Company Name": "Sino Biological, Inc.",
+        "Email": "karen_moberg@sinobiologicalus.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/karenmoberg",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Richard Seibert",
+        "First Name": "Richard",
+        "Last Name": "Seibert",
+        "Title": "Director of Technical Development and Transfer",
+        "Company Name": "SpectronRx",
+        "Email": "rseibert@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/richardseibert",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Steve Taliadouros",
+        "First Name": "Steve",
+        "Last Name": "Taliadouros",
+        "Title": "Director - Manufacturing Science & Technology",
+        "Company Name": "PCI Pharma Services",
+        "Email": "staliadouros@lyophilization.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/steve-taliadouros-a7b8472a/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Anton Kiefer",
+        "First Name": "Anton",
+        "Last Name": "Kiefer",
+        "Title": "Director of Chemistry, Instrumentation and Emerging Technologies",
+        "Company Name": "SpectronRx",
+        "Email": "akieferjr@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/anton-kiefer-801486132",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Tan Quach",
+        "First Name": "Tan",
+        "Last Name": "Quach",
+        "Title": "Senior Director of GMP Operations",
+        "Company Name": "Dalton Pharma Services",
+        "Email": "tquach@dalton.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/tan-quach-68903849",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Vernal Richards",
+        "First Name": "Vernal",
+        "Last Name": "Richards",
+        "Title": "Director Inorganic Radiochemistry",
+        "Company Name": "SpectronRx",
+        "Email": "vrichards@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/vernal-richards-ph-d-48767144",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Karen Hermanson",
+        "First Name": "Karen",
+        "Last Name": "Hermanson",
+        "Title": "Associate Director, Lab Operations",
+        "Company Name": "Adimab",
+        "Email": "karen.hermanson@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/karen-hermanson-534a5843",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Margaret Nolen",
+        "First Name": "Margaret",
+        "Last Name": "Nolen",
+        "Title": "Principal Scientist",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "mnolen@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/margaret-nolen-10b07212",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Huiyan Huang",
+        "First Name": "Huiyan",
+        "Last Name": "Huang",
+        "Title": "Principal Scientist",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "hhuang@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/huiyan-winnie-huang-2a33709a",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Michelle Schmidt",
+        "First Name": "Michelle",
+        "Last Name": "Schmidt",
+        "Title": "Sr. Director of Chemical Development",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "mschmidt@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/michelle-schmidt-5755388",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dean McGraw",
+        "First Name": "Dean",
+        "Last Name": "McGraw",
+        "Title": "Principal Scientist",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "dmcgraw@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/dean-mcgraw-125bab22",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Gary DeCrescenzo",
+        "First Name": "Gary",
+        "Last Name": "DeCrescenzo",
+        "Title": "SVP Research and Pharmaceutical Development",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "gdecrescenzo@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/gary-decrescenzo-44ba13180",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Daylin Reynoso",
+        "First Name": "Daylin",
+        "Last Name": "Reynoso",
+        "Title": "Senior Production Technician",
+        "Company Name": "Evergreen Theragnostics",
+        "Email": "daylin.reynoso@evergreentgn.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/daylin-reynoso-0a6704187",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Rucheet Patel",
+        "First Name": "Rucheet",
+        "Last Name": "Patel",
+        "Title": "Director of Supply Chain",
+        "Company Name": "Evergreen Theragnostics",
+        "Email": "rucheet.patel@evergreentgn.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/rucheet-patel-465783146",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Benjamin Causton",
+        "First Name": "Benjamin",
+        "Last Name": "Causton",
+        "Title": "Principal Scientist",
+        "Company Name": "Visterra Inc.",
+        "Email": "bcauston@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/benjamin-causton-6b8ba817",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Brahm Yachnin",
+        "First Name": "Brahm",
+        "Last Name": "Yachnin",
+        "Title": "Associate Director, Research",
+        "Company Name": "Visterra Inc.",
+        "Email": "byachnin@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/brahm-yachnin",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Victor Cisneros",
+        "First Name": "Victor",
+        "Last Name": "Cisneros",
+        "Title": "Vice President Global Operations",
+        "Company Name": "ILC Dover",
+        "Email": "cisnev@ilcdover.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/victorcisneros",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kevin Nolan",
+        "First Name": "Kevin",
+        "Last Name": "Nolan",
+        "Title": "Supply Chain Lead - Hardware, USA",
+        "Company Name": "ILC Dover",
+        "Email": "nolank@ilcdover.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/kevin-nolan-mba",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Juergen Nett",
+        "First Name": "Juergen",
+        "Last Name": "Nett",
+        "Title": "Senior Director High Throughput Expression",
+        "Company Name": "Adimab",
+        "Email": "juergen.nett@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/juergen-nett-42b7298",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hannah Watkins",
+        "First Name": "Hannah",
+        "Last Name": "Watkins",
+        "Title": "Senior Scientist I, Antibody Engineering",
+        "Company Name": "Adimab",
+        "Email": "hannah.watkins@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/hannah-watkins-b611607",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jessica Dawson",
+        "First Name": "Jessica",
+        "Last Name": "Dawson",
+        "Title": "Senior Director of Protein Analytics",
+        "Company Name": "Adimab",
+        "Email": "jessica.dawson@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/jessicapdawson",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jonathan Bolen",
+        "First Name": "Jonathan",
+        "Last Name": "Bolen",
+        "Title": "Director of Manufacturing Services",
+        "Company Name": "SpectronRx",
+        "Email": "jbolen@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/jonathan-bolen-43363a51",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "David Trump",
+        "First Name": "David",
+        "Last Name": "Trump",
+        "Title": "Chief Radiochemist",
+        "Company Name": "SpectronRx",
+        "Email": "dtrump@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/david-trump-7a921823b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dileep Pulukkunat",
+        "First Name": "Dileep",
+        "Last Name": "Pulukkunat",
+        "Title": "Director of Discovery",
+        "Company Name": "Invenra",
+        "Email": "dpulukkunat@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/dileep-pulukkunat-09aba1a",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Nicholas Marshall",
+        "First Name": "Nicholas",
+        "Last Name": "Marshall",
+        "Title": "Head of Protein Sciences",
+        "Company Name": "Invenra",
+        "Email": "nmarshall@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/nicholas-marshall-21437354",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Frank Moses",
+        "First Name": "Frank",
+        "Last Name": "Moses",
+        "Title": "Research and Development Supervisor",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "fmoses@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/frankmoses",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Andrew Weishar",
+        "First Name": "Andrew",
+        "Last Name": "Weishar",
+        "Title": "Senior Research Development Scientist",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "aweishar@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/andrewweishar",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Uyen Phan",
+        "First Name": "Uyen",
+        "Last Name": "Phan",
+        "Title": "Head of Immunology",
+        "Company Name": "Invenra",
+        "Email": "uphan@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/uyen-phan-03407453",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "John Richards",
+        "First Name": "John",
+        "Last Name": "Richards",
+        "Title": "Principal Scientist",
+        "Company Name": "Invenra",
+        "Email": "jrichards@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/john-richards-ph-d-399357b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Ron Jacak",
+        "First Name": "Ron",
+        "Last Name": "Jacak",
+        "Title": "Principal Scientist",
+        "Company Name": "Invenra",
+        "Email": "rjacak@invenra.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/ron-jacak",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Carl Adams",
+        "First Name": "Carl",
+        "Last Name": "Adams",
+        "Title": "Senior Manager, Analytical Research and Development",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "carladams@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/carl-adams-971a6329",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Honglei Zhai",
+        "First Name": "Honglei",
+        "Last Name": "Zhai",
+        "Title": "Senior Scientist",
+        "Company Name": "Sino Biological, Inc.",
+        "Email": "honglei_zhai@sinobiologicalus.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/honglei-zhai-5918b1279",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Paola Aquino",
+        "First Name": "Paola",
+        "Last Name": "Aquino",
+        "Title": "Senior Supply Chain Specialist",
+        "Company Name": "Evergreen Theragnostics",
+        "Email": "paola.aquino@evergreentgn.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/paola-aquino-435b335b",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Trinity Stokely",
+        "First Name": "Trinity",
+        "Last Name": "Stokely",
+        "Title": "Site Director",
+        "Company Name": "ILC Dover",
+        "Email": "stoket@ilcdover.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/trinity-stokely-73890943",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Amin Esmaeilnia",
+        "First Name": "Amin",
+        "Last Name": "Esmaeilnia",
+        "Title": "Senior Scientist",
+        "Company Name": "Sino Biological, Inc.",
+        "Email": "amin_esmaeilnia@sinobiological.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/amin-esmaeilnia-a70715218",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kathryn Ellis",
+        "First Name": "Kathryn",
+        "Last Name": "Ellis",
+        "Title": "Director, Research",
+        "Company Name": "Visterra Inc.",
+        "Email": "kellis@visterrainc.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/kathryn-ellis-12159110a",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Gord Schultz",
+        "First Name": "Gord",
+        "Last Name": "Schultz",
+        "Title": "Director of Supply Chain",
+        "Company Name": "BWXT Medical",
+        "Email": "gschultz@bwxt.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/gordschultz",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kirt Johnson",
+        "First Name": "Kirt",
+        "Last Name": "Johnson",
+        "Title": "Senior Director, Product Engineering and Operations",
+        "Company Name": "Adimab",
+        "Email": "kirt.johnson@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/kirt-johnson-0391491",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jim Vincent",
+        "First Name": "Jim",
+        "Last Name": "Vincent",
+        "Title": "Director of Manufacturing",
+        "Company Name": "SpectronRx",
+        "Email": "jvincent@spectronrx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/jim-vincent-0a91b31a3",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Amanda Blackwell",
+        "First Name": "Amanda",
+        "Last Name": "Blackwell",
+        "Title": "Head of Analytical Development",
+        "Company Name": "PCI Pharma Services",
+        "Email": "amanda.curson@pciservices.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/amanda-blackwell-146904154/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Linh Phan",
+        "First Name": "Linh",
+        "Last Name": "Phan",
+        "Title": "Associate CMC QC Operations Director",
+        "Company Name": "Exelixis",
+        "Email": "lphan@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/linh-phan-31bb996/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dharti Kothari",
+        "First Name": "Dharti",
+        "Last Name": "Kothari",
+        "Title": "Associate Bioconjugation Process Development Director",
+        "Company Name": "Exelixis",
+        "Email": "dkothari@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/dharti-kothari-795ba520/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Grace Li",
+        "First Name": "Grace",
+        "Last Name": "Li",
+        "Title": "Director, Biologics Analytical Development",
+        "Company Name": "Exelixis",
+        "Email": "gli@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/grace-li-8033b21/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Qiuting Hong",
+        "First Name": "Qiuting",
+        "Last Name": "Hong",
+        "Title": "Director, Analytical Development",
+        "Company Name": "Exelixis",
+        "Email": "qhong@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/qiuting-hong-0b431842/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Cristen Peterson",
+        "First Name": "Cristen",
+        "Last Name": "Peterson",
+        "Title": "Associate Biologics Upstream Process Development Director",
+        "Company Name": "Exelixis",
+        "Email": "cpeterson@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/cristen-peterson-7952a545/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Raj Haldankar",
+        "First Name": "Raj",
+        "Last Name": "Haldankar",
+        "Title": "Executive Director, Protein Sciences and Research Process Development",
+        "Company Name": "Exelixis",
+        "Email": "rhaldankar@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/raj-haldankar-524890/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Purbasa Patnaik",
+        "First Name": "Purbasa",
+        "Last Name": "Patnaik",
+        "Title": "Associate Director, Formulation & Drug Product Dev, CMC Biotherapeutics",
+        "Company Name": "Exelixis",
+        "Email": "ppatnaik@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/purbasapatnaik/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Bhas Dani",
+        "First Name": "Bhas",
+        "Last Name": "Dani",
+        "Title": "Vice President, Biologics CMC Development & Manufacturing",
+        "Company Name": "Exelixis",
+        "Email": "bdani@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/bhasdani/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Debola Banerjee",
+        "First Name": "Debola",
+        "Last Name": "Banerjee",
+        "Title": "Senior Director, Biotherapeutics CMC",
+        "Company Name": "Exelixis",
+        "Email": "dbanerjee@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/debola-banerjee-71708992/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Weijun L.",
+        "First Name": "Weijun",
+        "Last Name": "L.",
+        "Title": "Senior Director Biologics Analytical Development / CMC Team Lead",
+        "Company Name": "Exelixis",
+        "Email": "wli@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/weijunli/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Engin Ayturk",
+        "First Name": "Engin",
+        "Last Name": "Ayturk",
+        "Title": "Senior Director, CMC BioConjugation Process Development & Manufacturing",
+        "Company Name": "Exelixis",
+        "Email": "eayturk@exelixis.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/engin-ayturk-87427b/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Adrian Blackburn",
+        "First Name": "Adrian",
+        "Last Name": "Blackburn",
+        "Title": "Head of Process Development",
+        "Company Name": "KBI Biopharma",
+        "Email": "ablackburn@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/adrian-blackburn-1425a52b/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Erik Nordwald",
+        "First Name": "Erik",
+        "Last Name": "Nordwald",
+        "Title": "Director, head of microbial process development",
+        "Company Name": "KBI Biopharma",
+        "Email": "enordwald@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/erik-nordwald/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Aaron Anders",
+        "First Name": "Aaron",
+        "Last Name": "Anders",
+        "Title": "Director Manufacturing Technical Operations",
+        "Company Name": "KBI Biopharma",
+        "Email": "aanders@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/aaron-anders-392a1915/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Shaunak Uplekar",
+        "First Name": "Shaunak",
+        "Last Name": "Uplekar",
+        "Title": "Director, Upstream Process Development",
+        "Company Name": "KBI Biopharma",
+        "Email": "suplekar@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/shaunak-uplekar-557953b/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Amanda Hoertz",
+        "First Name": "Amanda",
+        "Last Name": "Hoertz",
+        "Title": "Senior Vice President, Analytical and Formulation Sciences",
+        "Company Name": "KBI Biopharma",
+        "Email": "ahoertz@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/amanda-hoertz-3aba605/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Leslie Wolfe",
+        "First Name": "Leslie",
+        "Last Name": "Wolfe",
+        "Title": "Senior Vice President Process Development & Site Head",
+        "Company Name": "KBI Biopharma",
+        "Email": "lwolfe@kbibiopharma.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/leslieswolfe/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Margie Campbell",
+        "First Name": "Margie",
+        "Last Name": "Campbell",
+        "Title": "Associate Director, Upstream Viral Vector Process Development",
+        "Company Name": "SK pharmteco",
+        "Email": "mcampbell@cfbm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/margie-campbell-7a703017/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Evan Schlaich",
+        "First Name": "Evan",
+        "Last Name": "Schlaich",
+        "Title": "Associate Director, Viral Vector Process Development",
+        "Company Name": "SK pharmteco",
+        "Email": "evan.schlaich@skpt.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/evanschlaich/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Mardhani A.",
+        "First Name": "Mardhani",
+        "Last Name": "A.",
+        "Title": "Director, MSAT",
+        "Company Name": "SK pharmteco",
+        "Email": "mardhani.aparajithan@skpt.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/mardhaniaparajithan/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Eric Fried",
+        "First Name": "Eric",
+        "Last Name": "Fried",
+        "Title": "Associate Director, Viral Vector MSAT",
+        "Company Name": "SK pharmteco",
+        "Email": "eric.fried@skpt.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/eric-fried-73264a2b/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Chris Nieder",
+        "First Name": "Chris",
+        "Last Name": "Nieder",
+        "Title": "Director, Viral Vector Process Development",
+        "Company Name": "SK pharmteco",
+        "Email": "cnieder@cfbm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/chris-nieder-756ba6a4/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Gene Yoshioka",
+        "First Name": "Gene",
+        "Last Name": "Yoshioka",
+        "Title": "Senior Director, Manufacturing Sciences and Technology",
+        "Company Name": "Avid Bioservices",
+        "Email": "gyoshioka@avidbio.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/gene-yoshioka-975b951a/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Charles Carrier",
+        "First Name": "Charles",
+        "Last Name": "Carrier",
+        "Title": "MSAT Associate Director (Upstream & Formulations)",
+        "Company Name": "Avid Bioservices",
+        "Email": "ccarrier@avidbio.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/charlesrcarrier/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Tatiana Mello",
+        "First Name": "Tatiana",
+        "Last Name": "Mello",
+        "Title": "Director Early Stage Process Development",
+        "Company Name": "Avid Bioservices",
+        "Email": "tmello@avidbio.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/tatiana-t-s-mello-3b975470/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Vaishali Sharma",
+        "First Name": "Vaishali",
+        "Last Name": "Sharma",
+        "Title": "Associate Director, Analytical and Formulation Development",
+        "Company Name": "Bionova Scientific",
+        "Email": "vaishalis@bionovascientific.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/vaishali-sharma-94019aa/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Minni Aswath",
+        "First Name": "Minni",
+        "Last Name": "Aswath",
+        "Title": "Vice President, Process Development",
+        "Company Name": "Bionova Scientific",
+        "Email": "minnia@bionovascientific.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/minni/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jason Fairlee",
+        "First Name": "Jason",
+        "Last Name": "Fairlee",
+        "Title": "Senior Director of Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "jason.fairlee@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/jason-fairlee-34165319/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Sharyn Farnsworth",
+        "First Name": "Sharyn",
+        "Last Name": "Farnsworth",
+        "Title": "Director Upstream Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "sharyn.farnsworth@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/sharyn-farnsworth-920ab94/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Fay Saunders",
+        "First Name": "Fay",
+        "Last Name": "Saunders",
+        "Title": "Senior Director, Mammalian Cell Culture Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "fay.saunders@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/fay-saunders-77259311/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Cecilie Cederberg",
+        "First Name": "Cecilie",
+        "Last Name": "Cederberg",
+        "Title": "Director Downstream Process Engineering",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "cecilie.cederberg@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/cecilie-cederberg-8b68573/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Gustav Green",
+        "First Name": "Gustav",
+        "Last Name": "Green",
+        "Title": "Sr Director Process Dev and MSAT Technologies",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "gustav.green@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/gustav-green-62700112/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Jason Matthews",
+        "First Name": "Jason",
+        "Last Name": "Matthews",
+        "Title": "Associate Director of QC Analytical Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "jason.matthews@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/jason-matthews-4738804/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Chy-Anh Tran",
+        "First Name": "Chy-Anh",
+        "Last Name": "Tran",
+        "Title": "Head of Process & Analytical Development and MSAT",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "anh.tran@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/chyanh/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Rajesh Kasiviswanathan",
+        "First Name": "Rajesh",
+        "Last Name": "Kasiviswanathan",
+        "Title": "Director, Downstream Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "rajesh.kasiviswanathan@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/rajesh-kasiviswanathan-090b4914/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Sean Salamander",
+        "First Name": "Sean",
+        "Last Name": "Salamander",
+        "Title": "Head of Upstream MSAT",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "sean.salamander@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/sean-salamander-94672942/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Clara Smith",
+        "First Name": "Clara",
+        "Last Name": "Smith",
+        "Title": "Senior Director, Process Development Strategy",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "clara.smith@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/clara-smith-60b84a3/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "John Stewart",
+        "First Name": "John",
+        "Last Name": "Stewart",
+        "Title": "Senior Vice President, Global Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "john.stewart@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/john-stewart-a0185546/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Mahalia C.",
+        "First Name": "Mahalia",
+        "Last Name": "C.",
+        "Title": "Head of MSAT",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "mahalia.corrales@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/mahalia-c-2469659/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Pooja Mehta",
+        "First Name": "Pooja",
+        "Last Name": "Mehta",
+        "Title": "Director, MSAT",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "pooja.mehta@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/poojabalchandani/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "James Pullen",
+        "First Name": "James",
+        "Last Name": "Pullen",
+        "Title": "Senior Director of Downstream Process Development",
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Email": "james.pullen@fujifilm.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/james-pullen-71aa6335/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Brett Verstak",
+        "First Name": "Brett",
+        "Last Name": "Verstak",
+        "Title": "Director, Cell Line Development",
+        "Company Name": "Abzena",
+        "Email": "brett.verstak@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/brett-verstak-5a970764/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Renu Goel",
+        "First Name": "Renu",
+        "Last Name": "Goel",
+        "Title": "Associate Director of Analytical Development",
+        "Company Name": "Abzena",
+        "Email": "renu.goel@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/renu-goel-b4767628/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Simon Keen",
+        "First Name": "Simon",
+        "Last Name": "Keen",
+        "Title": "Vice President Cell Line Development",
+        "Company Name": "Abzena",
+        "Email": "simon.keen@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/simon-keen-8b617525/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Rudramurty Balla",
+        "First Name": "Rudramurty",
+        "Last Name": "Balla",
+        "Title": "Director CMC Program Management",
+        "Company Name": "Abzena",
+        "Email": "rudramurty.balla@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/rudramurty-balla/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hiren Soni",
+        "First Name": "Hiren",
+        "Last Name": "Soni",
+        "Title": "Director - Manufacturing Chemistry and MSaT",
+        "Company Name": "Abzena",
+        "Email": "hiren.soni@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/hirensoni-peng/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Clayton Lutzow",
+        "First Name": "Clayton",
+        "Last Name": "Lutzow",
+        "Title": "Head of MSaT",
+        "Company Name": "Abzena",
+        "Email": "clayton.lutzow@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/clayton-lutzow-16a01868/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Kevin Chang",
+        "First Name": "Kevin",
+        "Last Name": "Chang",
+        "Title": "Associate Director, Analytical Development",
+        "Company Name": "Abzena",
+        "Email": "kevin.chang@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/kevintkchang/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Haiou Yang",
+        "First Name": "Haiou",
+        "Last Name": "Yang",
+        "Title": "Sr. Director Process Development",
+        "Company Name": "Abzena",
+        "Email": "haiou.yang@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/haiouyang/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Satendra Chauhan",
+        "First Name": "Satendra",
+        "Last Name": "Chauhan",
+        "Title": "Senior Director, Process Development Chemistry",
+        "Company Name": "Abzena",
+        "Email": "satendra.chauhan@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/satendra-chauhan-a4816019/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Hamideh Keshavarz",
+        "First Name": "Hamideh",
+        "Last Name": "Keshavarz",
+        "Title": "Senior Director, Analytical Development",
+        "Company Name": "Abzena",
+        "Email": "hamideh.keshavarz@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/hamideh-keshavarz-phd-96606b32/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Dennis Yoon",
+        "First Name": "Dennis",
+        "Last Name": "Yoon",
+        "Title": "Senior Director, MSAT",
+        "Company Name": "Abzena",
+        "Email": "dennis.yoon@abzena.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/dennis-yoon-38997516/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Michael Mims",
+        "First Name": "Michael",
+        "Last Name": "Mims",
+        "Title": "Vice President of Manufacturing",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "mmims@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/michael-mims-mba-88413811",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Paul Ruther",
+        "First Name": "Paul",
+        "Last Name": "Ruther",
+        "Title": "Executive Director Manufacturing Science and Technology",
+        "Company Name": "PCI Pharma Services",
+        "Email": "paul.ruther@pci.com",
+        "LinkedIn URL": "https://www.linkedin.com/in/paul-ruther-50b9838/",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Mo Ahmed",
+        "First Name": "Mo",
+        "Last Name": "Ahmed",
+        "Title": "Senior Director of Research Development",
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Email": "mahmed@exela.us",
+        "LinkedIn URL": "http://www.linkedin.com/in/mo-ahmed-b59b6a2a",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Melissa Durkin",
+        "First Name": "Melissa",
+        "Last Name": "Durkin",
+        "Title": "Principal Research Associate I, Antibody Engineering",
+        "Company Name": "Adimab",
+        "Email": "melissa.durkin@adimab.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/melissa-durkin-8b07a2138",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Full Name": "Shaun Selness",
+        "First Name": "Shaun",
+        "Last Name": "Selness",
+        "Title": "SVP, Head of Discovery and Preclinical Sciences",
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Email": "sselness@aclaristx.com",
+        "LinkedIn URL": "http://www.linkedin.com/in/shaunselness",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    }
+  ]
+}

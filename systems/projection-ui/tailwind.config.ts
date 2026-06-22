@@ -1,7 +1,14 @@
 import type { Config } from "tailwindcss";
 
+// Absolute content globs so the build does not depend on the process cwd.
+// The preview harness launches `next dev` from a different directory, which
+// makes relative globs ("./app/**") match nothing and emits zero utilities.
+const ROOT = "/Users/nplmini/code/work/systems/projection-ui";
+
 const config: Config = {
   content: [
+    `${ROOT}/app/**/*.{ts,tsx}`,
+    `${ROOT}/components/**/*.{ts,tsx}`,
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
   ],

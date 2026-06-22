@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const fs=require('fs');const p='/Users/nplmini/code/work/practices/agentic-systems/ECOSYSTEM-MAP.md';let t='';try{t=fs.readFileSync(p,'utf8')}catch(e){process.exit(0)}process.stdout.write(JSON.stringify({hookSpecificOutput:{hookEventName:'SessionStart',additionalContext:t}}))\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

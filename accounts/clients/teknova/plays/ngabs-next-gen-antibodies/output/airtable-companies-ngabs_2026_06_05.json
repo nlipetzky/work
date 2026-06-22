@@ -1,0 +1,1278 @@
+{
+  "meta": {
+    "batch_id": "ngabs_2026_06_05",
+    "entity": "companies",
+    "generated_at": "2026-06-09T15:36:28.557Z",
+    "source": "staging (contract-gated)",
+    "contract": "delivery-contract.md",
+    "discovery_source_tag": "agent_ngabs",
+    "merge_on": "Domain",
+    "count": 62
+  },
+  "records": [
+    {
+      "fields": {
+        "Company Name": "Curia",
+        "Domain": "curiaglobal.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "NY",
+        "HQ Country": "United States",
+        "Employee Count": 3398,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/curia-cdmo",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "antibody fragments",
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, antibody fragments, ADCs. Verdict: yes (confidence: high). Evidence: From the Beacon page: \"Save time and resources by using our fully integrated antibody engineering service to reformat lead antibodies to your desired specifications (e.g. scFv or bi-specific).\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Cytovance Biologics",
+        "Domain": "cytovance.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "OK",
+        "HQ Country": "United States",
+        "Employee Count": 188,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/cytovance",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the CDMO page: \"Mammalian cell culture services from cell line development to commercial manufacturing of monoclonal antibodies, fusion proteins and multispecifics.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "WuXi AppTec, Laboratory Testing Division",
+        "Domain": "wuxiapptec.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "NJ",
+        "HQ Country": "United States",
+        "Employee Count": 4223,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/laboratorytestingdivision",
+        "Biotech Modality Types": [
+          "ADCs",
+          "bispecific antibodies",
+          "BiTEs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs, bispecific antibodies, BiTEs. Verdict: yes (confidence: high). Evidence: From the Antibody-Drug Conjugate page: \"Our end-to-end preclinical testing services cover the entire spectrum of ADCs, from discovery through IND and NDA, allowing developers to advance novel therapies further, faster.\"; From the Bispecific Antibody blog: \"Bispecific T cell engagers\" (listing of bispecific mechanisms) ; From Discovery Biology 'antibody science' page: \"From antigen design and preparation to polyclonal antibody and monoclonal antibody service, including anti-drug antibodies (ADA), HCP antibodies, surrogate antibodies, diagnostic antibodies, and therapeutic antibody hits.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Exelixis",
+        "Domain": "exelixis.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 1549,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/exelixis",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs"
+        ],
+        "Company Research": "developer developing bispecific antibodies, ADCs. Verdict: yes (confidence: high). Evidence: From the Discovery Engine page: \"Much of our drug discovery activities focuses on discovering and advancing various biotherapeutics that have the potential to become anti-cancer therapies, such as bispecific antibodies, ADCs and other innovative treatments. Several biotherapeutic product candidates have progressed into clinical trials. ADU-1805* | XB010 | XB628 | XB371 | XB773\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Harbour BioMed",
+        "Domain": "harbourbiomed.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Massachusetts",
+        "HQ Country": "United States",
+        "Employee Count": 111,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/harbour-biomed",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "platform company developing bispecific antibodies, multispecific antibodies, ADCs, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the Homepage: \"Our proprietary antibody technology platform, Harbour Mice ® , generates fully human monoclonal antibodies in both the conventional two heavy and two light chain (H2L2) format and the heavy chain-only (HCAb) format. Building upon HCAb antibodies, the HCAb-based immune cell engagers (HBICE ® ) bispecific antibody technology enables tumor-killing effects that traditional combination therapies cannot achieve. The HCAb-based Antibody Plus technology (HCAb PLUS TM ) provides comprehensive modality solutions for the development of innovative multi-specific medicines in different disease areas.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "MacroGenics, Inc.",
+        "Domain": "macrogenics.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "MD",
+        "HQ Country": "United States",
+        "Employee Count": 380,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/macrogenics",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs",
+          "BiTEs"
+        ],
+        "Company Research": "developer developing bispecific antibodies, ADCs, BiTEs. Verdict: yes (confidence: high). Evidence: From the About page: \"MacroGenics is a clinical-stage biopharmaceutical company focused on developing innovative, next-generation antibody-based therapies to improve the lives of cancer patients. The Company is advancing a broad pipeline of novel product candidates incorporating proprietary technology platforms for antibody-drug conjugates (ADCs), bispecific checkpoint antibodies, and next-generation T-cell engagers.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "KBI Biopharma",
+        "Domain": "kbibiopharma.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "North Carolina",
+        "HQ Country": "United States",
+        "Employee Count": 1692,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/kbi-biopharma",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the Bispecifics Platform page: \"Our SUREtechnology Platform has successfully produced 36 bispecific antibody programs, 25 of which are currently in Human Clinical Trial stages.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "ILC Dover",
+        "Domain": "ilcdover.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Delaware",
+        "HQ Country": "United States",
+        "Employee Count": 564,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/ilc-dover",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the soloADC product page: \"soloADC is the highest-performing containment isolator unit with proven containment results, designed solely for ADC manufacturing and toxic linker compounding.\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "GenScript ProBio",
+        "Domain": "probiocdmo.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 243,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/genscript-probio",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the SMABody page: \"ProBio SMABody( Single-domain antibody fused to monoclonal Ab ) platform naturally combine the single domain antibody and the monoclonal antibody to make a bispecific antibody in symmetric format with good biological efficacy and good developability...SMABody Bispecific Antibody Platform is available for R&D service and co-development model.\"; From the Bispecific discovery page: \"One-stop bsAb discovery solution...Over 20 bsAb discovery projects...Most advanced project is in clinical phase I...Partner with 5 companies on SMAB co-development.\"; From the ADC service PDF: \"With 19 years of experience in antibody drug discovery, ProBio offers one-stop ADC discovery services to accelerate customers’ R&D speed from target to preclinical candidate(PCC)...100+ ready-to-use payload-linker conjugates...ADC Conjugation ·Lysine-based ·Cysteine-based ·Site-specific conjugation...Different biologics modalities mAb,bsAb,sdAb, antibody fragment.\"; From the GenScript press release: \"LaNova Medicines leveraged ProBio’s PD-1 molecule to develop its PD-1/VEGF bispecific antibody, a key component of the LM-299 program.\"; From About Us: \"ProBio, a subsidiary of GenScript, is a global CDMO offering end-to-end services from discovery to GMP for plasmids, antibodies, and cell & gene therapies.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Ambrx",
+        "Domain": "ambrx.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "CA",
+        "HQ Country": "United States",
+        "Employee Count": 60,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/ambrx",
+        "Biotech Modality Types": [
+          "ADCs",
+          "bispecific antibodies",
+          "BiTEs",
+          "immunocytokines"
+        ],
+        "Company Research": "developer developing ADCs, bispecific antibodies, BiTEs, immunocytokines. Verdict: yes (confidence: high). Evidence: From the Pipeline page: \"We are advancing enhanced antibody-drug conjugate, immuno-oncology conjugate and bispecific candidates as potential treatments for cancer.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "BIOVECTRA",
+        "Domain": "biovectra.com",
+        "Industry": "Biotechnology",
+        "HQ State": "PE",
+        "HQ Country": "Canada",
+        "Employee Count": 511,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/biovectra",
+        "Biotech Modality Types": [
+          "antibody fragments",
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing antibody fragments, ADCs. Verdict: yes (confidence: high). Evidence: From the Biologics page: \"The types of drug substances we are manufacturing comprise of proteins, enzyme, antibody fragments, and peptides.\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "BigHat Biosciences",
+        "Domain": "bighatbio.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 97,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/bighat-biosciences",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "platform company developing bispecific antibodies, multispecific antibodies, ADCs, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the Technology page: \"Today, BigHat specializes in next-generation antibody formats, including camelid and human VHHs, scFvs, multispecifics, and conjugates.\" From the Therapeutics page: \"Advancing a pipeline of therapeutics towards the clinic... Modality ... ADC ... BHB810 ... Modality ... TCE ... BHB299\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Pace Life Sciences",
+        "Domain": "pacelifesciences.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Minnesota",
+        "HQ Country": "United States",
+        "Employee Count": 419,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/pacelifesciences",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Analytical Testing page: \"Some of these include virus like particles (VLPs), viral vectors, adeno-associated virus (AAV), lipid nanoparticles (LNPs), and antibody-drug conjugates (ADCs).\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Recipharm Advanced Bio",
+        "Domain": "recipharm-ab.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "MA",
+        "HQ Country": "United States",
+        "Employee Count": 177,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/recipharmadvancedbio",
+        "Biotech Modality Types": [
+          "ADCs",
+          "Fc-fusion proteins",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing ADCs, Fc-fusion proteins, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Recipharm Corporate Fact Sheet: 'Preparation of antibody-drug conjugates (ADCs)... Custom design and synthesis of payloads, spacers and linkers... Preparation and purification of various types of bioconjugates.' From the Recipharm Advanced Bio About page: 'development and manufacturing services: ... Recombinant proteins'..",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "AbCellera",
+        "Domain": "abcellera.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "British Columbia",
+        "HQ Country": "Canada",
+        "Employee Count": 589,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/abcellera",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "BiTEs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, ADCs, BiTEs. Verdict: yes (confidence: high). Evidence: From the Pipeline page: \"ABCL635 is a potential first-in-class antibody medicine for the non-hormonal treatment of VMS...\"; From the Platform page: \"We design and engineer T-cell engagers to address challenging tumor types by incorporating novel CD3, co-stimulatory, and multispecific modalities.\"; From the Prelude press release: \"Multi-year collaboration to jointly discover, develop, and commercialize novel oncology medicines for up to five programs, with the first ADC program...\" and \"AbCellera will lead manufacturing activities...\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Aclaris Therapeutics, Inc.",
+        "Domain": "aclaristx.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Pennsylvania",
+        "HQ Country": "United States",
+        "Employee Count": 71,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/aclaris-therapeutics-inc-",
+        "Biotech Modality Types": [
+          "bispecific antibodies"
+        ],
+        "Company Research": "developer developing bispecific antibodies. Verdict: yes (confidence: high). Evidence: From the Press Release (Aclaris Therapeutics Announces Positive Interim Results... Jan 6, 2026): \"ATI-052 is an investigational humanized anti-TSLP and anti-IL-4Rα bispecific antibody that exhibits high binding affinity to and dual blockade of both the upstream thymic stromal lymphopoietin (TSLP) receptor signal transduction and downstream interleukin-4 receptor (IL-4R) activation thereby inhibiting this central proinflammatory pathway.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Gallus BioPharmaceuticals",
+        "Domain": "patheon.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "MO",
+        "HQ Country": "United States",
+        "Employee Count": 2082,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/gallus-biopharmaceuticals",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the Upstream process development page: 'we specialize in the development of monoclonal antibodies (mAbs), bispecific antibodies, Fc fusion, enzymes, recombinant proteins, and many other complex molecules.'; From the Biologics CDMO Services page: 'Can you manufacture bispecific and fc-fusion based biologics? Yes, approximately 32% of projects successfully completed have been for bispecific, fc-fusion, and enzymatic molecules.'.",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Treeline",
+        "Domain": "treeline.bio",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Massachusetts",
+        "HQ Country": "United States",
+        "Employee Count": 170,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/treeline-biosciences",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "developer developing ADCs. Verdict: yes (confidence: high). Evidence: From the Home page: \"Inhibitors, protein degraders, and antibody drug conjugates are clinically proven approaches to making new medicines. We have enabled all of these in-house, so we can choose the best approach for each target and disease.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Sutro Biopharma, Inc.",
+        "Domain": "sutrobio.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 215,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/sutro-biopharma-inc-",
+        "Biotech Modality Types": [
+          "ADCs",
+          "multispecific antibodies",
+          "bispecific antibodies"
+        ],
+        "Company Research": "platform company developing ADCs, multispecific antibodies, bispecific antibodies. Verdict: yes (confidence: high). Evidence: From the About page: \"At Sutro, we are advancing a cutting-edge, next-generation antibody-drug conjugate (ADC) platform designed to deliver single- and dual-payload ADCs that enable meaningful breakthroughs for patients with cancer. By fully optimizing the antibody, linker, and payload, our cell-free platform produces ADCs that are engineered to improve drug exposure, reduce side effects, and expand the range of treatable tumor types. With unique capabilities in dual-payload ADCs, we aim to overcome treatment resistance and redefine what’s possible in cancer therapy.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "LGM Pharma",
+        "Domain": "lgmpharma.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Florida",
+        "HQ Country": "United States",
+        "Employee Count": 145,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/lgm-pharma",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the blog post \"How The Right CDMO Partner Can Ensure Your Antibody Drug Conjugate Project Is A Success\": \"Recently, we were approached to source a mAb for a startup biopharmaceutical company with a novel, patented ADC technology designed to enhance the effectiveness of the antibody drug conjugate. As a startup, the client lacked supply chain experience, and did not have the capability to formulate and manufacture the ultimate drug product. LGM not only sourced the mAb, but also identified a partner who could perform the formulation and manufacturing of the final ADC drug product on the client’s behalf.\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Sino Biological, Inc.",
+        "Domain": "sinobiological.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Texas",
+        "HQ Country": "United States",
+        "Employee Count": 262,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/sino-biological-inc",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "trispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, trispecific antibodies, ADCs, Fc-fusion proteins, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the CRO Service page: \"Bispecific Antibody Production Service Starting from antibody sequences, 20+ bsAb formats can be produced... Antibody Fragment Production Services Diverse fragment formats: scFv, Fab, VHH, antibody-fusion proteins, and more.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Proteintech Group",
+        "Domain": "ptglab.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Illinois",
+        "HQ Country": "United States",
+        "Employee Count": 255,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/proteintech-group",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "antibody fragments",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, antibody fragments, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the Custom Antibody Services page: \"Develop highly specific recombinant monoclonal antibodies, utilizing the Proteintech single B cell-based ABCE™ platform: * Fab, F(ab’) fragments and scFv, scFv-Fc, VHH-Fc * Chimeric and Bi-specific antibodies * Custom VHH/Nanobody service\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Absci",
+        "Domain": "absci.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Washington",
+        "HQ Country": "United States",
+        "Employee Count": 175,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/absci",
+        "Biotech Modality Types": [
+          "multispecific antibodies"
+        ],
+        "Company Research": "developer, platform company developing multispecific antibodies. Verdict: yes (confidence: high). Evidence: From the Technology page: \"AI-designed antibody features: * Tunable selectivity * pH dependent binding * Half-life extension * Multi-valency / multiple targets\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Avidity Biosciences, Inc.",
+        "Domain": "aviditybiosciences.com",
+        "Industry": "Biotechnology",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 452,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/avidity-biosciences-llc",
+        "Biotech Modality Types": [
+          "none"
+        ],
+        "Company Research": "developer developing none. Verdict: yes (confidence: high). Evidence: From the Platform page: \"Antibody Oligonucleotide Conjugates (AOC) therapeutics are designed to combine the proven technology of monoclonal antibodies (mAbs) with the precision and potency of oligonucleotide therapies to access previously untreatable tissue and cell types...Utilizing our proprietary Antibody Oligonucleotide Conjugates (AOCs™) platform, Avidity was the first company to demonstrate the successful targeted delivery of RNA to muscle.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Wheeler Bio, Inc.",
+        "Domain": "wheelerbio.com",
+        "Industry": "Biotechnology",
+        "HQ State": "Oklahoma",
+        "HQ Country": "United States",
+        "Employee Count": 73,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/wheeler-bio",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the About Us page: \"Wheeler Bio is an innovative contract development and manufacturing organization (CDMO) specializing in the development and cGMP manufacturing of large molecule biologics, including antibody-based therapeutics, bispecific antibodies, fusion proteins, and other complex biologics.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "SK pharmteco",
+        "Domain": "skpharmteco.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 1431,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/skpharmteco",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the LOTTE BIOLOGICS press release page: 'The collaboration will deliver integrated, one-stop CDMO services spanning antibody drug substance, linker–payload production, and bioconjugation, supported by joint marketing based on deep ADC expertise.'.",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Adimab",
+        "Domain": "adimab.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "New Hampshire",
+        "HQ Country": "United States",
+        "Employee Count": 136,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/adimab-llc",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "platform company developing bispecific antibodies, multispecific antibodies, ADCs, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the 'Adimab Provides Update on Pipeline' press release: \"Antibodies from Adimab have exquisite specificity and are utilized in a variety of modalities, including monoclonal and multispecific formats, CAR-Ts, ADCs, etc.\" From the Platform/Capabilities page: \"Multispecific antibodies and T cell engagers — Engineer multispecifics, including T-cell engagers, of diverse formats for function, manufacturability, and scalability.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Seagen",
+        "Domain": "pfizer.com",
+        "Industry": "Manufacturing",
+        "HQ State": "Washington",
+        "HQ Country": "United States",
+        "Employee Count": 317,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/seagen",
+        "Biotech Modality Types": [
+          "ADCs",
+          "bispecific antibodies"
+        ],
+        "Company Research": "developer developing ADCs, bispecific antibodies. Verdict: yes (confidence: high). Evidence: From Pfizer Completes Acquisition of Seagen (Press Release): \"Seagen is a world-leader in ADC technology, a transformative modality that is emerging as a powerful tool across a broad range of cancers... With the addition of Seagen, Pfizer’s Oncology pipeline has doubled in size with 60 programs spanning multiple modalities, including ADCs, small molecules, bispecifics and other immunotherapies.\"; From Manufacturing Sites page: \"The North Creek site, integrated into Pfizer’s network following the Seagen acquisition, produces antibody drug conjugates (ADCs) and antibody intermediates.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "AGC Biologics",
+        "Domain": "agcbio.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "WA",
+        "HQ Country": "United States",
+        "Employee Count": 2520,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/agcbiologics",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs, Fc-fusion proteins, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Proveo (ADC) page: \"Proveo ™ provides complete and efficient solutions for antibody drug conjugates (ADCs)... Proveo ™ leverages AGC Biologics' specialized expertise in monoclonal antibody production...\"; From the Novelty Nobility press release: \"Novelty Nobility Taps AGC Biologics to Further Develop Bispecific Drug Candidate... NN4101 is a first-in-class bispecific antibody intended for the treatment of neovascular retinal diseases. It uniquely connects a fully human anti-c-Kit monoclonal antibody with a vascular endothelial growth factor (VEGF) trap.\"; From the Seattle press release: \"The approved products include two FC-fusion proteins and a monoclonal antibody (mAb).\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Dalton Pharma Services",
+        "Domain": "dalton.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "ON",
+        "HQ Country": "Canada",
+        "Employee Count": 156,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/dalton-pharma-services",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Home page: \"Dalton offers custom conjugation services as a tool for drug delivery, including development of antibody-drug conjugates (ADCs).\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Alcami Corporation",
+        "Domain": "alcami.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "NC",
+        "HQ Country": "United States",
+        "Employee Count": 1243,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/alcami",
+        "Biotech Modality Types": [
+          "ADCs",
+          "multispecific antibodies"
+        ],
+        "Company Research": "CDMO service provider developing ADCs, multispecific antibodies. Verdict: yes (confidence: high). Evidence: From the Alcami Durham expansion press release: \"The 20,000-square-foot expansion ... will significantly strengthen Alcami’s analytical capabilities in support of biologics, peptides, oligonucleotides, antibody-drug conjugates (ADCs), and cell and gene therapy (CGT) drug substances and drug products.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Avid Bioservices",
+        "Domain": "avidbio.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 361,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/avid-bioservices",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs. Verdict: yes (confidence: high). Evidence: From World ADC 2025 page: \"Avid Bioservices has extensive experience supporting Antibody-Drug Conjugate (ADC) programs, helping innovators navigate the complexities of biologics development and manufacturing. Whether you’re advancing a novel ADC candidate or preparing for commercial scale-up, our team is ready to discuss how we can support your goals with tailored CDMO solutions.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Visterra Inc.",
+        "Domain": "visterrainc.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Massachusetts",
+        "HQ Country": "United States",
+        "Employee Count": 133,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/visterra-inc-",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins"
+        ],
+        "Company Research": "developer developing bispecific antibodies, multispecific antibodies, ADCs, Fc-fusion proteins. Verdict: yes (confidence: high). Evidence: From the Our Approach page: \"A variety of novel antibody formats are utilized to enable precise control of the target biology, including engineering multi-specific molecules, Fc-fusion proteins, and payload-conjugates.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "NJ Bio, Inc.",
+        "Domain": "njbio.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 146,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/njbp",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Manufacturing Services page: \"We specialize in the development and GMP manufacturing of antibody-drug conjugates (ADCs), complex bioconjugates, mRNA, oligonucleotides, antibody-oligonucleotide conjugates, linker payloads and other advanced therapeutics.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "J-STAR Research, Inc.",
+        "Domain": "jstar-research.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 137,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/j-star-research-inc",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From 'Overview and Case Study of Antibody Oligonucleotide Conjugates (AOC)' (AOC PDF): 'With the completion of the construction and production of four R&D and manufacturing sites in Minhang(Shanghai), Fengxian(Shanghai), Waigaoqiao(Shanghai), and New Jersey(USA) in the past two years, Porton has the ability to provide end-to-end CDMO services for AOC drugs and has accumulated experience in multiple AOC Drug, Payload-Linker and Oligonucleotide one-stop R&D and manufacturing projects.' Also: 'In addition to the oligonucleotide related services mentioned above, we have also accumulated rich project experience in AOC conjugation technology, covering various conjugation methods including traditional lysine and cysteine conjugation, enzyme catalyzed site-specific conjugation, and engineered cysteine modification.' From 'Navigating ADC Market Entry: Key Challenges and Solutions' page: 'An Antibody Drug Conjugate ... is formed when an active drug (the payload) is connected to an antibody using a linker' and the linked PDF notes an ADC R&D lead: 'Mr. Xu Jun ... Senior Manager, ADC R&D and Production ... possesses rich experience in the development of monoclonal antibody purification and conjugation processes ... and GMP scale-up manufacturing.'.",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Eurofins CDMO Alphora",
+        "Domain": "eurofins.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Ontario",
+        "HQ Country": "Canada",
+        "Employee Count": 24611,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/cdmo-alphora",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Eurofins CDMO Alphora page: \"Development & GMP Manufacture of Monoclonal Antibodies (mAbs), Proteins, and Antibody-Drug Conjugates (ADCs): 200L and 2000L (coming 2026)\"; From the Pharma Newsletter (Pilot facility) page: \"Integrated ADC Services: By consolidating our deep expertise in linker and warhead development with our new biologics manufacturing capacity, we now offer an end-to-end solution for antibody drug conjugate (ADC) production, all under one roof.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Immunome, Inc.",
+        "Domain": "immunome.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Washington",
+        "HQ Country": "United States",
+        "Employee Count": 244,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/immunome-inc-",
+        "Biotech Modality Types": [
+          "ADCs",
+          "radioimmunoconjugates"
+        ],
+        "Company Research": "developer developing ADCs, radioimmunoconjugates. Verdict: yes (confidence: high). Evidence: From the Pipeline page: \"Our most advanced pipeline programs are varegacestat (formerly AL102), a late-clinical stage gamma secretase inhibitor for treatment of desmoid tumors; IM-1021, a ROR1-targeted ADC which is currently in a Phase 1 trial; and IM-3050, a FAP-targeted radioligand, which received IND clearance in Q1 2025. Our preclinical pipeline includes IM-1617, IM-1340, and IM-1335, all of which are ADCs pursuing undisclosed targets with expression in multiple solid tumors.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Just - Evotec Biologics",
+        "Domain": "evotec.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "WA",
+        "HQ Country": "United States",
+        "Employee Count": 4819,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/just-inc-",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs. Verdict: yes (confidence: high). Evidence: From the Antibody Drug Conjugates services page: \"Evotec delivers end-to-end antibody drug conjugate services from gene to IND, with flexible entry points throughout the preclinical discovery process\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Exela Pharma Sciences LLC",
+        "Domain": "exelapharma.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "NC",
+        "HQ Country": "United States",
+        "Employee Count": 341,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/exela-pharma-sciences-llc",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the CDMO Services page: \"Exela Pharma Sciences is a fully integrated large and small molecule sterile injectable development and manufacturing operation.\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Crystal Pharmatech",
+        "Domain": "crystalpharmatech.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 77,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/crystal-pharmatech",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the About page: 'under Crystal Bio Solutions, we deliver bioanalytical and biomarker testing, biologics characterization and CMC analytics, and clinical pharmacology.' From the Careers page: '+ Independently conduct LC-MS method development for biologics (e.g., ADC, mAB, protein, peptide, oligonucleotide, etc.) in support of developability assessment, comparability assessment, in-depth characterization, biotransformation, and CQA related analysis.'.",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Evergreen Theragnostics",
+        "Domain": "evergreentgn.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 58,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/evergreentgn",
+        "Biotech Modality Types": [
+          "antibody fragments",
+          "radioimmunoconjugates"
+        ],
+        "Company Research": "CDMO service provider developing antibody fragments, radioimmunoconjugates. Verdict: yes (confidence: high). Evidence: From the Precirix partners page: \"CAM-H2 is being evaluated in a Phase I/II clinical trial targeting HER2-positive metastatic breast and gastric cancer. The novel precision therapy aims to effectively irradiate cancer lesions while sparing healthy tissue, based on its unique technology platform that leverages the favorable characteristics of single-domain antibodies.\" Also: \"Evergreen will manufacture CAM-H2, an I-131 based radiopharmaceutical, at its new state-of-the-art facility in Springfield, New Jersey, USA.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "SAB BIO",
+        "Domain": "sab.bio",
+        "Industry": "Biotechnology Research",
+        "HQ State": "FL",
+        "HQ Country": "United States",
+        "Employee Count": 86,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/sab-biotherapeutics",
+        "Biotech Modality Types": [
+          "multispecific antibodies"
+        ],
+        "Company Research": "developer developing multispecific antibodies. Verdict: yes (confidence: high). Evidence: From the Company Profile (About Us) page: \"SAB BIO is a clinical-stage biopharmaceutical company focused on developing multi-specific, high-potency, human immunoglobulin G (hIgG) to treat and prevent immune and autoimmune disorders... The company’s lead investigational candidate, SAB-142, is a multi-specific, fully human anti-thymocyte globulin (hATG) disease-modifying immunotherapy to delay the onset and progression of Stage 3 type 1 diabetes (T1D).\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Alloy Therapeutics, Inc.",
+        "Domain": "alloytx.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Massachusetts",
+        "HQ Country": "United States",
+        "Employee Count": 139,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/alloy-therapeutics-inc",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "platform company developing bispecific antibodies, multispecific antibodies, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From Antibody Platforms page: \"License the leading in vivo discovery platform for fully human monoclonal and bispecific antibodies... ATX-CLC... Common light chain strains for highly modular and manufacturable bispecific development.\" From Bispecific Antibody Discovery page: \"The world’s most advanced bispecific discovery service... we provide a fully integrated workflow from drug concept to bispecific lead including antibody discovery, bispecific format engineering, and functional screening.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Parabilis Medicines",
+        "Domain": "parabilismed.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "MA",
+        "HQ Country": "United States",
+        "Employee Count": 190,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/parabilis-medicines",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "platform company developing ADCs. Verdict: yes (confidence: high). Evidence: From the May 18, 2026 Press Release: \"Parabilis Medicines today announced a strategic research collaboration with Regeneron Pharmaceuticals, Inc. to discover and develop multiple therapeutic candidates based on Parabilis’s Helicon™ peptide platform, with a particular focus on Antibody-Helicon™ Conjugates (AHCs), a novel class of therapeutics designed to target challenging and historically “undruggable” targets.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "AVS Bio",
+        "Domain": "avsbio.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "CT",
+        "HQ Country": "United States",
+        "Employee Count": 136,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/avsbio",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "trispecific antibodies",
+          "antibody fragments",
+          "BiTEs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, trispecific antibodies, antibody fragments, BiTEs. Verdict: yes (confidence: high). Evidence: From the Protein Production & Purification page: \"AVS Bio delivers high-quality recombinant proteins—from simple antigens to complex enzymes and advanced antibody formats (mono-, bi-, tri-, and multi-specific).\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Invenra",
+        "Domain": "invenra.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Wisconsin",
+        "HQ Country": "United States",
+        "Employee Count": 55,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/invenra",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "trispecific antibodies",
+          "ADCs"
+        ],
+        "Company Research": "developer developing bispecific antibodies, multispecific antibodies, trispecific antibodies, ADCs. Verdict: yes (confidence: high). Evidence: From the About Us page: \"Since our founding, we have developed an extensive and proprietary set of platform technologies to enable the discovery and development of novel therapies across a wide range of therapeutic targets. With an initial focus in oncology, we and our partners have leveraged our platforms and are currently advancing pipelines of novel bi- and multi-specific antibody candidates that have demonstrated unparalleled combinatorial specificity and best-in-class potential in pre-clinical studies to date.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Pfanstiehl, Inc.",
+        "Domain": "pfanstiehl.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "IL",
+        "HQ Country": "United States",
+        "Employee Count": 105,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/pfanstiehl-inc-",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "trispecific antibodies",
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, trispecific antibodies, ADCs. Verdict: yes (confidence: high). Evidence: From Custom ADC Linker Manufacturing page: \"Pfanstiehl’s high-quality Good Manufacturing Practice (GMP) services for ADC linkers ensure the highest standards, supporting both therapeutic success and regulatory compliance for these life-changing treatments.\"; From Bispecific & Trispecific Antibody Formulations page: \"Pfanstiehl Excipient Solutions for Complex Bispecific or Trispecific Antibody Formulations\"; From Complex Chemistry Solutions page: \"ADC Toxins and Linkers... Pfanstiehl is at the forefront of providing custom solutions for ADC toxins and linkers.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Avance Biosciences, Inc.",
+        "Domain": "avancebio.com",
+        "Industry": "Biotechnology",
+        "HQ State": "Texas",
+        "HQ Country": "United States",
+        "Employee Count": 54,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/avance-biosciences-inc-",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Home page: \"We provide comprehensive analytical solutions for various drug and biologics modalities, including gene therapies, cell therapies, vaccines, mAbs, ADCs, proteins, and small molecule drugs.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Celldex Therapeutics",
+        "Domain": "celldex.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "NJ",
+        "HQ Country": "United States",
+        "Employee Count": 248,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/celldex-therapeutics",
+        "Biotech Modality Types": [
+          "bispecific antibodies"
+        ],
+        "Company Research": "developer developing bispecific antibodies. Verdict: yes (confidence: high). Evidence: From the Pipeline page: \"CDX-622 is a bispecific antibody that targets two complementary, clinically validated pathways that drive chronic inflammation, potently neutralizing the alarmin thymic stromal lymphopoietin (TSLP) and depleting mast cells via stem cell factor (SCF) starvation.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Argonaut Manufacturing Services Inc.",
+        "Domain": "argonautms.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "CA",
+        "HQ Country": "United States",
+        "Employee Count": 105,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/argonaut-manufacturing-services-inc.",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Aseptic Fill Finish page: \"Can you work with high-potent drugs such as antibody-drug conjugates (ADCs)? A: Argonaut can support programs up to and including SafeBridge Category 3, which includes some antibody-drug conjugates (ADCs).\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Mersana Therapeutics",
+        "Domain": "wpengine.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "MA",
+        "HQ Country": "United States",
+        "Employee Count": 1095,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/mersana-therapeutics",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "developer developing ADCs. Verdict: yes (confidence: high). Evidence: From the Home page: \"Mersana’s mission is to discover and develop life-changing antibody-drug conjugates for patients fighting cancer.\" From the About/Technology page: \"Mersana has developed highly differentiated and innovative antibody-drug conjugate (ADC) platforms, with both cytotoxic and immunostimulatory payloads...\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Bionova Scientific",
+        "Domain": "bionovascientific.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 138,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/bionova-scientific",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs, Fc-fusion proteins, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Downstream Process Development page: \"Bionova specializes in difficult to express and manufacture products including antibody drug conjugates (ADCs). These complex molecular constructs present a much higher bar for purity than many other biologics, and Bionova routinely delivers optimized ADC purification processes.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Veranova",
+        "Domain": "veranova.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Massachusetts",
+        "HQ Country": "United States",
+        "Employee Count": 592,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/veranovalife",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Drug Conjugate & Linkers (Specialty Modalities) page: \"At Veranova, we bring over 20 years of experience in developing and manufacturing ADC linker-payloads to support biopharmaceuticals. Our comprehensive suite of services supports your journey from early development through to large-scale commercial manufacturing...\"; From the Devens press release: \"This expansion will enable Veranova to provide a more comprehensive suite of services to partners developing antibody-drug conjugates (ADCs) and other bioconjugates...\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "FUJIFILM Biotechnologies",
+        "Domain": "fujifilm.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "North Carolina",
+        "HQ Country": "United States",
+        "Employee Count": 1704,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/fujifilm-biotechnologies",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, ADCs, Fc-fusion proteins, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Cell Line Development page: \"Our scalable ApolloX system is designed for quality and speed of delivery of monoclonal antibodies (mAbs) and a diverse range of CHO-expressed molecules, including bispecific antibody formats, Fc-fusion proteins and non-Fc containing recombinant proteins.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "BWXT Medical",
+        "Domain": "bwxtmedical.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "Ontario",
+        "HQ Country": "Canada",
+        "Employee Count": 4180,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/bwxt-medical-ltd",
+        "Biotech Modality Types": [
+          "radioimmunoconjugates"
+        ],
+        "Company Research": "CDMO service provider developing radioimmunoconjugates. Verdict: yes (confidence: high). Evidence: From Contract Manufacturing Services PDF: \"Complex radiochemistry and radiolabeling expertise... Develop and manufacture radiochemicals and APIs suited to your needs... Radiopharmaceutical unit doses in a variety of configurations\"; From Product Pipeline page: \"Selected products currently in development include: Target Delivery System... Lutetium-177... Lead-203\"; From BWXT press release (DMF): \"Ac-225 is an alpha-emitting isotope used in targeted alpha therapies (TATs) that combine the isotope with specific tumor-seeking targeting vectors... An active DMF enables clinical investigators or pharmaceutical companies to reference the filing\"..",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Althea, CMO",
+        "Domain": "altheacmo.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "CA",
+        "HQ Country": "United States",
+        "Employee Count": 72,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/althea-technologies",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Press Release: \"Ajinomoto Althea, Inc. ('Althea'), a leading provider of biopharmaceutical contract development and manufacturing services, today announced it is expanding its existing biological drug product manufacturing operations to include highly active materials such as Antibody Drug Conjugates (ADCs).\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "SpectronRx",
+        "Domain": "spectronrx.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "South Bend",
+        "HQ Country": "United States",
+        "Employee Count": 138,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/spectronrx",
+        "Biotech Modality Types": [
+          "radioimmunoconjugates",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing radioimmunoconjugates, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Brochure (SpectronRx-Brochure.pdf): \"As proven experts in monoclonal antibody labeling with a variety of isotopes, we are a logistics champion of import/export, and one of the world's top-tier experts in isotope production and procurement .\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Abzena",
+        "Domain": "abzena.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "California",
+        "HQ Country": "United States",
+        "Employee Count": 434,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/abzena",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "ADCs",
+          "Fc-fusion proteins",
+          "radioimmunoconjugates"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, ADCs, Fc-fusion proteins, radioimmunoconjugates. Verdict: yes (confidence: high). Evidence: From the Solutions page: \"End-to-end biologics CDMO + CRO services for modalities inc. mAbs, ADCs , AOCs , RDCs , fusion proteins, bispecifics & more underpinned by robust analytical capabilities across all phases of development.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Piramal Pharma Solutions",
+        "Domain": "piramalpharmasolutions.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "KY",
+        "HQ Country": "United States",
+        "Employee Count": 0,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/piramal-pharma-solutions",
+        "Biotech Modality Types": [
+          "antibody-drug conjugate"
+        ],
+        "Company Research": "Piramal Pharma Solutions is a global CDMO with over 20 years of specialized experience in antibody-drug conjugate (ADC) development and manufacturing, operating dedicated GMP bioconjugate facilities in Grangemouth, UK and Lexington, KY, USA. The company offers fully integrated ADC services—from payload-linker development and conjugation through to clinical and commercial fill/finish—under its branded ADCelerate programme, and recently completed its 1,500th ADC batch. All ngAbs activity is purely service/CDMO-oriented (manufacturing for clients), with no evidence of Piramal developing proprietary therapeutic ADC pipeline assets of its own.",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Simtra BioPharma Solutions",
+        "Domain": "simtra.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "New Jersey",
+        "HQ Country": "United States",
+        "Employee Count": 1011,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/simtra-biopharma-solutions",
+        "Biotech Modality Types": [
+          "ADCs"
+        ],
+        "Company Research": "CDMO service provider developing ADCs. Verdict: yes (confidence: high). Evidence: From the Home page: \"Simtra BioPharma Solutions and MilliporeSigma have forged a strategic alliance to streamline and accelerate the development and manufacturing of ADCs and other bioconjugates. The alliance represents quality-first ADC manufacturing and enables pharma and biopharma companies to focus on continued drug discovery.\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "GBI Bio",
+        "Domain": "gbibio.com",
+        "Industry": "Biotechnology Research",
+        "HQ State": "Florida",
+        "HQ Country": "United States",
+        "Employee Count": 87,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/gbi-bio",
+        "Biotech Modality Types": [
+          "bispecific antibodies",
+          "multispecific antibodies",
+          "trispecific antibodies",
+          "ADCs",
+          "radioimmunoconjugates",
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing bispecific antibodies, multispecific antibodies, trispecific antibodies, ADCs, radioimmunoconjugates, antibody fragments. Verdict: yes (confidence: high). Evidence: From the Bioconjugation Services page: \"As a top-tier US-based CDMO, GBI offers comprehensive bioconjugation services to support the full life cycle of antibody conjugates and complex biologics.\" From the Innovation in Bispecific and Multi-Specific Antibody Engineering page: \"[GBI Bio] applies its decades of experience to ensure the development of manufacturing protocols for bispecific and multi-specific antibodies meet all technical and regulatory requirements.\".",
+        "Promote Verdict": "IN",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    },
+    {
+      "fields": {
+        "Company Name": "Lifecore Biomedical",
+        "Domain": "lifecore.com",
+        "Industry": "Pharmaceutical Manufacturing",
+        "HQ State": "MN",
+        "HQ Country": "United States",
+        "Employee Count": 277,
+        "Company LinkedIn URL": "https://www.linkedin.com/company/lifecore-biomedical",
+        "Biotech Modality Types": [
+          "antibody fragments"
+        ],
+        "Company Research": "CDMO service provider developing antibody fragments. Verdict: yes (confidence: high). Evidence: From the Process Development page: \"Product Types & Raw Material Components * mAb fragments\".",
+        "Promote Verdict": "NARROW",
+        "Discovery Sources": [
+          "agent_ngabs"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+PROMEON 4.0 — Runtime Upgrade Readme,,
+Backwards-compatible Codex 5.5 agentic runtime layer built on the PROMEON 3.7 ontology workbook.,,
+,,
+Item,Value,Notes
+Workbook Version,PROMEON 4.0,Built from PROMEON Version 3.7.0-05.8.2026.xlsx
+Build Date,2026-05-09,America/Chicago
+Primary Upgrade,Codex 5.5 Agentic Runtime Constitution,"Adds explicit operating constitution, diagnostic workflow, primitive activation, anti-pattern suppression, system state modeling, and validation tests."
+Preservation Rule,3.7 ontology retained,"Existing ontology, edge, evidence, case, diagnostic, prompt, and deployment sheets are preserved."
+New Runtime Sheets,8,"System_Prompt_v4, System_Prompt_Package_v4, Diagnostic_Workflow_v4, Reasoning_Primitives_v4, Anti_Patterns_v4, System_State_Model_v4, Validation_Tests_v4, PROMEON_4_0_Readme."
+Design Logic,Runtime layer over ontology,The workbook remains the editable reasoning spine; 4.0 strengthens how the agent must reason over the graph.
+,,
+Navigation,,
+System_Prompt_v4,Open sheet,PROMEON 4.0 runtime addition
+System_Prompt_Package_v4,Open sheet,PROMEON 4.0 runtime addition
+Diagnostic_Workflow_v4,Open sheet,PROMEON 4.0 runtime addition
+Reasoning_Primitives_v4,Open sheet,PROMEON 4.0 runtime addition
+Anti_Patterns_v4,Open sheet,PROMEON 4.0 runtime addition
+System_State_Model_v4,Open sheet,PROMEON 4.0 runtime addition
+Validation_Tests_v4,Open sheet,PROMEON 4.0 runtime addition
+Prompt_Templates_v4,Open sheet,PROMEON 4.0 runtime addition

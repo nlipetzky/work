@@ -1,0 +1,5 @@
+{
+  "_comment": "Acquired-company contact routing for the mRNA Therapeutics play. THIN SCAFFOLD: no SME-confirmed acquired-company routes exist yet (playbook is v1, no feedback round). The rule stays a SCREEN: every email-vs-company domain mismatch is FLAGGED for operator review with the live domain, never auto-resolved. As Ellie confirms specific acquisition routes (e.g. 'Acquired -> Acquirer, CRM shows acquirer emails'), add them to routes[] with a dated cite (same shape as the ngAbs file).",
+  "routes": [],
+  "flag_domain_mismatch": true
+}
