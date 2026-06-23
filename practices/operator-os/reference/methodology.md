@@ -115,6 +115,53 @@ Four rules Atlas applies when shaping goals, projects, and tasks:
    intervention), **patient with the result.** No get-rich-quick ... a goal shaped like a
    shortcut is someone else getting rich off Nick.
 
+## 3b. Build and run: systems and the activities they repeat
+
+The spine in section 3 is the *build* ladder ... Goal -> Project -> Next Action, the finite work of
+making something. It lands in the Work surface as projects and tasks. But most of what an autonomous
+operator runs on is not finite. It *repeats*. Nick's model names the missing layer: below goals the
+tree branches into **systems**, and the bottom of the tree is the **activities those systems
+repeat**. Activities are not loose tasks floating under a goal ... they are embedded in a system,
+which is the thing that runs them.
+
+So the hierarchy is one tree with two kinds of leaf:
+
+```text
+Vision
+  Goal
+    Project -> Task        BUILD: finite work that produces or changes a system
+    System                 RUN: the durable thing that stays live
+      Activity             what the system repeats ... the keep-live leaf
+```
+
+- **Build vs run.** "Build the inbox-triage system" is a Project with Tasks ... finite, it completes,
+  it lives in the Work surface. What it *produces* is a System (inbox triage) that then repeats an
+  Activity (process new mail at 07:00 and 13:00) indefinitely. A Task completes; an Activity recurs.
+  Confusing the two is why running systems rot silently ... they get tracked as tasks that "finished."
+- **Systems ladder to goals.** A system is not orphaned infrastructure; it traces up to the goal it
+  serves, exactly as a project does. The inbox-triage system ladders to the operator-OS goal. A system
+  that cannot trace to a goal is the same flag as a project that cannot ... "why is this running."
+- **One tree, two registers.** The operator spine (this doc) and the agentic-systems registry (Boris)
+  are the same hierarchy seen from two ends. The registry is the catalog of live systems and their
+  activities; the spine is the goal-rooted *why* above them. They join at the system: a registry
+  system carries the `goal_id` it serves. This closes the "keep-live" gap ... the layer that tracks
+  what is *running*, not just what is *being built*.
+- **Areas cross-cut, they do not branch.** Area (Client, Finance, Infrastructure ...) is a slice
+  across the tree for allocation (section 6), not a rung in the branch. One goal's systems can span
+  several areas.
+
+This layer is where the leverage axis (section 3a) stops being a score and becomes structural: a
+**system that repeats an activity is an asset** ... it runs while Nick sleeps. Embedding an activity
+in a system *is* the act of automating it off his plate ... the aspirational-rate verdict made
+permanent. The wealth test drawn as a structure: the more of Nick's repeating activities live inside
+systems rather than on his task list, the more the environment earns without him.
+
+> Build status: the spine layer (Goals, the Project->Goal up-link) now exists in canon_engine. The
+> systems/activities run layer is the next structural piece ... it needs the registry's systems to
+> carry their `goal_id` and to model the activities they repeat, so the Work surface can show running
+> systems beside buildable projects. Until then, a system-in-progress is tracked as a build Project
+> under its goal (e.g. the inbox-triage system) and promoted to a registered System on completion.
+
 ## 4. Inbound context: from reality to the spine
 
 Section 3 describes the descent ... goals decomposed into actions. But most of
@@ -315,6 +362,10 @@ The methodology is ahead of the build. Closing the gap, in order:
    base as source of truth. Source of truth is moving to canon_engine; the contract
    and semantic moves repoint there, and Airtable retires once the surface replaces
    its views.
+7. **The systems/activities run layer** (section 3b). Registry systems carry the
+   `goal_id` they serve and model the activities they repeat, so the Work surface shows
+   *running* systems beside *buildable* projects ... the keep-live layer. Until it
+   exists, a system-in-progress is tracked as a build Project under its goal.
 
 ## 12. Relationship to the rest of operator-os
 

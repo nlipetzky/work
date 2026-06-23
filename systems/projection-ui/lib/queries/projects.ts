@@ -10,15 +10,15 @@ export interface Project {
   status: string;
   outcome: string | null;
   next_action: string | null;
+  goal: { id: string; title: string } | null;
 }
 
-// All projects. Source of truth: canon_engine.public.projects.
-// Goals view groups by goal_id; Focus view filters to active.
+// All projects joined to their goal for ladder rendering (R2) and project drill-down (R3).
 export async function listProjects(): Promise<Project[]> {
   const { data, error } = await canonDb()
     .from("projects")
-    .select("id, slug, name, goal_id, area, status, outcome, next_action")
+    .select("id, slug, name, goal_id, area, status, outcome, next_action, goal:goals(id,title)")
     .order("name", { ascending: true });
   if (error) throw new Error(error.message);
-  return (data ?? []) as Project[];
+  return (data ?? []) as unknown as Project[];
 }

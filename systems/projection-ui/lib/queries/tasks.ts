@@ -9,14 +9,21 @@ export interface Task {
   urgency: string | null;
   due: string | null;
   first_5_minutes: string | null;
-  project: { name: string } | null;
+  // project includes id (for task grouping) and goal chain (for ladder rendering)
+  project: {
+    id: string;
+    name: string;
+    goal_id: string | null;
+    goal: { id: string; title: string } | null;
+  } | null;
 }
 
-// Open tasks with their parent project name. Source: canon_engine.public.tasks.
+// Open tasks joined through projects → goals for ladder rendering (R2).
+// Sorted by due ascending; caller re-ranks by importance×urgency (R1).
 export async function listOpenTasks(): Promise<Task[]> {
   const { data, error } = await canonDb()
     .from("tasks")
-    .select("id,title,status,importance,urgency,due,first_5_minutes, project:projects(name)")
+    .select("id,title,status,importance,urgency,due,first_5_minutes,project:projects(id,name,goal_id,goal:goals(id,title))")
     .eq("status", "open")
     .order("due", { ascending: true, nullsFirst: false });
   if (error) throw new Error(error.message);
