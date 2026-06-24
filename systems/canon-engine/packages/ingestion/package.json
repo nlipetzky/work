@@ -1,0 +1,36 @@
+{
+  "name": "@canon-engine/ingestion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./google": "./dist/google/index.js",
+    "./pipelines/*": "./dist/pipelines/*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "fetch": "npx tsx scripts/gws-fetch-all.ts",
+    "fetch:emails": "npx tsx scripts/gws-fetch-emails.ts",
+    "fetch:transcripts": "npx tsx scripts/gws-fetch-transcripts.ts",
+    "fetch:calendar": "npx tsx scripts/gws-fetch-calendar.ts"
+  },
+  "dependencies": {
+    "@canon-engine/core": "workspace:*",
+    "@canon-engine/db": "workspace:*",
+    "@anthropic-ai/sdk": "^0.54.0",
+    "@supabase/supabase-js": "^2.99.3",
+    "googleapis": "^171.4.0",
+    "openai": "^6.32.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "*"
+  }
+}
