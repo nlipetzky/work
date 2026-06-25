@@ -34,6 +34,20 @@ export interface ExpertReview { exchange_id: string; expert_slug: string; status
 export interface HingeInput { type: string; role: string; state: ArtifactState }
 export interface ArtifactNeeds { summary: string; questions: string[] }
 export interface OperatorNote { note: string; author: string; created_at: string }
+export interface Recipe {
+  id: string;
+  name: string;
+  signal: string | null;
+  intent: string | null;
+  status: "draft" | "approved" | "superseded";
+  version: number;
+  tools_used: string[];
+  ungrounded: string[];        // tool ids the agent named that aren't in the live catalog
+  authored_by: string;
+  live_tool_count: number;
+  content_md: string;
+  created_at: string;
+}
 export interface CritiquePoint { dimension: string; severity: "blocker" | "major" | "minor"; issue: string; fix: string; providers?: string }
 export interface Critique {
   verdict: "buildable" | "buildable-with-fixes" | "not-buildable" | string;
@@ -64,6 +78,7 @@ export interface TargetingEngagement {
   artifacts: TargetingArtifact[];
   approved: number;
   total: number;
+  recipes: Recipe[];               // agent-authored discovery recipes (the recipe library)
 }
 export interface TargetingSystem { engagements: TargetingEngagement[]; doctrinePresent: boolean; keyReady: boolean }
 
@@ -74,7 +89,7 @@ async function filePresent(rel: string, minLen = 100): Promise<boolean> {
 
 export async function getTargetingSystem(): Promise<TargetingSystem> {
   const db = canonDb();
-  const [{ data: man, error: mErr }, { data: arts, error: aErr }, { data: exch, error: eErr }, { data: crit, error: cErr }, { data: notes, error: nErr }] = await Promise.all([
+  const [{ data: man, error: mErr }, { data: arts, error: aErr }, { data: exch, error: eErr }, { data: crit, error: cErr }, { data: notes, error: nErr }, { data: recipes, error: rErr }] = await Promise.all([
     db.from("canon_artifact_manifest")
       .select("engagement_type, engagement_id, artifact_type, required_expertise, needs")
       .in("artifact_type", TARGETING.map((t) => t.type)),
@@ -90,12 +105,35 @@ export async function getTargetingSystem(): Promise<TargetingSystem> {
     db.from("artifact_operator_notes")
       .select("engagement_type, engagement_id, artifact_type, note, author, created_at")
       .order("created_at", { ascending: false }),
+    db.from("discovery_recipes")
+      .select("id, engagement_type, engagement_id, name, signal, intent, status, version, tools_used, content_md, authored_by, metadata, created_at")
+      .in("status", ["draft", "approved"]).order("created_at", { ascending: false }),
   ]);
   if (mErr) throw new Error(mErr.message);
   if (aErr) throw new Error(aErr.message);
   if (eErr) throw new Error(eErr.message);
   if (cErr) throw new Error(cErr.message);
   if (nErr) throw new Error(nErr.message);
+  if (rErr) throw new Error(rErr.message);
+
+  // latest recipe per (engagement, name) -> grouped by engagement (the recipe library)
+  const recipesByEng = new Map<string, Recipe[]>();
+  const seenRecipe = new Set<string>();
+  for (const r of recipes ?? []) {
+    const nameKey = `${r.engagement_type}:${r.engagement_id}:${r.name}`;
+    if (seenRecipe.has(nameKey)) continue; // newest per name wins (ordered created_at desc)
+    seenRecipe.add(nameKey);
+    const md = (r.metadata as { ungrounded_tools?: string[]; live_tool_count?: number } | null) ?? {};
+    const engKey = `${r.engagement_type}:${r.engagement_id}`;
+    if (!recipesByEng.has(engKey)) recipesByEng.set(engKey, []);
+    recipesByEng.get(engKey)!.push({
+      id: r.id, name: r.name, signal: r.signal ?? null, intent: r.intent ?? null,
+      status: r.status as Recipe["status"], version: r.version,
+      tools_used: (r.tools_used as string[]) ?? [], ungrounded: md.ungrounded_tools ?? [],
+      authored_by: r.authored_by, live_tool_count: md.live_tool_count ?? 0,
+      content_md: r.content_md ?? "", created_at: r.created_at,
+    });
+  }
 
   // operator/expert notes per (engagement, artifact_type)
   const notesByKey = new Map<string, OperatorNote[]>();
@@ -175,6 +213,7 @@ export async function getTargetingSystem(): Promise<TargetingSystem> {
       artifacts,
       approved: artifacts.filter((a) => a.state === "approved").length,
       total: artifacts.length,
+      recipes: recipesByEng.get(`${et}:${eid}`) ?? [],
     });
   }
   engagements.sort((a, b) => a.engagement_id.localeCompare(b.engagement_id));

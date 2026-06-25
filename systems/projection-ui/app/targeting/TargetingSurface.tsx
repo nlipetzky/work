@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArtifactChip } from "@/app/system/[constellation]/[slug]/AssemblerActions";
-import type { TargetingSystem, TargetingEngagement, TargetingArtifact, ArtifactState } from "@/lib/queries/targeting";
+import type { TargetingSystem, TargetingEngagement, TargetingArtifact, ArtifactState, Recipe } from "@/lib/queries/targeting";
 
 // The Targeting (signal-targeting) console — the INPUT side of list-building. Governs the fundamental
 // artifacts that define + drive a list build: produce (shared engine) -> rules-gate -> judge ->
@@ -249,6 +249,107 @@ function ArtifactRow({ et, eid, art, contractMet }: { et: string; eid: string; a
   );
 }
 
+function RecipeCard({ r }: { r: Recipe }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  async function approve() {
+    setBusy(true); setErr(null);
+    try {
+      const j = await fetch("/api/targeting/confirm-recipe", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ recipe_id: r.id, confirmed_by: "Nick" }),
+      }).then((res) => res.json());
+      if (!j.ok) setErr(j.error || "approve failed"); else router.refresh();
+    } catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
+    finally { setBusy(false); }
+  }
+  return (
+    <div className="rounded border border-ink-700 bg-ink-900/60 p-2.5">
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <span className="text-[12px] font-semibold text-[#e6edf3]">{r.name}</span>
+        <span className="text-[10px] text-ink-600">v{r.version}</span>
+        <span className={`text-[11px] ${r.status === "approved" ? "text-ok" : "text-warn"}`}>{r.status === "approved" ? "✓ approved" : "○ draft"}</span>
+        <span className="text-[10px] text-ink-600">· {r.tools_used.length} tools grounded{r.live_tool_count ? ` of ${r.live_tool_count} live` : ""}</span>
+      </div>
+      {r.signal && <p className="mb-1 text-[11px] text-[#cdd9e5]"><span className="text-ink-600">signal:</span> {r.signal}</p>}
+      {r.tools_used.length > 0 && (
+        <div className="mb-1 flex flex-wrap gap-1">
+          {r.tools_used.slice(0, 12).map((t) => <span key={t} className="rounded border border-ink-700 px-1 py-0.5 text-[10px] text-muted">{t}</span>)}
+        </div>
+      )}
+      {r.ungrounded.length > 0 && (
+        <div className="mb-1 rounded border border-warn/30 bg-warn/10 p-1.5 text-[10px] text-warn">
+          {r.ungrounded.length} tool id(s) the agent named are not in the live catalog (verify): {r.ungrounded.join(", ")}
+        </div>
+      )}
+      <button onClick={() => setOpen(!open)} className="text-[11px] text-accent hover:underline">{open ? "▾ hide" : "▸ read the pipeline"}</button>
+      {open && <pre className="mt-1 max-h-96 overflow-auto whitespace-pre-wrap rounded bg-ink-950 p-2 text-[11px] leading-relaxed text-[#cdd9e5]">{r.content_md}</pre>}
+      {r.status === "draft" && (
+        <div className="mt-2 flex items-center gap-2">
+          <button onClick={approve} disabled={busy} className="rounded border border-ok/40 bg-ok/10 px-2 py-0.5 text-[11px] text-ok hover:bg-ok/20 disabled:opacity-50">{busy ? "approving…" : "Approve ✓"}</button>
+          {err && <span className="text-[11px] text-bad">{err}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RecipeLibrary({ et, eid, recipes }: { et: string; eid: string; recipes: Recipe[] }) {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [intent, setIntent] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  async function author() {
+    if (!intent.trim()) return;
+    setBusy(true); setMsg("the agent is discovering live tools + composing the pipeline… (up to ~2 min)");
+    try {
+      const j = await fetch("/api/targeting/author-recipe", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ engagement_type: et, engagement_id: eid, name, intent }),
+      }).then((r) => r.json());
+      if (j.needsKey) setMsg("Needs ANTHROPIC_API_KEY.");
+      else if (j.insufficient) setMsg("The agent could not ground that signal in any live tool or custom source.");
+      else if (j.ok) { setName(""); setIntent(""); setMsg("Authored. Refreshing…"); }
+      else setMsg(`Run: ${(j.output || j.error || "no output").slice(0, 160)}`);
+      router.refresh();
+    } catch (e) { setMsg(`Failed: ${e instanceof Error ? e.message : String(e)}`); }
+    finally { setBusy(false); }
+  }
+  return (
+    <div className="mb-3 rounded border border-accent/30 bg-accent/5 p-3">
+      <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-accent">Recipe library — the authoring agent</div>
+      <p className="mb-2 text-[11px] text-muted">
+        Describe a signal or intent. The agent searches the live deepline tool universe, composes a grounded
+        signal → qualified-leads pipeline (falling back to the §6 custom sources where no provider has the facet),
+        and flags any tool it can&apos;t verify. Each authored recipe later compiles to a deepline play to run.
+      </p>
+      <div className="space-y-1.5">
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="recipe name (optional)"
+          className="w-full rounded border border-ink-700 bg-ink-950 px-2 py-1 text-[11px] text-[#cdd9e5] placeholder:text-ink-600" />
+        <textarea value={intent} onChange={(e) => setIntent(e.target.value)} rows={2}
+          placeholder='e.g. "Companies with a recent FDA 510(k) clearance" · "Companies hiring their first regulatory lead" · "Recently funded device startups"'
+          className="w-full rounded border border-ink-700 bg-ink-950 p-2 text-[11px] text-[#cdd9e5] placeholder:text-ink-600" />
+        <div className="flex items-center gap-2">
+          <button onClick={author} disabled={busy || !intent.trim()}
+            className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] text-accent hover:bg-accent/20 disabled:opacity-50">
+            {busy ? "authoring…" : "▸ Author recipe"}
+          </button>
+          {msg && <span className="text-[11px] text-ink-600">{msg}</span>}
+        </div>
+      </div>
+      {recipes.length > 0 && (
+        <div className="mt-3 space-y-2">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">{recipes.length} authored recipe(s)</div>
+          {recipes.map((r) => <RecipeCard key={r.id} r={r} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function EngagementBlock({ eng }: { eng: TargetingEngagement }) {
   return (
     <section className="mb-6">
@@ -278,9 +379,11 @@ function EngagementBlock({ eng }: { eng: TargetingEngagement }) {
         </ul>
       </div>
 
+      <RecipeLibrary et={eng.engagement_type} eid={eng.engagement_id} recipes={eng.recipes} />
+
       {eng.artifacts.filter((a) => a.artifact_type === "discovery-recipe").map((a) => (
         <div key="recipe" className="mb-3">
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-accent">The recipe — the signal → qualified-leads pipeline (synthesizes the four inputs)</div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">Reference recipe (the worked-example shape, synthesizes the four inputs)</div>
           <ArtifactRow et={eng.engagement_type} eid={eng.engagement_id} art={a} contractMet={eng.contractMet} />
         </div>
       ))}
