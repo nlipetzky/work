@@ -72,7 +72,7 @@ async function produce({ channel, cfg, offer, source, priorFeedback }) {
     "If the source lacks what you need, set that step's copy to 'INSUFFICIENT_SOURCE: <what is missing>' and add a flag. " +
     "House voice: no em dashes (use ellipses), no emojis, plain language a person reads on a phone, concrete over abstract. " +
     "Return STRICT JSON ONLY, no prose, matching: " +
-    '{"channel":"' + channel + '","front_end_offer":"<which offer this leads with>","sender_expert_slug":"will",' +
+    '{"channel":"' + channel + '","front_end_offer":"<which offer this leads with>","sender_expert_slug":"will-rosellini",' +
     '"steps":[{"order":1,"action_type":"<one of: ' + cfg.actionTypes.join("|") + '>","delay_hours":0,"subject":"<email only, else empty>","copy":"<the message>","source_map":[{"line":"<short phrase from copy>","source":"<which input it traces to>"}]}],' +
     '"note_variants":{"noted":"<linkedin connect note <=300 chars>","noteless":true},"flags":["<any blocked/unsourced lines>"]}';
   const user =
@@ -206,7 +206,7 @@ async function cmdRun(et, eid, channel, offer, maxRev) {
 
   const { data, error } = await db.rpc("record_outreach_sequence", {
     p_engagement_type: et, p_engagement_id: eid, p_channel: channel,
-    p_steps: accepted.steps, p_sender_expert_slug: accepted.sender_expert_slug || "will",
+    p_steps: accepted.steps, p_sender_expert_slug: accepted.sender_expert_slug || "will-rosellini",
     p_front_end_offer: accepted.front_end_offer || offer || null,
     p_note_variants: accepted.note_variants || {}, p_flags: accepted.flags || [],
     p_rules_passed: lastGate.checks, p_inputs: contract.inputs,

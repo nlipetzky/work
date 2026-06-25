@@ -174,8 +174,58 @@ function ApproveSequenceButton({ id }: { id: string }) {
   );
 }
 
+function expertName(slug: string | null) {
+  if (!slug) return "the expert";
+  const first = slug.split("-")[0];
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
+function RequestExpertApprovalButton({ id, expert }: { id: string; expert: string }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  async function send() {
+    setBusy(true); setErr(null);
+    try {
+      const j = await fetch("/api/outreach/request-expert-approval", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sequence_id: id }),
+      }).then((r) => r.json());
+      if (!j.ok) setErr(j.error || "failed"); else router.refresh();
+    } catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
+    finally { setBusy(false); }
+  }
+  return (
+    <span className="inline-flex items-center gap-2">
+      <button onClick={send} disabled={busy}
+        className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] text-accent hover:bg-accent/20 disabled:opacity-50">
+        {busy ? "routing…" : `▸ Send to ${expert} for approval (via Hermes)`}
+      </button>
+      {err && <span className="text-[11px] text-bad">{err}</span>}
+    </span>
+  );
+}
+
+function ExpertReviewState({ review, expert }: { review: NonNullable<Sequence["expert_review"]>; expert: string }) {
+  const label: Record<string, string> = {
+    drafted: `Drafted in Expert Liaison ... open EL to send it to ${expert}`,
+    sent: `Sent to ${expert} ... awaiting reply`,
+    answered: `${expert} replied ... review the answer in Expert Liaison`,
+    closed: "Closed",
+  };
+  const tone = review.status === "answered" ? "text-ok" : review.status === "sent" ? "text-warn" : "text-ink-600";
+  return (
+    <div className="text-[11px]">
+      <span className={tone}>● {label[review.status] ?? review.status}</span>{" "}
+      <a href="/expert-liaison" className="text-accent underline hover:opacity-80">open Expert Liaison →</a>
+      {review.response && <p className="mt-1 rounded border border-ink-700 bg-ink-900/50 p-2 text-[11px] text-[#cdd9e5]">{review.response}</p>}
+    </div>
+  );
+}
+
 function SequenceView({ seq }: { seq: Sequence }) {
   const passed = seq.rules_passed.filter((r) => r.ok).length;
+  const expert = expertName(seq.sender_expert_slug);
   return (
     <div className="mt-2 rounded border border-ink-700 bg-ink-950 p-3">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px]">
@@ -251,7 +301,27 @@ function SequenceView({ seq }: { seq: Sequence }) {
         </div>
       )}
 
-      {seq.state === "draft" && <div className="mt-3"><ApproveSequenceButton id={seq.id} /></div>}
+      {/* approval: operator + the SME, whose name the copy goes out under */}
+      <div className="mt-3 rounded border border-ink-700 bg-ink-900/40 p-2.5">
+        <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted">Approval</div>
+        <p className="mb-2 text-[11px] text-ink-600">
+          This copy goes out in {expert}&apos;s name, so {expert} must approve it before it can send. Hermes routes it.
+        </p>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="w-16 shrink-0 text-[10px] uppercase tracking-wider text-ink-600">operator</span>
+            {seq.state === "approved"
+              ? <span className="text-[11px] text-ok">✓ approved by you</span>
+              : <ApproveSequenceButton id={seq.id} />}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="w-16 shrink-0 text-[10px] uppercase tracking-wider text-ink-600">{expert}</span>
+            {seq.expert_review
+              ? <ExpertReviewState review={seq.expert_review} expert={expert} />
+              : <RequestExpertApprovalButton id={seq.id} expert={expert} />}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

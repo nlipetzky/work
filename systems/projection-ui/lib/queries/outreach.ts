@@ -79,6 +79,13 @@ export interface Sequence {
   flags: string[];
   rules_passed: RuleCheck[];
   inputs: InputLineage[];        // the provenance trail: what context produced this
+  expert_review: ExpertReview | null; // routed to the SME (via Hermes) for approval?
+}
+export interface ExpertReview {
+  exchange_id: string;
+  expert_slug: string;
+  status: "drafted" | "sent" | "answered" | "closed";
+  response: string | null;
 }
 export interface ChannelSequences { linkedin: Sequence | null; email: Sequence | null }
 
@@ -103,7 +110,7 @@ async function filePresent(rel: string, minLen = 100): Promise<boolean> {
 export async function getOutreachSystem(): Promise<OutreachSystem> {
   const db = canonDb();
   // engagements that have the offer producer wired (manifest row for the offer-ladder)
-  const [{ data: man, error: mErr }, { data: arts, error: aErr }, { data: seqs, error: sErr }] = await Promise.all([
+  const [{ data: man, error: mErr }, { data: arts, error: aErr }, { data: seqs, error: sErr }, { data: exch, error: eErr }] = await Promise.all([
     db.from("canon_artifact_manifest")
       .select("engagement_type, engagement_id, artifact_type, required_expertise")
       .eq("artifact_type", OFFER_TYPE),
@@ -113,10 +120,22 @@ export async function getOutreachSystem(): Promise<OutreachSystem> {
     db.from("outreach_sequences")
       .select("id, engagement_type, engagement_id, channel, status, version, front_end_offer, sender_expert_slug, steps, note_variants, flags, rules_passed, inputs")
       .in("status", ["draft", "approved"]).order("version", { ascending: false }),
+    db.from("expert_exchanges")
+      .select("id, expert_slug, status, response, metadata")
+      .eq("metadata->>kind", "outreach-copy-approval").order("created_at", { ascending: false }),
   ]);
   if (mErr) throw new Error(mErr.message);
   if (aErr) throw new Error(aErr.message);
   if (sErr) throw new Error(sErr.message);
+  if (eErr) throw new Error(eErr.message);
+
+  // latest expert-approval exchange per sequence (the SME sign-off route)
+  const reviewMap = new Map<string, ExpertReview>();
+  for (const x of exch ?? []) {
+    const sid = (x.metadata as { sequence_id?: string } | null)?.sequence_id;
+    if (!sid || reviewMap.has(sid)) continue;
+    reviewMap.set(sid, { exchange_id: x.id, expert_slug: x.expert_slug, status: x.status, response: x.response ?? null });
+  }
 
   // latest live sequence per (engagement, channel)
   const seqMap = new Map<string, Sequence>();
@@ -129,6 +148,7 @@ export async function getOutreachSystem(): Promise<OutreachSystem> {
       steps: (s.steps as SequenceStep[]) ?? [], note_variants: (s.note_variants as Sequence["note_variants"]) ?? null,
       flags: (s.flags as string[]) ?? [], rules_passed: (s.rules_passed as RuleCheck[]) ?? [],
       inputs: (s.inputs as InputLineage[]) ?? [],
+      expert_review: reviewMap.get(s.id) ?? null,
     });
   }
 
