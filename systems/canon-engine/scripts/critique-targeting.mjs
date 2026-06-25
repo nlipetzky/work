@@ -40,6 +40,7 @@ const DOCS = {
   "icp-titles": ["finding-companies-and-contacts.md"],
   "enrichment-spec": ["enriching-and-researching.md"],
   "list-qualification": ["writing-outreach.md", "enriching-and-researching.md"],
+  "discovery-recipe": ["finding-companies-and-contacts.md", "enriching-and-researching.md"],
 };
 const CAP = 70000; // per-doc char cap (keep the call bounded)
 
@@ -103,14 +104,6 @@ const { error: rErr } = await db.rpc("record_artifact_critique", {
 });
 if (rErr) fail(`record_artifact_critique: ${rErr.message}`);
 
-// inject the pushback into the drafting source so a re-Produce optimizes against it (idempotent)
-const srcPath = path.join(WORK_ROOT, "accounts/ventures", EID, "context/revops", `${TYPE}.md`);
-const MARK = "\n\n---\n\n## CRAFT REVIEW (deepline list-builder) — address these on the next produce\n";
-try {
-  let src = await readFile(srcPath, "utf8");
-  src = src.split(MARK)[0]; // strip any prior craft-review block
-  const block = pushback.map((p, i) => `${i + 1}. [${p.severity}] (${p.dimension}) ${p.issue}\n   FIX: ${p.fix}${p.providers ? `\n   PROVIDERS: ${p.providers}` : ""}`).join("\n");
-  await writeFile(srcPath, `${src}${MARK}Verdict: ${crit.verdict}. ${crit.summary || ""}\n\n${block}\n`, "utf8");
-} catch { /* source file optional */ }
-
+// The critique is stored in canon; assemble-targeting-source.mjs folds the latest pushback into the
+// drafting source (single source of truth), so a re-Produce optimizes against it. No file write here.
 console.log(`✓ critique ${TYPE}: ${crit.verdict} — ${pushback.length} pushback, ${doctrineUpdates.length} doctrine update(s)${subscriptionAware ? " [deepline CLI present]" : " [knowledge-only]"}`);

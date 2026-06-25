@@ -1,9 +1,9 @@
-# Drafting source — segment-criteria (CIPO)
+# Drafting source — discovery-recipe (CIPO)
 
 Assembled from the doctrine + approved canon + sibling artifacts + the latest craft critique + expert
-notes. This is the producer's only input; the governed segment-criteria is distilled FROM this.
+notes. This is the producer's only input; the governed discovery-recipe is distilled FROM this.
 
-TASK: Produce the account-level segment criteria for CIPO's cold-outreach list (source-agnostic; declare a Source Mode per §7).
+TASK: Produce the DISCOVERY RECIPE: the end-to-end, ordered, signal-driven pipeline that turns a live signal into qualified CIPO leads in a database, synthesizing the four input artifacts. For each step name the source/tool, the keying method, and the expected hit-rate/cost. Start from the strongest signal for this segment (e.g. USPTO PatentsView patent filings in our tech classes, per doctrine §6).
 
 ---
 
@@ -506,6 +506,122 @@ All three aim at the raised hand, not the cold close. The recommendation between
 
 ---
 
+## HINGE — SEGMENT CRITERIA (account targeting) (draft v2)
+
+# Segment Criteria (CIPO / Konstellation)
+
+Scope: the account layer. Which *companies* enter the cold-outreach list, decided from named, observable signals. Source-agnostic (no provider or column names). Contact-level personas are deferred to icp-titles (approved v1). Reconciled to the approved ICP (icp-and-disqualifiers v2), the offer ladder (outreach-offer-ladder v1), and the targeting doctrine §1 / §7.
+
+The buyer universe is small, founder-dense, early-stage medical-device / biotech. Hard filters are kept few on purpose... intersecting more than a handful on a narrow vertical returns an empty list. Behavioral and relational signals default to soft signals, not hard filters.
+
+---
+
+## Hard filters (account-level; a record must match all)
+
+These are deliberately sparse. Each declares a Source Mode (`searchable` = a named provider facet plausibly exists; `derived` = requires row-level enrichment, never a search-time filter per doctrine §7).
+
+**HF1 ... Industry is medical-device or biotech.**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: company's stated industry / product category names a medical device, diagnostic, therapeutic, or biotech product. Enumerate validated taxonomy values; do not rely on a raw broad industry list (doctrine §7.5).
+- Why: the offer ladder names "medical-device / biotech companies" as the shared target. Every front-end deliverable (teardown, FTO, Velocity Score) is written for this vertical.
+
+**HF2 ... Privately held, venture-backed or fundraising stage.**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: company shows a disclosed funding round (pre-seed through Series B) or an institutional investor on record. Public companies and bootstrapped-no-capital companies fall out.
+- Why: the ICP fit signal is "venture-backed or actively fundraising... capital is moving, IP positioning matters to the round." Maps to the Scout / Shield / Arsenal stage bands.
+
+**HF3 ... Early- to growth-stage (pre-seed through Series B).**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: latest disclosed round is at or before Series B; not late-stage / public / post-IPO.
+- Why: the three tiers map pre-seed through growth. Beyond Series B the buyer typically has in-house IP counsel and the wedge (hourly-billing pain) weakens.
+
+**HF4 ... Technology-differentiated product.**
+- Type: firmographic · Match: hard filter · Source Mode: derived
+- Observability: company's stated edge is a technical product (a device, molecule, platform, or method), not a pure services / go-to-market play. Verifiable from the business description. Because this is `derived`, it gates at row-level enrichment, not at search time.
+- Why: ICP fit signal "technology-differentiated... the product's edge is technical." A non-technical company has no patent position to defend, so no offer applies.
+
+Four hard filters, within the 5-10 band, leaving room for the count-first sizing pass (doctrine §7.3) on the facetable subset (HF1 + HF2 + HF3) before any build.
+
+---
+
+## Soft signals (scored after hard filters; weighted with discrimination)
+
+Each carries an expected-coverage note and null-handling default: unknown ≠ negative (doctrine §7.4). A signal whose coverage runs mostly-null is dropped, not scored.
+
+**SS1 ... Actively raising or recently raised.** — Weight: HIGH
+- Type: behavioral · Match: soft signal · Source Mode: derived (research / press)
+- Observability: a recent round announcement, an open round mention, or fundraise language in press / web. Live "raising now" status is research-derived, not provider-facetable (doctrine §7.6).
+- Discrimination: this is the offer ladder's named "strong receptivity rung." A fresh raise means IP positioning is live and budget exists. Highest-priority signal.
+
+**SS2 ... Holds or is filing patents.** — Weight: HIGH
+- Type: technographic · Match: soft signal · Source Mode: derived (authoritative source)
+- Observability: company appears as a patent assignee, or shows recent filing activity. Patents have no commercial-provider facet, so this routes to the authoritative IP source keyed by company name with normalization (doctrine §6), as a post-discovery gate.
+- Discrimination: an existing or growing portfolio is direct evidence "IP is material to defensibility" (ICP fit signal). The presence of competitor filings in the same space is also what makes the Competitor Filing Teardown land.
+
+**SS3 ... Pre-commercial-launch / approaching launch.** — Weight: MEDIUM
+- Type: behavioral · Match: soft signal · Source Mode: derived (research)
+- Observability: product described as in development, in trials, or pre-market; not yet broadly commercialized. For trial-stage device/biotech, sponsor-keyed clinical-trial data is an authoritative source (doctrine §6).
+- Discrimination: the Shield buyer "needs FTO clearance plus competitive positioning... approaching commercial launch." Pre-launch is when the deferred-FTO pain is most acute.
+
+**SS4 ... Small / capital-constrained headcount.** — Weight: MEDIUM
+- Type: firmographic · Match: soft signal · Source Mode: searchable
+- Observability: headcount in the small-team band (roughly under ~50). Note: doctrine §7.7 flags sub-50 early-stage companies as the worst case for email coverage... the email-acquisition waterfall and catch-all policy are named in enrichment-spec.
+- Discrimination: ICP fit signal "capital-constrained enough that hourly IP billing is a barrier... that is the wedge." Smaller teams feel the unpredictable-hourly pain hardest.
+
+**SS5 ... Recently hired IP / R&D leadership.** — Weight: LOW
+- Type: relational · Match: soft signal · Source Mode: derived
+- Observability: a recent senior hire in IP, patents, or R&D leadership (publicly announced role change). This is an account-level momentum signal; the contact-level targeting of that person lives in icp-titles.
+- Discrimination: the offer ladder names "newly-hired heads of IP / R&D leadership brought in to drive change" as a receptivity rung... a change-agent with mandate and budget. Low weight because coverage is thin and it is a bonus signal, not a baseline.
+
+---
+
+## Disqualifiers (anti-list; remove what hard filters miss; non-duplicative)
+
+**DQ1 ... Law firm or IP-services / patent-prosecution firm.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (business description)
+- Observability: the company's business is legal services, patent prosecution, or IP-services. Remove on match, stop scoring.
+- Why: Will's hard exclusion (icp-and-disqualifiers v2): law firms and IP-services firms as buyers are not-fit, always... no reframing unlocks it. This is the carve-out that HF1's industry filter will miss, since some such firms self-classify under adjacent tech/professional taxonomies (doctrine §7.5 carve-outs are row-level disqualifiers, not search facets).
+
+**DQ2 ... Pure-filing / prosecution-procurement only.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (research)
+- Observability: the company's apparent IP need is solely "get a patent filed" with no portfolio or ongoing-strategy dimension visible.
+- Why: ICP not-fit signal: pure prosecution / filing is "no margin there"... Konstellation is intelligence plus CIPO advisory, not a filing shop.
+
+**DQ3 ... Current customer.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company appears on the existing customer / CRM book.
+- Why: doctrine §7.8 internal-list disqualifier. Konstellation is re-pointing from PatentVest; if a prior customer base exists it is a required build input. If the engagement has no existing customer base yet, state that explicitly... this disqualifier then matches zero rows but stays declared.
+
+**DQ4 ... Active sales cycle / in-CRM open opportunity.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company is already in an open deal or active sequence in CRM.
+- Why: doctrine §7.8 ... do not cold-touch an account already in motion. Required build input where the operator has it; declared as zero-match if none exists yet.
+
+**DQ5 ... Recently acquired / no longer independent.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (research)
+- Observability: company shows a recent acquisition or M&A event removing its independent IP-strategy decision.
+- Why: an acquired company's IP strategy folds into the parent; the founder no longer owns the deferral decision the customer-problem model traces. Distinct from the stage hard filters... a still-early acquired company passes HF1-HF4 but has no standalone buyer.
+
+**DQ6 ... Named-accounts-to-avoid.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company appears on a Will / Nick supplied do-not-contact list (relationships, conflicts, prior burned outreach).
+- Why: doctrine §7.8 named-accounts-to-avoid. A required build input if supplied; if none exists yet, state that explicitly rather than omitting it.
+
+---
+
+## Blue-ocean note
+
+This segment is the defensible blue ocean the offer ladder names: venture-backed, technology-differentiated medical-device / biotech companies where IP is material to valuation and unpredictable hourly billing is a real constraint. It deliberately avoids the abused red-ocean segments (agency owners, generic "doctors," "lawyers"). The law-firm / IP-services hard exclusion is enforced at both the account disqualifier (DQ1) and, downstream, every contact at such an account (icp-titles Tier 3).
+
+## Build notes (for the downstream engine)
+
+- Count-first sizing pass required on the searchable hard-filter subset (HF1 + HF2 + HF3) before build (doctrine §7.3).
+- Derived hard filter HF4 and all `derived` soft signals run as post-discovery enrichment gates, never as search facets (doctrine §7.1-7.2).
+- Patent activity (SS2) and clinical-trial stage (SS3) route to the authoritative company-keyed sources in doctrine §6, with an accepted hit-rate haircut.
+- Internal-list disqualifiers (DQ3, DQ4, DQ6) are required build inputs; where the engagement has none yet, declare zero-match explicitly rather than omitting.
+
+---
+
 ## HINGE — ICP TITLES (contact personas) (draft v2)
 
 # ICP Titles / Persona Tiers — CIPO / Konstellation (Cold Outreach)
@@ -785,27 +901,3 @@ Every account verdict records a `prep_verdict` plus a rationale built only from 
 - Tier assignment (Scout / Shield / Arsenal) is a downstream routing decision driven by stage (H5) and portfolio depth (S5), not a gate input. An account qualifies into the cohort first; its tier is named after.
 - Contact-level screening (Tier 1 / Tier 2 / Tier 3, the verified-email reachability gate) runs only after the account qualifies and follows the icp-titles targeting order. The account gate and the contact gate are distinct steps, not one combined pass.
 - Per canon, the ICP cut and sub-segments are pending Will's certification; this gate inherits that pending status, including the named threshold (6) and edge band (4-5), which Will may tune once the ~100-conversation model is confirmed.
-
----
-
-## CRAFT REVIEW (deepline list-builder) — address these on this produce
-Verdict: buildable-with-fixes. Sound source-mode discipline and authoritative-source routing; main risks are HF2/HF3 facet precision, a thin facetable subset that may under-size, and an unspecced email/catch-all waterfall for sub-50 targets.
-
-1. [major] (searchable-filters) HF2 ('privately held, venture-backed') and HF3 ('latest round at/before Series B') are marked searchable, but the facetable subset really resolves to one provider's funding-stage + round-type facets. crustdata last_funding_round_type / employee growth and apollo funding dates exist, but 'privately held' and 'has an institutional investor on record' are not clean single facets — public/bootstrapped exclusion is partly derived. As specced, the count-first pass on HF1+HF2+HF3 may over-count (includes companies whose latest round is unknown/null) or silently empty if the round-type enum is over-constrained.
-   FIX: Spec HF2/HF3 as: searchable on last_funding_round_type IN {pre-seed..Series B} via crustdata_companydb_autocomplete-validated enums, with public/bootstrapped exclusion moved to a row-level derived disqualifier. Treat funding-stage null as unknown≠negative and route to derived confirmation, not a hard drop at search time.
-   PROVIDERS: crustdata_companydb_search (last_funding_round_type, autocomplete), apollo_company_search (funding dates)
-2. [major] (empty-list-risk) The truly searchable subset is effectively HF1 (industry) + HF3 (funding stage) on a narrow med-device/biotech vertical at pre-seed–Series B. linkedin_industries is too broad and crunchbase_categories for device/diagnostic/therapeutic sub-segments are sparse for very early-stage companies that DB providers under-cover (the docs explicitly flag pre-revenue startups returning 0). Intersecting industry + early funding stage + small headcount can return a thin or empty structured pull.
-   FIX: Run the count-first sizing pass with crunchbase_categories validated via autocomplete BEFORE committing; if structured counts are thin, route discovery to known-source extraction (VC med-device portfolios, biotech accelerator batches via parallel_extract) and exa_company_search concept search as primary discovery, with DB search as enrichment rather than the spine. Make this fallback explicit in build notes.
-   PROVIDERS: crustdata_companydb_autocomplete, dropleads_get_lead_count, exa_company_search, parallel_extract (VC/accelerator portfolios)
-3. [major] (deliverability) SS4 itself flags sub-50 early-stage as worst-case for email coverage, and the doc correctly defers the waterfall to enrichment-spec — but this artifact targets a buyer universe that is overwhelmingly sub-50. Dropleads has near-zero coverage <50 emp and hunter_email_finder is poor there, so the entire account layer risks low reachability. The spec defers but does not constrain — there is no named catch-all policy or fallback contact-discovery route here.
-   FIX: Acceptable to defer mechanics, but add a one-line forward reference naming the expected fallback (exa_people_search for <50-emp contact discovery + a verify step) and assert that enrichment-spec MUST carry the waterfall + catch-all decision per doctrine §7.7. Flag that a meaningful fraction of qualified accounts may be unreachable and should drop at the contact gate, not inflate the account list.
-   PROVIDERS: exa_people_search (tiny-startup contacts), hunter_email_finder, dropleads_search_people (low <50)
-4. [minor] (enrichment-reality) SS2 (patents → USPTO PatentsView) and SS3 (trial stage → ClinicalTrials.gov) are correctly routed to doctrine §6 authoritative sources keyed by company name. These are BUILDABLE as derived gates, not blockers. The only real risk is name-normalization hit-rate: assignee names and trial sponsor names diverge from legal/brand names, so the accepted haircut must be quantified, not just asserted.
-   FIX: Keep as derived gates (no change to status). Add an expected match-rate band and a normalization step (assignee/sponsor name + domain crosswalk) to the build notes so the haircut is a number the engine can budget against.
-   PROVIDERS: USPTO PatentsView API, ClinicalTrials.gov API (doctrine §6 custom sources)
-5. [minor] (scoring) SS1 and SS2 are both HIGH; SS5 is correctly LOW. But SS1 (live 'raising now') is research-derived per-row and will be mostly-null across a structured pull — doctrine §7.4 says a mostly-null signal is dropped, not scored. As the highest-weighted signal it cannot also be the most coverage-fragile without a stated coverage floor.
-   FIX: State an expected coverage estimate for SS1 and a fallback: if live-raise coverage runs below the usable threshold, fall back to 'recently raised' (last_funding_round_date within N months, which IS facetable) as the scored proxy so the HIGH weight rests on observable data.
-   PROVIDERS: crustdata last_funding_round_type/date, apollo funding dates; research/press for live status
-6. [minor] (provider-coverage) SS5 (recently hired IP/R&D leadership) is derived with thin coverage and LOW weight — appropriately handled. No blocker. Minor note: there is no named source path for it beyond 'publicly announced role change'.
-   FIX: Note the likely route (serper/exa for announced role changes, or LinkedIn job-change signals) so the engine doesn't treat it as unsourceable; keep LOW weight and unknown≠negative.
-   PROVIDERS: serper_google_search, exa_search, apify linkedin actors

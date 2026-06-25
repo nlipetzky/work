@@ -278,8 +278,15 @@ function EngagementBlock({ eng }: { eng: TargetingEngagement }) {
         </ul>
       </div>
 
+      {eng.artifacts.filter((a) => a.artifact_type === "discovery-recipe").map((a) => (
+        <div key="recipe" className="mb-3">
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-accent">The recipe — the signal → qualified-leads pipeline (synthesizes the four inputs)</div>
+          <ArtifactRow et={eng.engagement_type} eid={eng.engagement_id} art={a} contractMet={eng.contractMet} />
+        </div>
+      ))}
+      <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">The four inputs</div>
       <div className="space-y-2">
-        {eng.artifacts.map((a) => <ArtifactRow key={a.artifact_type} et={eng.engagement_type} eid={eng.engagement_id} art={a} contractMet={eng.contractMet} />)}
+        {eng.artifacts.filter((a) => a.artifact_type !== "discovery-recipe").map((a) => <ArtifactRow key={a.artifact_type} et={eng.engagement_type} eid={eng.engagement_id} art={a} contractMet={eng.contractMet} />)}
       </div>
     </section>
   );

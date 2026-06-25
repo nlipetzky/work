@@ -17,6 +17,7 @@ const TARGETING: { type: string; role: string }[] = [
   { type: "icp-titles", role: "Contact-level: which titles / personas at a qualified account" },
   { type: "enrichment-spec", role: "What data to collect per record + which are qualify-gates" },
   { type: "list-qualification", role: "The gate: qualified / edge / not-qualified verdict" },
+  { type: "discovery-recipe", role: "THE RECIPE: the signal → qualified-leads pipeline synthesizing the four inputs" },
 ];
 // the approved marketing canon they hinge on (the input contract)
 const HINGES: { type: string; role: string }[] = [

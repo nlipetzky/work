@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // the artifact's drafting source so a re-Produce optimizes against it.
 
 const CANON_ENGINE_DIR = "/Users/nplmini/code/work/systems/canon-engine";
-const ALLOWED = new Set(["segment-criteria", "icp-titles", "enrichment-spec", "list-qualification"]);
+const ALLOWED = new Set(["segment-criteria", "icp-titles", "enrichment-spec", "list-qualification", "discovery-recipe"]);
 
 export async function POST(req: Request) {
   let body: { engagement_type?: string; engagement_id?: string; artifact_type?: string };

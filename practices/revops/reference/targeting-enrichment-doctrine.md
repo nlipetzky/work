@@ -148,3 +148,34 @@ Deepline list-builder craft critic) gate every artifact so it doesn't ship a bea
 8. **Internal-list disqualifiers** (suppression, in-cycle CRM accounts, named-accounts-to-avoid) are
    declared as **required build inputs** that block the build if the operator has them; if the engagement
    has none yet (no existing customer base), state that explicitly rather than omitting it.
+
+## 8. The discovery recipe (signal → qualified leads pipeline)
+
+The four artifacts above define WHO/WHAT to target. The **recipe** is the synthesis: the ordered,
+signal-driven pipeline that turns a live signal into qualified leads in a database. It is the executable
+shape of the build, and the worked example a future recipe-authoring agent learns from. It is designed to
+RUN CONTINUOUSLY (a standing watch), not as a one-shot list pull.
+
+A recipe is a named, ordered sequence of steps. Each step states: what it does, the **source / tool** it
+uses (a named commercial provider OR a §6 custom authoritative source), the **keying method** (how the
+prior step's output becomes this step's input, e.g. patent assignee → company-name normalization), and the
+**expected hit-rate / cost** (so the funnel is sized honestly). The canonical shape:
+
+1. **Signal watch** — the standing query against the strongest signal for the segment (e.g. USPTO
+   PatentsView for new filings in our tech classes; ClinicalTrials.gov for phase changes). States the
+   query, the cadence, and what counts as a fresh signal. This is the continuous trigger.
+2. **Signal → company resolution** — resolve the signal to a company (assignee / sponsor → company),
+   with the normalization + dedup against companies already in the pipeline.
+3. **Company enrichment + segment screen** — enrich firmographics, apply the segment-criteria hard
+   filters / disqualifiers (Source Mode per §7), count-first sizing.
+4. **Contact discovery + enrichment** — find the icp-titles personas at qualified companies; the
+   verified-work-email waterfall + catch-all policy (§7.7) as a hard reachability gate.
+5. **Qualify** — apply list-qualification to produce the qualified / edge / not verdict; qualified records
+   land in the database (the Prospect spine).
+6. **Hand-off to outreach** — qualified cohort → System M (offer + copy, in the sender expert's name).
+
+A recipe must: name a concrete signal (not "find good companies"); have every step buildable per §7 (no
+unsourced step); be honest about funnel shrinkage at each stage; and define its output contract (what a
+"qualified lead" row contains). It does NOT invent providers or capabilities not in the doctrine or the
+deepline craft docs. The recipe is the unit the flywheel runs and the recipe-authoring agent will later
+compose from an intent.

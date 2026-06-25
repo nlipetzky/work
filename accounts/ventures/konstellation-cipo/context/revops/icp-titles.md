@@ -1,9 +1,9 @@
 # Drafting source — icp-titles (CIPO)
 
-Assembled from APPROVED canon + the targeting doctrine. This is the producer's raw input; the
-governed icp-titles artifact is distilled FROM this. Do not treat this file as the deliverable.
+Assembled from the doctrine + approved canon + sibling artifacts + the latest craft critique + expert
+notes. This is the producer's only input; the governed icp-titles is distilled FROM this.
 
-TASK: Produce the contact-level ICP titles / persona tiers for CIPO (function signals, not literal titles; tiered).
+TASK: Produce the contact-level ICP titles / persona tiers; name the email-acquisition waterfall + catch-all per doctrine §7.7.
 
 ---
 
@@ -160,11 +160,41 @@ Deepline list-builder craft critic) gate every artifact so it doesn't ship a bea
    declared as **required build inputs** that block the build if the operator has them; if the engagement
    has none yet (no existing customer base), state that explicitly rather than omitting it.
 
+## 8. The discovery recipe (signal → qualified leads pipeline)
+
+The four artifacts above define WHO/WHAT to target. The **recipe** is the synthesis: the ordered,
+signal-driven pipeline that turns a live signal into qualified leads in a database. It is the executable
+shape of the build, and the worked example a future recipe-authoring agent learns from. It is designed to
+RUN CONTINUOUSLY (a standing watch), not as a one-shot list pull.
+
+A recipe is a named, ordered sequence of steps. Each step states: what it does, the **source / tool** it
+uses (a named commercial provider OR a §6 custom authoritative source), the **keying method** (how the
+prior step's output becomes this step's input, e.g. patent assignee → company-name normalization), and the
+**expected hit-rate / cost** (so the funnel is sized honestly). The canonical shape:
+
+1. **Signal watch** — the standing query against the strongest signal for the segment (e.g. USPTO
+   PatentsView for new filings in our tech classes; ClinicalTrials.gov for phase changes). States the
+   query, the cadence, and what counts as a fresh signal. This is the continuous trigger.
+2. **Signal → company resolution** — resolve the signal to a company (assignee / sponsor → company),
+   with the normalization + dedup against companies already in the pipeline.
+3. **Company enrichment + segment screen** — enrich firmographics, apply the segment-criteria hard
+   filters / disqualifiers (Source Mode per §7), count-first sizing.
+4. **Contact discovery + enrichment** — find the icp-titles personas at qualified companies; the
+   verified-work-email waterfall + catch-all policy (§7.7) as a hard reachability gate.
+5. **Qualify** — apply list-qualification to produce the qualified / edge / not verdict; qualified records
+   land in the database (the Prospect spine).
+6. **Hand-off to outreach** — qualified cohort → System M (offer + copy, in the sender expert's name).
+
+A recipe must: name a concrete signal (not "find good companies"); have every step buildable per §7 (no
+unsourced step); be honest about funnel shrinkage at each stage; and define its output contract (what a
+"qualified lead" row contains). It does NOT invent providers or capabilities not in the doctrine or the
+deepline craft docs. The recipe is the unit the flywheel runs and the recipe-authoring agent will later
+compose from an intent.
+
 
 ---
 
-## ICP + DISQUALIFIERS (who we serve + hard exclusions)
-source: canon icp-and-disqualifiers (approved v2)
+## ICP + DISQUALIFIERS (approved v2)
 
 # ICP and Disqualifiers
 
@@ -222,8 +252,7 @@ State the verdict (fit / not-fit / edge), then name the signals that drove it. E
 
 ---
 
-## CUSTOMER PROBLEM (the pain)
-source: canon customer-problem-model (approved v1)
+## CUSTOMER PROBLEM (approved v1)
 
 # Customer Problem Model
 
@@ -260,8 +289,7 @@ There is also a demand-side distortion that keeps the real problem hidden. Inven
 
 ---
 
-## MECHANISM (the differentiator / what fit looks like)
-source: canon mechanism-of-action (approved v2)
+## MECHANISM / what fit looks like (approved v2)
 
 # Mechanism of Action
 
@@ -301,8 +329,7 @@ That is why the chain holds. The workflows are structured methodology engines ra
 
 ---
 
-## OFFER (what we sell)
-source: canon offer-architecture-and-pricing (approved v1)
+## OFFER (approved v1)
 
 # Offer Architecture & Pricing
 
@@ -388,8 +415,7 @@ Tiers and numbers are Will's and must be confirmed before any public-facing use.
 
 ---
 
-## OFFER LADDER (the front-end offer the list will receive)
-source: canon outreach-offer-ladder (approved v1)
+## OFFER LADDER (what the list receives) (approved v1)
 
 # Outreach Offer Ladder (CIPO / Konstellation)
 
@@ -480,72 +506,342 @@ All three aim at the raised hand, not the cold close. The recommendation between
 
 ---
 
-## SEGMENT CRITERIA (account-level targeting)
-source: canon segment-criteria (approved v1)
+## HINGE — SEGMENT CRITERIA (account targeting) (draft v2)
 
-# Segment Criteria — CIPO / Konstellation (Cold Outreach)
+# Segment Criteria (CIPO / Konstellation)
 
-Account-level targeting for the cold-outreach list. Source-agnostic: no provider or column names. Person-level titles are deferred to icp-titles. This artifact decides which accounts are in or out of the segment from named, observable signals.
+Scope: the account layer. Which *companies* enter the cold-outreach list, decided from named, observable signals. Source-agnostic (no provider or column names). Contact-level personas are deferred to icp-titles (approved v1). Reconciled to the approved ICP (icp-and-disqualifiers v2), the offer ladder (outreach-offer-ladder v1), and the targeting doctrine §1 / §7.
 
-Derived from and consistent with: the approved ICP and its hard exclusions (icp-and-disqualifiers v2), the outreach offer ladder's shared-targeting block (outreach-offer-ladder v1), the customer-problem model (v1), and the Targeting & Enrichment Doctrine §1.
-
-The defensible blue ocean per the offer ladder: venture-backed, technology-differentiated medical-device / biotech companies where IP is material to valuation and unpredictable hourly billing is a real constraint. Explicitly NOT the abused red-ocean segments (agency owners, generic "doctors," "lawyers").
+The buyer universe is small, founder-dense, early-stage medical-device / biotech. Hard filters are kept few on purpose... intersecting more than a handful on a narrow vertical returns an empty list. Behavioral and relational signals default to soft signals, not hard filters.
 
 ---
 
-## Hard filters (account-level; a record must match ALL)
+## Hard filters (account-level; a record must match all)
 
-Used sparingly. Each is a binary check against a signal a person could verify from public sources, not a judgment call.
+These are deliberately sparse. Each declares a Source Mode (`searchable` = a named provider facet plausibly exists; `derived` = requires row-level enrichment, never a search-time filter per doctrine §7).
 
-| # | Criterion | Type | Match | Observability |
-|---|-----------|------|-------|---------------|
-| H1 | Company operates in medical-device or biotech (its product is a physical/clinical or life-science technology, not a software-only or services play) | firmographic | hard filter | Stated industry classification, product description, or sector tag on the company's own site / public profile |
-| H2 | Company has taken institutional venture funding OR is in an open round (a named raise, lead investor, or "raising" status is visible) | firmographic | hard filter | Public funding record: announced round, named investors, or an actively-raising signal the company itself publishes |
-| H3 | Company holds at least one patent or published patent application (it is an IP-bearing entity, not pre-invention) | technographic | hard filter | A published filing or grant tied to the company / its founders in the public patent record |
-| H4 | The buyer is an operating product company, NOT a law firm or IP-services firm (this is the ICP hard exclusion, expressed as an account filter; it is a category check, not a judgment call) | disqualifier-as-filter | hard filter | The company's stated line of business: does it sell a technology product, or does it sell legal/IP services to others? |
-| H5 | Company is early-to-growth stage (pre-seed through Series B, mapping to Scout / Shield / Arsenal), not late-stage / public / enterprise-mature | firmographic | hard filter | Most recent funding stage as stated in the public funding record |
+**HF1 ... Industry is medical-device or biotech.**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: company's stated industry / product category names a medical device, diagnostic, therapeutic, or biotech product. Enumerate validated taxonomy values; do not rely on a raw broad industry list (doctrine §7.5).
+- Why: the offer ladder names "medical-device / biotech companies" as the shared target. Every front-end deliverable (teardown, FTO, Velocity Score) is written for this vertical.
 
-Note on H4: the ICP hard exclusion ("law firms and IP-services firms as buyers are not-fit, always") is enforced here as an account-level filter AND restated as a disqualifier below, because the two catch different failure modes (a misclassified industry tag vs. a hybrid entity). This is the doctrine's one sanctioned overlap, flagged so it is not read as accidental duplication.
+**HF2 ... Privately held, venture-backed or fundraising stage.**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: company shows a disclosed funding round (pre-seed through Series B) or an institutional investor on record. Public companies and bootstrapped-no-capital companies fall out.
+- Why: the ICP fit signal is "venture-backed or actively fundraising... capital is moving, IP positioning matters to the round." Maps to the Scout / Shield / Arsenal stage bands.
+
+**HF3 ... Early- to growth-stage (pre-seed through Series B).**
+- Type: firmographic · Match: hard filter · Source Mode: searchable
+- Observability: latest disclosed round is at or before Series B; not late-stage / public / post-IPO.
+- Why: the three tiers map pre-seed through growth. Beyond Series B the buyer typically has in-house IP counsel and the wedge (hourly-billing pain) weakens.
+
+**HF4 ... Technology-differentiated product.**
+- Type: firmographic · Match: hard filter · Source Mode: derived
+- Observability: company's stated edge is a technical product (a device, molecule, platform, or method), not a pure services / go-to-market play. Verifiable from the business description. Because this is `derived`, it gates at row-level enrichment, not at search time.
+- Why: ICP fit signal "technology-differentiated... the product's edge is technical." A non-technical company has no patent position to defend, so no offer applies.
+
+Four hard filters, within the 5-10 band, leaving room for the count-first sizing pass (doctrine §7.3) on the facetable subset (HF1 + HF2 + HF3) before any build.
 
 ---
 
 ## Soft signals (scored after hard filters; weighted with discrimination)
 
-| # | Criterion | Type | Match | Weight | Observability |
-|---|-----------|------|-------|--------|---------------|
-| S1 | Newly raised within the last ~6 months, OR an open round visible now | behavioral | soft signal | high | Dated funding announcement or a current "raising" post / page |
-| S2 | A head of IP, R&D leadership, or technical-founder change hired recently (a person brought in to drive IP/technical direction) | relational | soft signal | high | A recent hire / appointment announcement or updated leadership listing |
-| S3 | Product edge is explicitly technical (the company describes a differentiated technology or platform, not just go-to-market / distribution) | firmographic | soft signal | high | Product / technology language on the company's own materials |
-| S4 | Approaching or recently past a commercial-launch milestone (clearance, first product, market entry) ... the FTO-relevant moment | behavioral | soft signal | medium | Announced launch, regulatory submission, or product-availability signal |
-| S5 | Active patent filing momentum (more than one filing in the trailing ~24 months, suggesting an emerging portfolio) | technographic | soft signal | medium | Multiple dated filings in the public patent record |
-| S6 | Competitor patent activity is visible in the company's exact space (a named competitor is filing nearby) ... relevance hook for the teardown offer | behavioral | soft signal | medium | Competitor filings in the same technology class in the public patent record |
-| S7 | Small team / capital-constrained profile where unpredictable hourly billing would bite (lean headcount relative to stage) | firmographic | soft signal | low | Public headcount vs. funding stage |
-| S8 | Public signal the company treats IP as material (mentions patents in investor / press materials, names IP as a moat) | behavioral | soft signal | low | The company's own investor-facing or press statements |
+Each carries an expected-coverage note and null-handling default: unknown ≠ negative (doctrine §7.4). A signal whose coverage runs mostly-null is dropped, not scored.
 
-Weighting logic: the high-weight signals (S1, S2, S3) are the receptivity rungs the offer ladder calls out ... a newly-funded, technically-differentiated company with a change-agent in an IP/R&D seat is the strongest open. Medium signals (S4, S5, S6) raise relevance and arm specific front-end offers (FTO / teardown). Low signals (S7, S8) corroborate fit but do not move an account on their own.
+**SS1 ... Actively raising or recently raised.** — Weight: HIGH
+- Type: behavioral · Match: soft signal · Source Mode: derived (research / press)
+- Observability: a recent round announcement, an open round mention, or fundraise language in press / web. Live "raising now" status is research-derived, not provider-facetable (doctrine §7.6).
+- Discrimination: this is the offer ladder's named "strong receptivity rung." A fresh raise means IP positioning is live and budget exists. Highest-priority signal.
+
+**SS2 ... Holds or is filing patents.** — Weight: HIGH
+- Type: technographic · Match: soft signal · Source Mode: derived (authoritative source)
+- Observability: company appears as a patent assignee, or shows recent filing activity. Patents have no commercial-provider facet, so this routes to the authoritative IP source keyed by company name with normalization (doctrine §6), as a post-discovery gate.
+- Discrimination: an existing or growing portfolio is direct evidence "IP is material to defensibility" (ICP fit signal). The presence of competitor filings in the same space is also what makes the Competitor Filing Teardown land.
+
+**SS3 ... Pre-commercial-launch / approaching launch.** — Weight: MEDIUM
+- Type: behavioral · Match: soft signal · Source Mode: derived (research)
+- Observability: product described as in development, in trials, or pre-market; not yet broadly commercialized. For trial-stage device/biotech, sponsor-keyed clinical-trial data is an authoritative source (doctrine §6).
+- Discrimination: the Shield buyer "needs FTO clearance plus competitive positioning... approaching commercial launch." Pre-launch is when the deferred-FTO pain is most acute.
+
+**SS4 ... Small / capital-constrained headcount.** — Weight: MEDIUM
+- Type: firmographic · Match: soft signal · Source Mode: searchable
+- Observability: headcount in the small-team band (roughly under ~50). Note: doctrine §7.7 flags sub-50 early-stage companies as the worst case for email coverage... the email-acquisition waterfall and catch-all policy are named in enrichment-spec.
+- Discrimination: ICP fit signal "capital-constrained enough that hourly IP billing is a barrier... that is the wedge." Smaller teams feel the unpredictable-hourly pain hardest.
+
+**SS5 ... Recently hired IP / R&D leadership.** — Weight: LOW
+- Type: relational · Match: soft signal · Source Mode: derived
+- Observability: a recent senior hire in IP, patents, or R&D leadership (publicly announced role change). This is an account-level momentum signal; the contact-level targeting of that person lives in icp-titles.
+- Discrimination: the offer ladder names "newly-hired heads of IP / R&D leadership brought in to drive change" as a receptivity rung... a change-agent with mandate and budget. Low weight because coverage is thin and it is a bonus signal, not a baseline.
 
 ---
 
-## Disqualifiers (the anti-list; removes what hard filters miss)
+## Disqualifiers (anti-list; remove what hard filters miss; non-duplicative)
 
-Non-duplicative of the hard filters above. Each removes a record that could otherwise pass.
+**DQ1 ... Law firm or IP-services / patent-prosecution firm.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (business description)
+- Observability: the company's business is legal services, patent prosecution, or IP-services. Remove on match, stop scoring.
+- Why: Will's hard exclusion (icp-and-disqualifiers v2): law firms and IP-services firms as buyers are not-fit, always... no reframing unlocks it. This is the carve-out that HF1's industry filter will miss, since some such firms self-classify under adjacent tech/professional taxonomies (doctrine §7.5 carve-outs are row-level disqualifiers, not search facets).
 
-| # | Criterion | Type | Match | Observability |
-|---|-----------|------|-------|---------------|
-| D1 | The entire visible ask / need is pure patent filing or prosecution with no intelligence/advisory angle ("just file my patent") | disqualifier | disqualifier | The company's stated need or any inbound context names filing-only, with no portfolio/strategy interest |
-| D2 | Current Konstellation customer or account already in an active sales cycle | disqualifier | disqualifier | Internal CRM / pipeline record |
-| D3 | Acquired or in announced acquisition within the last ~6 months (IP decisions now sit with the acquirer, not the target) | disqualifier | disqualifier | Public M&A announcement |
-| D4 | Previously contacted in a prior outreach wave and went cold / opted out (burned audience) | disqualifier | disqualifier | Internal outreach / suppression record |
-| D5 | A named account on the do-not-contact list (e.g. an existing partner, a referral relationship, or an account Will / Nick reserve) | disqualifier | disqualifier | Internal named-accounts-to-avoid list maintained by Will / Nick |
-| D6 | Buyer shows the entry fixation ("my patent is infringed") but no portfolio or ongoing-strategy signal at all ... per the ICP, this is edge, not in-segment | disqualifier | disqualifier | Inbound or research context shows only the acute infringement framing with zero durable-need signal |
+**DQ2 ... Pure-filing / prosecution-procurement only.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (research)
+- Observability: the company's apparent IP need is solely "get a patent filed" with no portfolio or ongoing-strategy dimension visible.
+- Why: ICP not-fit signal: pure prosecution / filing is "no margin there"... Konstellation is intelligence plus CIPO advisory, not a filing shop.
 
-D1 is distinct from the H4 exclusion: H4 removes law firms / IP-services firms (a category of buyer); D1 removes an in-category buyer whose only need is filing (a need shape). D6 routes ICP edge cases out of the cold list rather than auto-including them; per the ICP these go to human review, not into the segment.
+**DQ3 ... Current customer.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company appears on the existing customer / CRM book.
+- Why: doctrine §7.8 internal-list disqualifier. Konstellation is re-pointing from PatentVest; if a prior customer base exists it is a required build input. If the engagement has no existing customer base yet, state that explicitly... this disqualifier then matches zero rows but stays declared.
+
+**DQ4 ... Active sales cycle / in-CRM open opportunity.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company is already in an open deal or active sequence in CRM.
+- Why: doctrine §7.8 ... do not cold-touch an account already in motion. Required build input where the operator has it; declared as zero-match if none exists yet.
+
+**DQ5 ... Recently acquired / no longer independent.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (research)
+- Observability: company shows a recent acquisition or M&A event removing its independent IP-strategy decision.
+- Why: an acquired company's IP strategy folds into the parent; the founder no longer owns the deferral decision the customer-problem model traces. Distinct from the stage hard filters... a still-early acquired company passes HF1-HF4 but has no standalone buyer.
+
+**DQ6 ... Named-accounts-to-avoid.**
+- Type: disqualifier · Match: disqualifier · Source Mode: derived (internal list)
+- Observability: company appears on a Will / Nick supplied do-not-contact list (relationships, conflicts, prior burned outreach).
+- Why: doctrine §7.8 named-accounts-to-avoid. A required build input if supplied; if none exists yet, state that explicitly rather than omitting it.
+
+---
+
+## Blue-ocean note
+
+This segment is the defensible blue ocean the offer ladder names: venture-backed, technology-differentiated medical-device / biotech companies where IP is material to valuation and unpredictable hourly billing is a real constraint. It deliberately avoids the abused red-ocean segments (agency owners, generic "doctors," "lawyers"). The law-firm / IP-services hard exclusion is enforced at both the account disqualifier (DQ1) and, downstream, every contact at such an account (icp-titles Tier 3).
+
+## Build notes (for the downstream engine)
+
+- Count-first sizing pass required on the searchable hard-filter subset (HF1 + HF2 + HF3) before build (doctrine §7.3).
+- Derived hard filter HF4 and all `derived` soft signals run as post-discovery enrichment gates, never as search facets (doctrine §7.1-7.2).
+- Patent activity (SS2) and clinical-trial stage (SS3) route to the authoritative company-keyed sources in doctrine §6, with an accepted hit-rate haircut.
+- Internal-list disqualifiers (DQ3, DQ4, DQ6) are required build inputs; where the engagement has none yet, declare zero-match explicitly rather than omitting.
+
+---
+
+## HINGE — ENRICHMENT SPEC (data points + qualify-gates) (draft v2)
+
+# Enrichment Spec — CIPO / Konstellation (Cold Outreach)
+
+Which data points to collect per account and per contact, and which are **qualify-gates** (used to decide in-scope vs out-of-scope) vs **enrich-only** (carried for later use, not a fit decision). Source-agnostic: data-point names, not provider columns or facets.
+
+Derived from and consistent with: the Targeting & Enrichment Doctrine §3, the approved segment-criteria (v1), icp-titles (v1), icp-and-disqualifiers (v2), and the outreach-offer-ladder (v1). Inherits the pending-Will-certification status those carry.
+
+Personalization-snippet fields (email opener / ideal-customers / past-clients) are deliberately excluded ... those are the copy layer's input, not enrichment.
+
+---
+
+## Group 1 — Identity / firmographic (account level)
+
+Mostly enrich-only context, with the named hard-filter gates the segment-criteria artifact composes.
+
+| Data point | Level | Gate? | Rule that uses it (for gates) | Observability |
+|---|---|---|---|---|
+| Company name | account | enrich-only | — | Company's own site / public profile |
+| Primary domain | account | enrich-only | — | Company's own site |
+| Industry / sector classification | account | qualify-gate | H1: must be medical-device or biotech (physical/clinical or life-science technology, not software-only or services). Enumerate validated taxonomy values; software/services carve-outs are row-level, not a broad-taxonomy filter | Stated industry classification, product description, or sector tag on the company's site / public profile |
+| Line-of-business / what the company sells | account | qualify-gate | H4: must be an operating product company, NOT a law firm or IP-services firm (ICP hard exclusion as a category check) | The company's stated line of business: sells a technology product vs sells legal/IP services to others |
+| Headcount / team size | account | qualify-gate + enrich-only | Used by S7 (lean headcount relative to funding stage = capital-constrained profile, low-weight soft signal); otherwise carried as context | Public headcount vs funding stage |
+| Location | account | enrich-only | — | Company's public profile |
+| Technologies / product description | account | enrich-only | Carried as context; feeds S3 fit signal in Group 3 | Product / technology language on the company's own materials |
+| Business description | account | enrich-only | — | Company's own materials |
+
+---
+
+## Group 2 — Contact identity + reachability (contact level)
+
+The reachability gate is hard: an unreachable contact is not a usable record.
+
+| Data point | Level | Gate? | Rule that uses it (for gates) | Observability |
+|---|---|---|---|---|
+| Contact name | contact | enrich-only | — | Public profile |
+| Contact title | contact | enrich-only | Carried as context; the function-signal screen (Group 4) reads it, but literal title is not itself the gate | Public profile / leadership listing |
+| Public profile / professional listing | contact | enrich-only | — | Public professional profile |
+| **Verified work email** | contact | **qualify-gate (reachability)** | Hard reachability gate: a contact must have a work email that passes a find-and-verify loop. An unreachable contact is not usable. Per icp-titles targeting order: if no reachable Tier 1, fall to Tier 2; no reachable contact at all = account not actionable | Email found and verified deliverable through an acquisition + verification waterfall, with a stated catch-all policy (early-stage <50-employee companies are the worst case for coverage) |
+
+---
+
+## Group 3 — Research / fit signals, account level (the qualifying shrink)
+
+The company-context signals an AI judge uses to decide in-scope vs out-of-scope. Each names the value that qualifies. These map to the segment-criteria hard filters and soft signals; signals with no commercial facet are **derived** (post-discovery), routed to the named authoritative source, not specced as a search-time filter.
+
+| Data point | Level | Gate? | Value that qualifies | Source mode |
+|---|---|---|---|---|
+| Funding status / institutional venture backing | account | qualify-gate | H2: has taken institutional venture funding OR is in an open round (named raise, lead investor, or "raising" status visible). Disqualified if no venture / fundraising signal | searchable (announced rounds); "raising-now" status is derived (press/web), per buildability rule 6 |
+| Funding stage | account | qualify-gate | H5: pre-seed through Series B (Scout / Shield / Arsenal range); NOT late-stage / public / enterprise-mature | searchable |
+| Patent / published-application holding | account | qualify-gate | H3: holds at least one patent or published application tied to the company / its founders (an IP-bearing entity, not pre-invention). Disqualified if no public filing exists | derived — route to the authoritative patent source (USPTO PatentsView API, keyed by assignee / company name with normalization); no commercial facet, post-discovery gate with an accepted hit-rate haircut |
+| Recency of last raise | account | enrich-only (scored soft) | S1 (high weight): newly raised within ~6 months OR an open round visible now | searchable (dated announcement); open-round is derived |
+| Recent IP/R&D leadership or technical-founder hire | account | enrich-only (scored soft) | S2 (high weight): a head of IP, R&D leader, or technical-founder change hired recently (a change-agent brought in to drive direction) | derived (hire/appointment announcement, updated leadership listing) |
+| Technical differentiation of the product | account | enrich-only (scored soft) | S3 (high weight): the company describes a differentiated technology or platform, not just go-to-market / distribution | derived (row-level read of company materials) |
+| Commercial-launch proximity | account | enrich-only (scored soft) | S4 (medium): approaching or recently past a clearance / first-product / market-entry milestone (the FTO-relevant moment) | derived (announced launch, regulatory submission, product-availability) |
+| Patent filing momentum | account | enrich-only (scored soft) | S5 (medium): more than one filing in the trailing ~24 months (emerging portfolio) | derived — same authoritative patent source as the H3 gate, keyed by company |
+| Competitor filing activity in the same space | account | enrich-only (scored soft) | S6 (medium): a named competitor is filing in the company's exact technology class (relevance hook for the teardown offer) | derived — authoritative patent source, keyed by competitor / technology class |
+| IP-as-material public signal | account | enrich-only (scored soft) | S8 (low): the company names patents / IP as a moat in its own investor or press materials | derived (investor-facing / press statements) |
+
+Null-handling per buildability rule 4: each scored soft signal carries an expected-coverage estimate and treats unknown as not-negative. A signal below a usable coverage threshold is dropped, not scored on mostly-null data.
+
+---
+
+## Group 4 — Research / fit signals, contact level
+
+The modality/role signals the judge uses to keep a contact in-scope. Function signals, not literal title strings (per icp-titles).
+
+| Data point | Level | Gate? | Value that qualifies | Source mode |
+|---|---|---|---|---|
+| Function signal: founder / company principal OR owner of IP/technical strategy | contact | qualify-gate | Tier 1: founder, co-founder, chief executive, named principal, OR the person responsible for patents / IP portfolio / R&D direction / technical defensibility (CIPO, Head of IP, VP R&D, CTO, CSO where the role carries IP ownership). Read the function the title implies, not the literal phrase | derived (role read from profile + leadership listing) |
+| Function signal: influencer / champion | contact | enrich-only | Tier 2: senior technical/scientific staff who feel the competitor-filing threat but lack budget authority, OR operating/finance leadership who influence vendor/advisory spend at a stage with a separate IP owner. Carried as the route-in when no reachable Tier 1 | derived |
+| Disqualifying contact signal: law-firm / IP-services employment | contact | qualify-gate | Tier 3 hard exclusion: any contact whose employer is a law firm or IP-services / patent-prosecution firm (attorney, patent agent, of-counsel, partner, IP-services account lead). Stop scoring. This should already have failed the H4 account gate | derived (employer line of business) |
+| Disqualifying contact signal: filing-only / function-irrelevant role | contact | qualify-gate | Tier 3: a contact whose only need is "get this patent filed" with no portfolio/strategy dimension, OR a sales / marketing / HR / CS / general-admin role with no IP, technical, founder, or spend-authority signal | derived (stated need / role function) |
+
+---
+
+## Order and composition (reconciled to qualification-logic)
+
+- **Company-first, contacts-second.** The account clears the Group 1 + Group 3 qualify-gates (H1–H5) and the H4 / law-firm exclusion before any contact is pulled.
+- Per qualified account, pull Tier 1 first; the **verified-work-email reachability gate** (Group 2) decides usability. If no reachable Tier 1, fall to Tier 2. Screen out every Tier 3 contact.
+- The qualify-gates above feed the qualification-logic verdict (hard filters + disqualifiers + soft-signal threshold → qualified / edge / not-qualified). Enrich-only points are carried for routing and later use, not for the in/out decision.
+
+## Buildability notes
+
+- **Source mode declared on every gate**: searchable (a provider facet exists) vs derived (row-level / post-discovery). The patent gates (H3, S5, S6) and all "raising-now" / live-status signals are **derived**, routed to the authoritative patent source or research per Doctrine §6–§7. They are never specced as search-time hard filters and never scraped where an authoritative API exists.
+- **Email-acquisition waterfall + catch-all policy** is named up front for Group 2, because early-stage sub-50-employee companies are the worst case for coverage and deliverability.
+- **Internal-list disqualifiers** (current customers, in-cycle CRM accounts, suppression / burned audiences, named-accounts-to-avoid) are required build inputs that the qualification-logic gate enforces (segment D2/D4/D5). They are not enrichment data points and are not specced here beyond noting the dependency; if the engagement has no existing customer base yet, that should be stated rather than omitted.
+
+---
+
+*Inherits pending Will certification: the ICP cut, the four sub-segments, and the patent / funding signals are Will's to confirm.*
+
+---
+
+## HINGE — LIST QUALIFICATION (the qualified/edge/not gate) (draft v2)
+
+# Qualification Logic — CIPO / Konstellation (Cold Outreach)
+
+The gate that turns a sourced + enriched record into a deterministic, explainable verdict: qualified / edge / not-qualified. It composes the account-level hard filters, disqualifiers, and weighted soft signals from segment-criteria (v1) with the enrichment qualify-gates, so a raw pull becomes a vetted cohort an agent can defend signal by signal.
+
+Derived from and consistent with: segment-criteria (v1) §hard-filters / §soft-signals / §disqualifiers, icp-and-disqualifiers (v2), icp-titles (v1), the outreach offer ladder (v1), and the Targeting & Enrichment Doctrine §4. Every verdict here is explainable from named signals... there are no vibe gates.
+
+---
+
+## The two-level order (company first, contacts second)
+
+This is the engine's actual build order, and it is not optional. The account qualifies first; only then are its contacts pulled and screened.
+
+1. **Account gate.** Evaluate the account against the hard filters (H1-H5), the disqualifiers (D1-D6), and the soft-score threshold below. The account earns a verdict: qualified / edge / not-qualified.
+2. **Contact pull (qualified accounts only).** Only for an account that lands qualified do we pull contacts, per the icp-titles targeting order: Tier 1 first (founder, then IP/R&D owner), Tier 2 as the route-in if no reachable Tier 1, every Tier 3 contact screened out.
+3. **Contact reachability gate.** A pulled Tier 1/Tier 2 contact needs a verified work email (the find-and-verify reachability gate). An account with zero reachable in-tier contacts produces no usable record even though the account qualified... it routes to edge for a reachability retry, not into the live cohort.
+
+An edge or not-qualified account never reaches the contact-pull step. We do not spend enrichment budget pulling contacts at an account that has not cleared its own gate.
+
+---
+
+## The account verdict (deterministic)
+
+Evaluate in this fixed order. The first stopping condition wins.
+
+### Step 1 — Hard exclusion / disqualifier check (stop conditions)
+
+If ANY disqualifier fires, the account is **not-qualified**. Stop scoring. The relevant disqualifiers:
+
+- **D2** — current customer or active sales cycle.
+- **D3** — acquired or in announced acquisition within ~6 months.
+- **D4** — burned / opted-out from a prior wave.
+- **D5** — named account on the do-not-contact list.
+- **D1** — entire visible ask is pure filing/prosecution, no intelligence/advisory angle.
+
+Two of these are the ICP hard exclusion expressed at the account layer and must be checked before anything else:
+
+- The law-firm / IP-services exclusion is enforced as hard filter **H4** (see Step 2). If H4 fails, the account is **not-qualified** with rationale "law firm / IP-services buyer, ICP hard exclusion, no further scoring." No reframing unlocks it.
+
+**D6 is the one disqualifier that does not return not-qualified.** D6 (entry fixation "my patent is infringed" with zero portfolio / ongoing-strategy signal) routes the account to **edge**, per the ICP. It is the durable-need-unproven case... worth a human conversation, not a cold-list inclusion and not a hard discard.
+
+### Step 2 — Hard filters (all must pass)
+
+The account must match ALL of H1-H5:
+
+- **H1** — operates in medical-device or biotech (physical/clinical/life-science product, not software-only or services).
+- **H2** — has taken institutional venture funding OR is in an open round.
+- **H3** — holds at least one patent or published application (IP-bearing entity).
+- **H4** — operating product company, NOT a law firm / IP-services firm (the ICP hard exclusion as an account filter).
+- **H5** — early-to-growth stage (pre-seed through Series B).
+
+If any hard filter fails, the account is **not-qualified**, rationale naming the failed filter(s). H3 and H2 are derived gates (patent record, funding record) and depend on the enrichment qualify-gates resolving before this step can run... see "Composition with enrichment" below.
+
+### Step 3 — Soft score (only for accounts that cleared Steps 1-2)
+
+Score the eight soft signals with weighted points:
+
+- **High weight (3 pts each):** S1 (newly raised / open round), S2 (recent IP/R&D leadership hire), S3 (explicitly technical product edge).
+- **Medium weight (2 pts each):** S4 (commercial-launch milestone), S5 (active filing momentum), S6 (competitor filing activity in-space).
+- **Low weight (1 pt each):** S7 (capital-constrained / lean-for-stage), S8 (public IP-as-material signal).
+
+Maximum possible soft score: (3 × 3) + (3 × 2) + (2 × 1) = **17 points**.
+
+**Null-handling:** an unknown signal scores zero, never negative. A signal whose coverage is below a usable threshold is not scored on mostly-null data... it is dropped from the denominator for that record, not counted against it.
+
+### Step 4 — The verdict bands
+
+For an account that has cleared all hard filters AND has no firing disqualifier (other than the D6 edge route):
+
+- **Qualified:** soft score **≥ 6**. Rationale: clears all hard filters, no disqualifier, and lands at or above threshold... typically at least two high-weight receptivity rungs, or one high plus medium corroboration.
+- **Edge (human review):** soft score **4-5** (the named edge band), OR the account hit the D6 route in Step 1, OR it cleared the account gate but produced zero reachable in-tier contacts at Step 3 of the contact pull. These are near-misses and unproven-durable-need cases that warrant a human look, not an auto-discard.
+- **Not-qualified:** soft score **≤ 3** after clearing hard filters (too thin to justify a cold touch), OR any not-qualified stop condition fired in Steps 1-2.
+
+The threshold (6) and the edge band (4-5) are named here so every band assignment is reproducible. Two accounts with the same signals always land in the same band.
+
+---
+
+## Composition with the enrichment qualify-gates
+
+Several hard filters and soft signals are **derived** (post-discovery), not searchable, and depend on the enrichment-spec qualify-gates resolving first. The verdict cannot be issued until these gates have a value:
+
+- **H3 (holds a patent)** and **S5 (filing momentum)** / **S6 (competitor filing)** resolve from the public patent record, keyed by company (the USPTO PatentsView authoritative source per doctrine §6). These are derived gates with an accepted hit-rate haircut, never search-time filters.
+- **H2 (funding)** and **S1 (newly raised / open round)** resolve from the public funding record; the "raising now" live-status portion of S1 is research-derived, not provider-facetable.
+- **D2 / D4 / D5** (current customer, burned audience, named-accounts-to-avoid) are **internal-list disqualifiers** and are required build inputs. If Will / Nick supply suppression and named-account lists, they block matching records. If the engagement has no existing customer base yet, that is stated explicitly... D2 returns empty rather than being silently skipped.
+
+If a derived qualify-gate cannot resolve a value for a record (e.g. company-name normalization fails against the patent record), that signal is treated as unknown (scores zero, does not auto-fail), and the record routes to **edge** rather than not-qualified when the missing gate is a hard filter input... an unresolved H3 is a "verify before discard," not a silent drop.
+
+---
+
+## Explainability requirement (no vibe gates)
+
+Every account verdict records a `prep_verdict` plus a rationale built only from named signals (H1-H5, S1-S8, D1-D6) and their resolved values. Examples:
+
+- "Not-qualified. H4 failed... buyer is an IP-services firm. ICP hard exclusion, no further scoring."
+- "Qualified. Cleared H1-H5; soft score 8 (S1 newly raised + S3 technical edge + S6 competitor filing nearby). Maps toward Shield by stage (H5 = Series A)."
+- "Edge. Cleared H1-H5 but soft score 4 (S3 + S7 only); near-miss, route to human."
+- "Edge. D6 fired... founder cites infringement but zero portfolio / ongoing-strategy signal. Durable need unproven, route to human."
+
+"Looks like a fit" is not a rule. If a verdict cannot be reconstructed from named signals and their values, it is invalid and the record is held for review rather than shipped into the cohort.
 
 ---
 
 ## Boundary notes
 
-- Person-level title and persona-tier criteria (decision-maker / influencer / excluded role) are out of scope here and live in icp-titles.
-- "IP is material to valuation," "technology-differentiated," and "capital-constrained" appear in the ICP as fit framings; each has been converted here into an observable account signal (S3, S5/S8, S7) rather than carried as a vibe.
-- Tier assignment (Scout / Shield / Arsenal) is a downstream routing decision driven by stage (H5) plus portfolio depth (S5), not a segment-inclusion gate.
-- Per canon, the ICP cut and sub-segments are pending Will's certification; these criteria inherit that pending status.
+- Tier assignment (Scout / Shield / Arsenal) is a downstream routing decision driven by stage (H5) and portfolio depth (S5), not a gate input. An account qualifies into the cohort first; its tier is named after.
+- Contact-level screening (Tier 1 / Tier 2 / Tier 3, the verified-email reachability gate) runs only after the account qualifies and follows the icp-titles targeting order. The account gate and the contact gate are distinct steps, not one combined pass.
+- Per canon, the ICP cut and sub-segments are pending Will's certification; this gate inherits that pending status, including the named threshold (6) and edge band (4-5), which Will may tune once the ~100-conversation model is confirmed.
+
+---
+
+## CRAFT REVIEW (deepline list-builder) — address these on this produce
+Verdict: buildable-with-fixes. Persona tiers are function-first and correctly separated from account-level qual, but the contact layer needs an email-waterfall/catch-all policy and explicit derived Source Modes for the IP/legal-function distinctions that no provider facets.
+
+1. [blocker] (deliverability) This is the contact-targeting artifact for cold outreach against pre-seed–Series B (H5) companies, i.e. the <50-employee worst case, yet it names no email-acquisition waterfall or catch-all policy. Doctrine §7.7 requires every cold segment to name its waterfall + catch-all up front, and the provider docs are explicit that Dropleads/Hunter have near-zero coverage <50 emp and Apollo paid is expensive/poor for small startups. Without a stated waterfall and catch-all rule, Tier-1 founders at tiny startups will be unreachable or land on catch-all domains and tank deliverability.
+   FIX: Add an email-acquisition section: verified-work-email is a hard reachability gate (per doctrine §3); spec the waterfall (Apollo paid → Hunter email_finder → exa_people_search/deeplineagent fallback for <50 emp) and a catch-all policy (route catch-all/unverifiable to edge or drop, do not send). State expected hit-rate haircut at this stage.
+   PROVIDERS: apollo_people_search_paid, hunter_email_finder, exa_people_search, deeplineagent; verification per enrichment-spec
+2. [major] (searchable-filters) The EX2 vs IN1 distinction (corporate/contracts 'Head of Legal' OUT vs portfolio/IP 'Head of IP' IN) and the EX4 'filing-only need' exclusion are function/intent distinctions no people-search provider facets. Dropleads/Apollo/Crustdata filter on title keyword + seniority only; they cannot tell contracts-legal from IP-strategy legal, nor read 'expressed need is filing only'. The doc treats these as clean tiers but they are derived judgments.
+   FIX: Mark EX2 and EX4 as derived (post-discovery) screens, not search-time exclusions. Spec the derived signal source: title/role keywords for a first cut, then a research/AI-judge pass (deeplineagent / exa research over LinkedIn profile + company context) to separate IP-strategy from corporate-legal. EX1 (employer is a law/IP-services firm) maps cleanly to the account-level H4 employer filter and is searchable via company-type — keep it account-keyed.
+   PROVIDERS: dropleads_search_people, apollo_people_search, crustdata_people_search (title+seniority); deeplineagent/exa_research for the derived legal-vs-IP and filing-only judgment
+3. [major] (searchable-filters) Tier targeting relies on broad function keywords + seniority, which is correct per the role-based-contact-search rule, but the artifact never declares the Source Mode (searchable vs derived) for any persona signal as doctrine §7.1 requires. IN3 'recently-appointed / hire is recent' in particular is a tenure signal that is not a reliable provider facet — it requires per-row enrichment of role start-date.
+   FIX: Add a Source Mode column to each tier row. DM1/DM2/DM3 and IN1/IN2 are searchable via broad jobTitles keyword + seniority (e.g. Founder/CEO/CTO/CSO; IP/Patent; R&D). IN3's recency must be derived: enrich role start-date via crustdata_person_enrichment / LinkedIn profile scrape and gate on tenure (<~12mo), with a coverage/null-handling rule.
+   PROVIDERS: dropleads_search_people + seniority for DM/IN base; crustdata_person_enrichment / apify linkedin-profile for IN3 tenure
+4. [minor] (scoring) IN3 is presented as the 'highest-receptivity champion' (high weight) but recent-hire tenure has incomplete coverage on LinkedIn for early-stage profiles; scoring on a mostly-null tenure field violates doctrine §7.4 (every scored soft signal needs a coverage estimate + null-handling, unknown ≠ negative).
+   FIX: State IN3's expected coverage and a null-handling rule: unknown tenure is not treated as 'not recent' — it stays at neutral/medium, only a confirmed recent start-date earns the high-weight bump.
+   PROVIDERS: crustdata_person_enrichment, apify linkedin-profile-detail
+5. [minor] (empty-list-risk) At a small in-segment account, Tier-1 (founder/CEO/CTO) is reliably findable, but a distinct Tier-2 IP/R&D leader (IN1/IN2/IN3) frequently will not exist or will not be discoverable at <50-emp companies (Dropleads near-zero coverage). The artifact correctly notes Tier1/Tier2 collapse but doesn't set a fallback rule, risking thin contact pulls per account.
+   FIX: State a per-account contact fallback: if no distinct IP/R&D leader is found, target the founder/CEO (DM1/DM2) as both buyer and champion; do not hold an account open waiting for a Tier-2 contact that doesn't exist. Use exa_people_search for the <50-emp tiny-startup fallback.
+   PROVIDERS: dropleads_search_people, exa_people_search (tiny-startup fallback), apollo_people_search_paid
