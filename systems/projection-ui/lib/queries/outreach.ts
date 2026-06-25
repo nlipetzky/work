@@ -48,6 +48,7 @@ export interface OfferStage {
   contract: ContractInput[];     // the input contract + each input's canon state
   contractMet: boolean;          // every required input approved
   missing: string[];             // inputs not yet approved (the named gaps)
+  expert_review: ExpertReview | null; // routed to the SME (via Hermes) for certification?
 }
 export interface SourceTag { line: string; source: string }
 export interface SequenceStep {
@@ -122,19 +123,22 @@ export async function getOutreachSystem(): Promise<OutreachSystem> {
       .in("status", ["draft", "approved"]).order("version", { ascending: false }),
     db.from("expert_exchanges")
       .select("id, expert_slug, status, response, metadata")
-      .eq("metadata->>kind", "outreach-copy-approval").order("created_at", { ascending: false }),
+      .in("metadata->>kind", ["outreach-copy-approval", "artifact-expert-review"]).order("created_at", { ascending: false }),
   ]);
   if (mErr) throw new Error(mErr.message);
   if (aErr) throw new Error(aErr.message);
   if (sErr) throw new Error(sErr.message);
   if (eErr) throw new Error(eErr.message);
 
-  // latest expert-approval exchange per sequence (the SME sign-off route)
-  const reviewMap = new Map<string, ExpertReview>();
+  // latest expert-review exchange per item (the SME sign-off route): sequences by sequence_id,
+  // artifacts (e.g. the offer ladder) by artifact_id.
+  const reviewMap = new Map<string, ExpertReview>();          // sequence_id -> review
+  const artifactReviewMap = new Map<string, ExpertReview>();  // artifact_id -> review
   for (const x of exch ?? []) {
-    const sid = (x.metadata as { sequence_id?: string } | null)?.sequence_id;
-    if (!sid || reviewMap.has(sid)) continue;
-    reviewMap.set(sid, { exchange_id: x.id, expert_slug: x.expert_slug, status: x.status, response: x.response ?? null });
+    const md = (x.metadata as { sequence_id?: string; artifact_id?: string } | null) ?? {};
+    const review: ExpertReview = { exchange_id: x.id, expert_slug: x.expert_slug, status: x.status, response: x.response ?? null };
+    if (md.sequence_id && !reviewMap.has(md.sequence_id)) reviewMap.set(md.sequence_id, review);
+    if (md.artifact_id && !artifactReviewMap.has(md.artifact_id)) artifactReviewMap.set(md.artifact_id, review);
   }
 
   // latest live sequence per (engagement, channel)
@@ -184,6 +188,7 @@ export async function getOutreachSystem(): Promise<OutreachSystem> {
         contract,
         contractMet: missing.length === 0,
         missing,
+        expert_review: hit ? (artifactReviewMap.get(hit.id) ?? null) : null,
       },
       copyGated: offerState !== "approved",
       sequences: {

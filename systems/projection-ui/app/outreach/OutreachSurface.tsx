@@ -113,6 +113,20 @@ function OfferStage({ eng }: { eng: OutreachEngagement }) {
             <ArtifactChip artifactId={o.artifact_id} label="outreach-offer-ladder" version={o.version} state={o.state as "draft" | "approved"} />
           </div>
         )}
+        {o.artifact_id && o.state !== "gap" && (
+          <div className="rounded border border-ink-700 bg-ink-900/40 p-2.5">
+            <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted">Expert sign-off</div>
+            <p className="mb-2 text-[11px] text-ink-600">
+              The front-end-offer choice and pricing are Will&apos;s call, and the copy commits this in his name. Send it for his review.
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-16 shrink-0 text-[10px] uppercase tracking-wider text-ink-600">Will</span>
+              {o.expert_review
+                ? <ExpertReviewState review={o.expert_review} expert="Will" />
+                : <RequestExpertApprovalButton payload={{ artifact_id: o.artifact_id, expert_slug: "will-rosellini" }} expert="Will" />}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -180,7 +194,7 @@ function expertName(slug: string | null) {
   return first.charAt(0).toUpperCase() + first.slice(1);
 }
 
-function RequestExpertApprovalButton({ id, expert }: { id: string; expert: string }) {
+function RequestExpertApprovalButton({ payload, expert }: { payload: Record<string, unknown>; expert: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -189,7 +203,7 @@ function RequestExpertApprovalButton({ id, expert }: { id: string; expert: strin
     try {
       const j = await fetch("/api/outreach/request-expert-approval", {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ sequence_id: id }),
+        body: JSON.stringify(payload),
       }).then((r) => r.json());
       if (!j.ok) setErr(j.error || "failed"); else router.refresh();
     } catch (e) { setErr(e instanceof Error ? e.message : String(e)); }
@@ -199,7 +213,7 @@ function RequestExpertApprovalButton({ id, expert }: { id: string; expert: strin
     <span className="inline-flex items-center gap-2">
       <button onClick={send} disabled={busy}
         className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] text-accent hover:bg-accent/20 disabled:opacity-50">
-        {busy ? "routing…" : `▸ Send to ${expert} for approval (via Hermes)`}
+        {busy ? "routing…" : `▸ Send to ${expert} for review (via Hermes)`}
       </button>
       {err && <span className="text-[11px] text-bad">{err}</span>}
     </span>
@@ -208,7 +222,7 @@ function RequestExpertApprovalButton({ id, expert }: { id: string; expert: strin
 
 function ExpertReviewState({ review, expert }: { review: NonNullable<Sequence["expert_review"]>; expert: string }) {
   const label: Record<string, string> = {
-    drafted: `Drafted in Expert Liaison ... open EL to send it to ${expert}`,
+    drafted: `Queued for ${expert} in Expert Liaison ... Hermes packages the batch before it sends`,
     sent: `Sent to ${expert} ... awaiting reply`,
     answered: `${expert} replied ... review the answer in Expert Liaison`,
     closed: "Closed",
@@ -318,7 +332,7 @@ function SequenceView({ seq }: { seq: Sequence }) {
             <span className="w-16 shrink-0 text-[10px] uppercase tracking-wider text-ink-600">{expert}</span>
             {seq.expert_review
               ? <ExpertReviewState review={seq.expert_review} expert={expert} />
-              : <RequestExpertApprovalButton id={seq.id} expert={expert} />}
+              : <RequestExpertApprovalButton payload={{ sequence_id: seq.id }} expert={expert} />}
           </div>
         </div>
       </div>
