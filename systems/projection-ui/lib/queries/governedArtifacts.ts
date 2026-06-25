@@ -41,6 +41,7 @@ export interface GovernedItem {
   version: number | null;
   artifact_id: string | null;
   done_when: string | null;   // the standard: what this artifact must satisfy
+  layer: string | null;       // artifact layer (used to resolve the source path)
   source_path: string;        // where its raw input is read from
   source_present: boolean;    // does usable source material exist yet
   needs: ArtifactNeeds | null; // the Assembler's articulation of what it still needs
@@ -91,7 +92,7 @@ export async function getGovernedArtifacts(): Promise<GovernedArtifacts> {
     const rawNeeds = m.needs as unknown as ArtifactNeeds | null;
     eng.items.push({
       artifact_type: m.artifact_type, state, version: hit?.version ?? null, artifact_id: hit?.id ?? null,
-      done_when: types?.done_when ?? null, source_path: sp.replace(WORK_ROOT + "/", ""), source_present: present,
+      done_when: types?.done_when ?? null, layer, source_path: sp.replace(WORK_ROOT + "/", ""), source_present: present,
       needs: rawNeeds && (rawNeeds.summary || rawNeeds.questions?.length) ? { summary: rawNeeds.summary ?? "", questions: rawNeeds.questions ?? [] } : null,
       required_expertise: (m.required_expertise as string[] | null) ?? [],
     });
