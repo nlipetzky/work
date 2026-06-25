@@ -13,6 +13,7 @@ const LINKS = [
   { href: "/staging", label: "Staging" },
   { href: "/context", label: "Context" },
   { href: "/expert-liaison", label: "Expert Liaison" },
+  { href: "/outreach", label: "Outreach" },
   { href: "/system", label: "System" },
 ];
 
