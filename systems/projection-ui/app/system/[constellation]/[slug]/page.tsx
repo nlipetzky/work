@@ -8,6 +8,7 @@ import Link from "next/link";
 import { getSystemAnatomy, type SysActivity, type SysAsset } from "@/lib/queries/systemAnatomy";
 import { getNorthStar } from "@/lib/queries/northStar";
 import { getGovernedArtifacts, type GovernedArtifacts } from "@/lib/queries/governedArtifacts";
+import { getSourceAssessments, type SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
 import { RunButton, ArtifactChip } from "./AssemblerActions";
 
 export const runtime = "nodejs";
@@ -91,6 +92,13 @@ export default async function SystemAnatomyPage({ params }: { params: Promise<{ 
   let governed: GovernedArtifacts | null = null;
   if (s.system_slug === "artifact-assembler") {
     try { governed = await getGovernedArtifacts(); } catch { governed = null; }
+  }
+
+  // Curation ledger: the Expert Liaison system's observability surface — what sources were
+  // reviewed and what came out of them.
+  let ledger: SourceAssessmentLedger | null = null;
+  if (s.system_slug === "expert-liaison") {
+    try { ledger = await getSourceAssessments(); } catch { ledger = null; }
   }
 
   const wiredTriggers = triggers.filter((t) => t.status === "wired");
@@ -307,6 +315,67 @@ export default async function SystemAnatomyPage({ params }: { params: Promise<{ 
                     );
                   })}
                   <p className="text-[11px] text-ink-600">Operate: <span className="text-accent">Run</span> drafts every artifact whose source is ready; <span className="text-warn">Confirm</span> promotes a draft to approved.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ===== CURATION LEDGER (Expert Liaison only) ===== */}
+        {ledger && (
+          <section className="mb-4 rounded-lg border border-ink-700 bg-ink-900">
+            <div className="flex flex-wrap items-baseline gap-2.5 border-b border-ink-800 px-4 py-2.5">
+              <span className="text-sm font-semibold text-white">Curation ledger</span>
+              <span className="text-xs text-ink-600">what was reviewed, and what came out</span>
+              <span className="ml-auto font-mono text-[11px] text-muted">
+                {ledger.totalSources} source{ledger.totalSources === 1 ? "" : "s"} assessed · {ledger.totalValuable} valuable · {ledger.totalFed} fed to Assembler
+              </span>
+            </div>
+            <div className="p-4">
+              {ledger.engagements.length === 0 ? (
+                <Stub>nothing assessed yet — the loop hasn&apos;t reviewed any source for an engagement</Stub>
+              ) : (
+                <div className="space-y-5">
+                  {ledger.engagements.map((e) => (
+                    <div key={`${e.engagement_type}:${e.engagement_id}`}>
+                      <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-accent">{e.engagement_type} · {e.engagement_id}</span>
+                        <span className="text-[11px] text-ink-600">{e.sourcesAssessed} assessed · {e.valuable} valuable · {e.fed} fed · {e.artifactsTouched} artifact{e.artifactsTouched === 1 ? "" : "s"} touched</span>
+                      </div>
+                      <div className="rounded border border-ink-700 bg-ink-850">
+                        {e.rows.map((r, i) => {
+                          const tone = r.outcome === "valuable" ? "bg-ok/15 text-ok"
+                            : r.outcome === "insufficient" || r.outcome === "unclear" ? "bg-warn/15 text-warn"
+                            : "bg-ink-800 text-ink-600";
+                          const fedTo = r.artifact_name
+                            ? `${r.artifact_type}${r.artifact_version ? ` v${r.artifact_version}` : ""}`
+                            : r.artifact_type;
+                          return (
+                            <div key={i} className={`px-3.5 py-2.5 ${i > 0 ? "border-t border-ink-800" : ""}`}>
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[10px] text-muted">{r.source_type}</span>
+                                    <span className="truncate text-[12px] text-[#cdd9e5]" title={r.source_locator ?? r.source_id}>{r.source_locator ?? r.source_id}</span>
+                                  </div>
+                                  {r.reasoning && <div className="mt-1 text-[11px] leading-snug text-ink-600">{r.reasoning}</div>}
+                                  {fedTo && (
+                                    <div className="mt-1 text-[11px]">
+                                      <span className="text-ink-600">→ fed </span>
+                                      <span className="text-accent">{fedTo}</span>
+                                      {r.fed_to_assembler && <span className="ml-1.5 text-[10px] text-ok">to Assembler ✓</span>}
+                                    </div>
+                                  )}
+                                </div>
+                                <span className={`shrink-0 rounded px-2 py-0.5 text-[11px] ${tone}`}>{r.outcome}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                  <p className="text-[11px] text-ink-600">Each row is one source assessed for relevance to an artifact under governance. Written by the Expert Liaison loop via <span className="font-mono text-muted">record_source_assessment</span>; read-only here.</p>
                 </div>
               )}
             </div>
