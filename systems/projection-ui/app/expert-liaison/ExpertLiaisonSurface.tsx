@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { GovernedArtifacts, GovernedEngagement, GovernedItem } from "@/lib/queries/governedArtifacts";
 import type { SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
@@ -74,6 +74,18 @@ function useAction() {
 function ownerFor(experts: Expert[], required: string[]): Expert | null {
   if (!required.length) return null;
   return experts.find((e) => e.expertise.some((x) => required.includes(x))) ?? null;
+}
+
+// textarea that auto-grows to fit its content, so the full text is always readable (no clipping).
+function AutoTextarea({ value, onChange, className, placeholder, rows = 1 }: {
+  value: string; onChange: (v: string) => void; className: string; placeholder?: string; rows?: number;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { const el = ref.current; if (el) { el.style.height = "auto"; el.style.height = `${el.scrollHeight}px`; } }, [value]);
+  return (
+    <textarea ref={ref} value={value} rows={rows} placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)} className={`resize-none overflow-hidden ${className}`} />
+  );
 }
 
 // ---------------------------------------------------------------- Asks & Needs
@@ -193,10 +205,10 @@ function GapEditor({ g, eng, experts }: { g: GovernedItem; eng: GovernedEngageme
                 <div className="mb-1 flex items-center gap-1.5">
                   <span className="text-[9px] uppercase tracking-wider text-ink-600">Q{i + 1} (edit to guide)</span>
                 </div>
-                <input value={q} onChange={(e) => setQ(i, e.target.value)}
-                  className="w-full rounded border border-ink-700 bg-ink-900 px-2 py-1 text-[11px] text-[#cdd9e5] outline-none focus:border-accent" />
-                <textarea value={answers[i] ?? ""} onChange={(e) => setA(i, e.target.value)} rows={2} placeholder="your answer…"
-                  className="mt-1 w-full rounded border border-ink-800 bg-ink-900 p-2 text-[11px] text-[#cdd9e5] outline-none focus:border-accent" />
+                <AutoTextarea value={q} onChange={(v) => setQ(i, v)}
+                  className="w-full rounded border border-ink-700 bg-ink-900 px-2 py-1 text-[11px] leading-relaxed text-[#cdd9e5] outline-none focus:border-accent" />
+                <AutoTextarea value={answers[i] ?? ""} onChange={(v) => setA(i, v)} rows={2} placeholder="your answer…"
+                  className="mt-1 w-full rounded border border-ink-800 bg-ink-900 p-2 text-[11px] leading-relaxed text-[#cdd9e5] outline-none focus:border-accent" />
               </div>
             ))}
             <button onClick={addQ} className="text-[10px] text-accent hover:underline">+ add a question</button>
