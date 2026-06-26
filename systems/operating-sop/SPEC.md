@@ -59,15 +59,37 @@ Produce each step's status: done · doing · todo · needs-you (human gate) · b
 completion / approval. Code: a projection-ui lib query (model on `lib/queries/roadmap.ts`
 + `systemState.ts`) + the surface. Lives in `systems/operating-sop/src`.
 
-## 5. Data
-- reads: `canon.activities`, `canon.systems` + `systemState`, the SOP/step/run tables,
-  and `capture_items` (build items linked to blocked steps).
-- writes: SOP step status / output-produced / approval, per run.
-- new schema (canon migration, service-role RPCs): `sops` (an output + its ordered
-  step-list), `sop_steps` (step -> `activity_id`, `system_slug`, output, `gate_type`),
-  `sop_runs` (an instance, e.g. one CIPO campaign) + per-step run status. Reuses
-  activities; does not duplicate them.
-- provenance: which run, who completed/approved, link to the build item if blocked.
+## 5. Data (the three-layer object model)
+
+Grounded in `practices/agentic-systems/reference/three-layer-work-model.md` (deep-research
+validated). Three layers, two contracts, one reconciler. Rollup is IMPLEMENTED, not
+inherited (a parent can read healthy over a failed child unless you propagate).
+
+- **L1 SOP spine (declarative, loose):** `sops` (an output / procedure), `sop_stages`
+  (ordered; required end-state + gate type), `sop_runs` (an instance, e.g. one CIPO
+  campaign) with a per-stage conformance state (on-track / deviated / done). Monitored by
+  conformance-checking, not hard enforcement.
+- **L2 Workflow (orchestration):** `workflows` (the executable that produces a stage's
+  output; attribute `control_flow` = fixed | agent-driven; may span engines),
+  `workflow_runs` (execution / event history; state open / closed / failed).
+- **L3 Activity binding (+ execution):** REUSE `canon.activities` as the shared binding
+  registry (add `executor_class` = automated-tool | agent-loop | human-in-the-loop, +
+  locator/schema) and `activity_executions` (per run; state unset / ok / error; names the
+  node / env / trigger).
+- **Contract A (L1|L2):** `sop_stage_workflows`, MANY-TO-MANY (one stage may need several
+  workflows; one workflow may serve several SOPs). **Contract B (L2|L3):**
+  `workflow_activities`, MANY-TO-MANY (one binding reused across workflows).
+- **Reconciler:** a `layer_drift` view ... flags where the layers DISAGREE (a stage marked
+  done with no L2 run that produced it; an L2 run reporting success while an L3 execution
+  errored). The highest-value artifact; the observability-projection pattern across three
+  layers.
+
+Reuse over reinvent: L3 ~= existing `activities` + `system_triggers` / `trigger_routes`;
+the L2 run ledger ~= generalize `prep_run_status`. Net-new: the L1 spine, the two
+contract tables, the drift view, `executor_class`, the L2 control-flow attribute.
+
+The surface renders L1 as the executable checklist (§ Execution model), with drill-down
+to the L2 run and L3 executions behind each step, and drift flags surfaced inline.
 
 ## 6. Connections
 - upstream `depends_on`: canon-engine, operator-os, and the systems each step runs on
