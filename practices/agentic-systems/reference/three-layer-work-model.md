@@ -31,6 +31,14 @@ This is the category error to avoid (Nick's "all three run parallel" wording).
 - **L2 <-> L3 is CONTAINMENT.** The binding lives INSIDE the workflow as its technical
   interior (Temporal Workflow/Activity; LangGraph node = a function; BPMN service/user
   tasks; MCP tool = name+schema+host). L3 is a refinement of L2, not a parallel plane.
+  **But containment is a RELATIONSHIP, not absorption.** L3 stays a DISTINCT, separately
+  tracked object for two reasons: (1) REUSE ... one activity ("enrich contact") is shared
+  across many workflows (Contract B, many-to-many); absorb it and you duplicate+drift it;
+  (2) MONITORING ... each activity has its own ok/error execution record that rolls UP into
+  the workflow, so you can see WHICH step failed, not just "the workflow failed." L3
+  genuinely collapses into L2 only in two cases: agent-driven steps (the binding is chosen
+  at runtime, not pre-authored) and trivial work (the per-stream depth choice). So: three
+  layers, with L3 collapsible per step ... not two.
 
 So: L1|L2 = parallel-by-contract; L2|L3 = containment. Do not model all three as one
 parallel stack.
