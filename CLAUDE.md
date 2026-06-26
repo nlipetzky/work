@@ -4,16 +4,16 @@ Nick is building an owned-asset studio with a JV venture arm. Service work funds
 
 ## Structure
 
-- `practices/` -- operator roles and pipelines. Each practice defines a persona, workflow, and artifact conventions. Shared across all engagement types. Active personas: Boris (agentic-systems), Kepler (sales-and-gtm), Hermes (expert-liaison), Polaris (engagement-governance), plus revops, automation, content, n8n-practice, management.
-- `capabilities/` -- shared building blocks: skills, schemas, and agents that any practice or engagement can use.
-- `assets/` -- owned properties Nick builds and operates. Audience, lead gen, monetization. Living proof of capability.
+- `systems/` -- the hinge. One folder per system Nick builds, runs, and iterates, scaffolded from `systems/_template/` (see `practices/agentic-systems/reference/system-folder-standard.md`). The shared-infrastructure systems (`canon-engine`, `revops-engine`, `projection-ui`) are themselves system folders that the others depend on.
+- `practices/` -- operator personas and their methods (the *who builds/runs*). Cross-cutting personas stay here: Boris (agentic-systems, orchestrator), Hermes (expert-liaison), Polaris (engagement-governance), Atlas (operator-os). Domain personas that map 1:1 to a single system belong in that system's folder (e.g. Ferris/revops -> `systems/revops-engine/`); that sort is in progress.
+- `capabilities/` -- shared building blocks: skills, schemas, and reusable agents any system or practice can use.
 - `accounts/` -- all engagement-bound folders, grouped by relationship type:
   - `accounts/ventures/` -- partnership businesses (e.g. Konstellation AI). LLC + bank account, equity-based, co-owned with a domain expert.
   - `accounts/clients/` -- service engagements that fund the building. Expected to shrink over time.
   - `accounts/prospects/` -- pre-engagement context for prospects in active conversation.
 - `reference/` -- studio-level reference docs (studio thesis, etc.).
 
-Practices hold the *how*. Everything under `accounts/` holds the *what*. They compose: launch Claude Code from a folder under `accounts/` or from `assets/<name>/`, and the right operator + skills load via the practice's engagement-loading pattern.
+Systems are the hinge: build/run/iterate each in its own folder, surfaced in the Projection UI. Practices hold the *how* (operator personas); `accounts/` holds the *what for* (engagements). They compose: launch Claude Code from `systems/<name>/` to work on a system, from a folder under `accounts/` for an engagement, or from a practice for org-wide work, and the right operator + context load. Owned monetizable properties are modeled as systems tagged in canon, not a separate `assets/` folder.
 
 ## Studio thesis
 
