@@ -24,6 +24,19 @@ UI. If you can't state this in a sentence, it isn't a system yet.
 - Code / runners: this folder (or an external repo if it's app/product code)
 - Surface: Projection UI `/system/<id>`
 
+## Folder layout
+
+Standard per-system layout (full spec:
+`practices/agentic-systems/reference/system-folder-standard.md`):
+
+- `SYSTEM.md` — the contract: activities, output, dependencies (the system's reality)
+- `agents/` — agents that serve only this system
+- `skills/` — procedures specific to this system
+- `schemas/` — this system's data contracts
+- `src/` (or `app/`) — the code
+- `runbooks/` — how to operate and recover it
+- `runtime/` — ephemeral execution state (gitignored)
+
 ## Two-surface rule
 
 Run this system in the Projection UI. Come to chat (here) only to extend or repair
