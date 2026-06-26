@@ -20,6 +20,33 @@ across `/targeting`, `/outreach`, `/prospects`, `/records`, `/expert-liaison`, a
 handoff docs. There is no per-output operating view, and nothing shows that a step is
 waiting on a system that is not built yet.
 
+## Authoring + operating (the two jobs)
+
+operating-sop is not only a tracker. It does two things:
+
+1. AUTHOR the work definitions, top-down. Given an output/goal, it helps create the
+   three-layer definitions (`three-layer-work-model.md`): the SOP (the spine), then the
+   workflow spec(s) that produce each stage, then the activities (the bound steps).
+   AI-assisted produce -> you approve (the govern-artifacts produce -> gate -> judge
+   pattern). These are real artifacts, not rows invented on the fly.
+2. OPERATE the known definitions. Because the definitions are KNOWN, running an SOP tracks
+   progress through them, shows what is next, and each system is aware of its inherent
+   activities.
+
+### The definitions live as context (where each artifact sits)
+- Activities + workflows are INHERENT to a system -> they live in that system's folder, as
+  its context. Launch into the system and it knows its activities. (Research: L3 bindings
+  are a registry owned by their system; workflows are that system's orchestrations.)
+- An SOP COMPOSES activities across systems for one output -> it lives with its output/goal
+  (e.g. the CIPO outreach SOP under the venture), referencing the systems' known
+  activities. (Research: SOPs reference a shared activity registry, many-to-many.)
+- operating-sop indexes these into canon so the operate-surface can read and track them.
+  The artifacts are the source of truth; canon holds the index + the live run-state.
+
+So every system folder carries its three-layer context (its activities and workflows); an
+SOP is the cross-system spine that strings them into an output you run and watch; and the
+operate-surface tracks progress because the definitions are already known.
+
 ## The law it obeys (method §0)
 
 Deterministic spine; AI a called component (none needed for v1 — this is a join over
@@ -30,9 +57,10 @@ gate read from live state, never narrated. Status is computed, never asserted.
 
 ## 1. Identity
 - name: Operating SOP (run-tracker). slug: `operating-sop`.
-- purpose (ensures): every recurring business output has ONE live checklist of the
-  system-activities that produce it, with status + the next action, and any step whose
-  system is not operational is shown as a build pause rather than a silent wait.
+- purpose (ensures): the work to run the business is DEFINED and OPERATED in three known
+  layers ... it authors each output's SOP -> workflow spec(s) -> activities as artifacts,
+  then renders the SOP as ONE live checklist (status + next action, build pauses lit) run
+  against those known definitions.
 - ladders to: goal "run the business without living in chat" -> vision "deterministic
   systems produce the work; Nick confirms" (`project_deterministic_systems_produce_work`).
 - lifecycle: emerging (spec, pending ratify). owner: operator-os (Atlas).
