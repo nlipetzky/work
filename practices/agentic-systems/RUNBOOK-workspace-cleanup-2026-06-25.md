@@ -112,12 +112,22 @@ For the other branches, check merged status before deleting (Phase 3):
                           expert-liaison-curation-ledger
        # KEEP: revops-staging-pipeline, rls-service-role-lockdown (review separately)
 
-4. Reclaim disk (junk only; safe because Phase 1 committed all real files, so nothing
-   untracked-and-real remains). DRY RUN first, read it, then run for real:
+4. Reclaim disk (junk only). DO NOT use `git clean -fdx` in this repo. The `-x` flag
+   deletes gitignored files, and the secrets (.env, .secrets/ across root, teknova,
+   canon-crm-feed, canon-engine, projection-ui) are gitignored, so `clean -fdx` would
+   WIPE them. Verified live 2026-06-26. Instead remove only the regenerable build-junk
+   directories by name:
 
-       git -C $W clean -ndx        # DRY RUN: lists what would be deleted (expect node_modules, .next, caches)
-       # review the list, then:
-       git -C $W clean -fdx        # deletes ignored + untracked junk; reinstall deps on demand
+       # DRY RUN: see exactly what would be removed
+       find $W -type d \( -name node_modules -o -name .next -o -name .turbo \
+         -o -name node-compile-cache -o -name dist \) -prune -print
+       # then remove for real (reinstall deps on demand with `npm install`):
+       find $W -type d \( -name node_modules -o -name .next -o -name .turbo \
+         -o -name node-compile-cache -o -name dist \) -prune -exec rm -rf {} +
+
+   Note: `node-compile-cache/` was tracked-in-git junk despite being gitignored
+   (gitignore does not untrack already-committed files). After the rm, `git add -u`
+   then commit to drop those deletions from tracking.
 
 ## Phase 4 - One rule so this does not recur
 
