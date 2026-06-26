@@ -49,6 +49,16 @@ activities:
   because they load with the folder.
 - **Workflows (L2)** ... the orchestrations that run those activities, in `workflows/`.
 
+**Shared workflows** follow the same rule as agents: one OWNER, many USERS. A workflow has
+exactly one owning system (its home, where it is defined and versioned) but may be
+referenced by many systems and SOPs. Define it once ... in its owner's `workflows/`, or in
+`capabilities/workflows/` if it is a generic utility with no single owner ... register it
+in canon, and reference it by id everywhere else. Never copy it into each user's folder
+(the drift trap). If many systems lean on it heavily, it is probably its own
+shared-capability system: promote it, and the relation becomes a `depends_on`, not a
+shared workflow. Each RUN is still its own record tagged with its caller, so sharing the
+definition never muddies tracking.
+
 SOPs (L1) are NOT per-system ... an SOP composes activities across several systems for one
 output, so it lives with its output/goal (e.g. a venture folder), referencing the systems'
 known activities. The `operating-sop` system authors all three and indexes them so the
