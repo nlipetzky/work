@@ -5,18 +5,20 @@ import { useRouter } from "next/navigation";
 import type { GovernedArtifacts, GovernedEngagement, GovernedItem } from "@/lib/queries/governedArtifacts";
 import type { SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
 import type { Expert, Exchange } from "@/lib/queries/expertLiaison";
+import type { PacketView } from "@/lib/queries/packets";
 import { RunButton, ArtifactChip } from "@/app/system/[constellation]/[slug]/AssemblerActions";
 
-type Tab = "asks" | "ledger" | "experts";
+type Tab = "asks" | "packets" | "ledger" | "experts";
 const SELF_SLUG = "nick-lipetzky";
 
 export default function ExpertLiaisonSurface({
-  governed, ledger, experts, exchanges,
+  governed, ledger, experts, exchanges, packets,
 }: {
-  governed: GovernedArtifacts; ledger: SourceAssessmentLedger; experts: Expert[]; exchanges: Exchange[];
+  governed: GovernedArtifacts; ledger: SourceAssessmentLedger; experts: Expert[]; exchanges: Exchange[]; packets: PacketView[];
 }) {
   const [tab, setTab] = useState<Tab>("asks");
   const totalGaps = governed.engagements.reduce((n, e) => n + e.items.filter((i) => i.state === "gap").length, 0);
+  const packetsPending = packets.filter((p) => p.pending.length > 0 || p.packet).length;
 
   return (
     <div className="h-full overflow-y-auto font-mono">
@@ -36,13 +38,14 @@ export default function ExpertLiaisonSurface({
         </div>
 
         <div className="mb-4 flex gap-1 border-b border-ink-800">
-          {([["asks", `Asks & Needs (${totalGaps})`], ["ledger", "Curation ledger"], ["experts", `Experts (${experts.length})`]] as [Tab, string][]).map(([t, label]) => (
+          {([["asks", `Asks & Needs (${totalGaps})`], ["packets", `Review packets (${packetsPending})`], ["ledger", "Curation ledger"], ["experts", `Experts (${experts.length})`]] as [Tab, string][]).map(([t, label]) => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-2 text-sm ${tab === t ? "border-b-2 border-accent text-white" : "text-muted hover:text-white"}`}>{label}</button>
           ))}
         </div>
 
         {tab === "asks" && <AsksAndNeeds governed={governed} experts={experts} exchanges={exchanges} />}
+        {tab === "packets" && <ReviewPackets packets={packets} exchanges={exchanges} />}
         {tab === "ledger" && <Ledger ledger={ledger} />}
         {tab === "experts" && <Experts experts={experts} />}
       </main>
@@ -74,6 +77,14 @@ function useAction() {
 function ownerFor(experts: Expert[], required: string[]): Expert | null {
   if (!required.length) return null;
   return experts.find((e) => e.expertise.some((x) => required.includes(x))) ?? null;
+}
+
+// Gmail compose deep-link: opens a prefilled compose window in Gmail web (no OS mail handler
+// needed, unlike mailto). Nick reviews and sends from there. For very long bodies (the
+// self-contained review email) the server-side draft route is used instead.
+function gmailComposeUrl(email: string, subject: string, body: string): string {
+  const q = new URLSearchParams({ view: "cm", fs: "1", to: email, su: subject, body });
+  return `https://mail.google.com/mail/?${q.toString()}`;
 }
 
 // textarea that auto-grows to fit its content, so the full text is always readable (no clipping).
@@ -241,7 +252,7 @@ function ExchangeRow({ x, email }: { x: Exchange; email?: string }) {
   const { run, busy, err } = useAction();
   const [body, setBody] = useState(x.body ?? "");
   const [response, setResponse] = useState(x.response ?? "");
-  const mailto = email ? `mailto:${email}?subject=${encodeURIComponent(x.subject ?? "")}&body=${encodeURIComponent(body)}` : null;
+  const mailto = email ? gmailComposeUrl(email, x.subject ?? "", body) : null;
   const toneCls = x.status === "answered" ? "bg-ok/15 text-ok" : x.status === "sent" ? "bg-accent/15 text-accent" : x.status === "closed" ? "bg-ink-800 text-ink-600" : "bg-warn/15 text-warn";
   const U = "/api/expert-liaison/exchange";
   return (
@@ -251,7 +262,7 @@ function ExchangeRow({ x, email }: { x: Exchange; email?: string }) {
         <span className="text-[12px] text-[#cdd9e5]">{x.subject}</span>
         {x.artifact_types.length > 0 && <span className="text-[10px] text-ink-600">covers: {x.artifact_types.join(", ")}</span>}
         <span className="ml-auto flex items-center gap-1.5">
-          {mailto && <a href={mailto} className="rounded bg-accent/15 px-2 py-0.5 text-[11px] text-accent hover:bg-accent/25">Open in mail ↗</a>}
+          {mailto && <a href={mailto} target="_blank" rel="noopener noreferrer" className="rounded bg-accent/15 px-2 py-0.5 text-[11px] text-accent hover:bg-accent/25">Open Gmail draft ↗</a>}
           {x.status === "drafted" && <button disabled={busy} onClick={() => run(U, { action: "update", id: x.id, status: "sent" })} className="rounded bg-ink-800 px-2 py-0.5 text-[11px] text-muted hover:text-white disabled:opacity-40">Mark sent</button>}
           {x.status === "sent" && <button disabled={busy} onClick={() => run(U, { action: "update", id: x.id, status: "answered", response })} className="rounded bg-ink-800 px-2 py-0.5 text-[11px] text-muted hover:text-white disabled:opacity-40">Mark answered</button>}
         </span>
@@ -269,6 +280,161 @@ function ExchangeRow({ x, email }: { x: Exchange; email?: string }) {
           className="mt-2 w-full rounded border border-ink-800 bg-ink-850 p-2 text-[11px] text-[#cdd9e5] outline-none focus:border-accent" />
       )}
     </div>
+  );
+}
+
+// ---------------------------------------------------------------- Review packets
+function kindLabel(kind: string | null): string {
+  if (kind === "outreach-copy-approval") return "outreach copy";
+  if (kind === "artifact-expert-review") return "artifact cert";
+  if (kind === "artifact-gap-ask") return "gap fill";
+  return kind ?? "ask";
+}
+
+function ReviewPackets({ packets, exchanges }: { packets: PacketView[]; exchanges: Exchange[] }) {
+  if (!packets.length)
+    return <p className="text-sm text-muted">No pending asks to package. When you mark items for an expert they collect here, grouped into one communication.</p>;
+  return (
+    <div className="space-y-4">
+      <p className="text-[11px] leading-relaxed text-ink-600">
+        One coherent communication per expert ... not N separate &ldquo;read this and reply&rdquo; emails. Package the batch (Hermes composes + self-reviews against the packaging doctrine), read + edit, send, then distribute the reply back so each item&apos;s sign-off lands on /outreach.
+      </p>
+      <div className="space-y-5">{packets.map((p) => <PacketCard key={p.key} p={p} exchanges={exchanges} />)}</div>
+    </div>
+  );
+}
+
+function PacketCard({ p, exchanges }: { p: PacketView; exchanges: Exchange[] }) {
+  const { run, busy, err, ok } = useAction();
+  const exById = new Map(exchanges.map((x) => [x.id, x]));
+  const packet = p.packet;
+  const isDraft = packet?.status === "drafted";
+  const isSent = packet?.status === "sent";
+  const isAnswered = packet?.status === "answered";
+
+  // editable composed draft (carried into the mail client on send)
+  const [subject, setSubject] = useState(packet?.composed_subject ?? "");
+  const [pbody, setPbody] = useState(packet?.composed_body ?? "");
+  // answer-distribution state
+  const [response, setResponse] = useState(packet?.response ?? "");
+  const [verdicts, setVerdicts] = useState<Record<string, string>>({});
+
+  // copy-to-clipboard: Nick pastes the plain-text email straight into Gmail by hand.
+  const [copied, setCopied] = useState(false);
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(`${subject}\n\n${pbody}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard blocked; user can select the textarea manually */ }
+  }
+  const memberIds = packet ? packet.member_exchange_ids : p.pending.map((m) => m.id);
+  const judge = (packet?.judge_notes as { final?: { pass?: boolean }; iterations?: number } | undefined);
+
+  return (
+    <section className="rounded-lg border border-ink-700 bg-ink-900">
+      <div className="flex flex-wrap items-center gap-2 border-b border-ink-800 px-4 py-2.5">
+        <span className="text-sm font-semibold text-white">{p.pending.length || memberIds.length} item{(p.pending.length || memberIds.length) === 1 ? "" : "s"} for {p.expert_name}</span>
+        <span className="text-[11px] font-bold uppercase tracking-wider text-accent">{p.engagement_type} · {p.engagement_id}</span>
+        {packet && <span className={`rounded px-2 py-0.5 text-[11px] ${isAnswered ? "bg-ok/15 text-ok" : isSent ? "bg-accent/15 text-accent" : "bg-warn/15 text-warn"}`}>{packet.status}</span>}
+        <span className="ml-auto flex items-center gap-2">
+          {p.pending.length > 0 && (
+            <button onClick={() => run("/api/expert-liaison/packet", { action: "package", expert_slug: p.expert_slug, engagement_type: p.engagement_type, engagement_id: p.engagement_id }, "packaged — read + edit below, then send")}
+              disabled={busy}
+              className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] text-accent hover:bg-accent/20 disabled:opacity-40"
+              title={packet ? "re-compose from the current pending asks" : "compose one communication from these asks"}>
+              {busy ? "packaging…" : packet ? "Re-package" : "Package"}
+            </button>
+          )}
+        </span>
+      </div>
+
+      {/* the pending asks being bundled */}
+      <div className="space-y-1.5 px-4 py-3">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-ink-600">{packet && !p.pending.length ? "Bundled asks" : "Pending asks to bundle"}</div>
+        {(p.pending.length ? p.pending.map((m) => ({ id: m.id, subject: m.subject, kind: m.kind, verdict: m.verdict }))
+          : memberIds.map((id) => { const x = exById.get(id); return { id, subject: x?.subject ?? id, kind: (x?.metadata?.kind as string) ?? null, verdict: (x?.metadata?.verdict as string) ?? null }; })
+        ).map((m) => (
+          <div key={m.id} className="flex flex-wrap items-center gap-2 text-[11px]">
+            <span className="rounded bg-ink-800 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-muted">{kindLabel(m.kind)}</span>
+            <span className="text-[#cdd9e5]">{m.subject}</span>
+            {m.verdict && <span className={`rounded px-1.5 py-0.5 text-[9px] uppercase tracking-wider ${m.verdict === "approved" ? "bg-ok/15 text-ok" : "bg-warn/15 text-warn"}`}>{m.verdict}</span>}
+          </div>
+        ))}
+        {!p.expert_email && <p className="text-[10px] text-warn">No email set for {p.expert_name} — add it in the Experts tab before sending.</p>}
+      </div>
+
+      {/* the composed communication (drafted) */}
+      {packet && (isDraft || isSent || isAnswered) && (
+        <div className="border-t border-ink-800 px-4 py-3">
+          <div className="mb-1.5 flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-600">The communication</span>
+            {packet.doctrine_version && <span className="text-[9px] text-ink-600">doctrine {packet.doctrine_version}</span>}
+            {judge?.final && <span className={`text-[9px] ${judge.final.pass ? "text-ok" : "text-warn"}`}>judge {judge.final.pass ? "passed" : "best-effort"} · {judge.iterations} rev</span>}
+          </div>
+          {isDraft ? (
+            <>
+              <input value={subject} onChange={(e) => setSubject(e.target.value)}
+                className="w-full rounded border border-ink-700 bg-ink-850 px-2 py-1 text-[12px] text-[#cdd9e5] outline-none focus:border-accent" />
+              <AutoTextarea value={pbody} onChange={setPbody} rows={10}
+                className="mt-1 w-full rounded border border-ink-700 bg-ink-850 p-2 text-[11px] leading-relaxed text-[#cdd9e5] outline-none focus:border-accent" />
+              <p className="mt-1 text-[10px] text-ink-600">Plain text, paste-ready. Copy it, send from your own mail to {p.expert_email ?? "the expert"}, then Mark sent.</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <button onClick={copyEmail}
+                  className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-[11px] text-accent hover:bg-accent/20">
+                  {copied ? "copied ✓" : "Copy email"}
+                </button>
+                <span className="mx-1 text-ink-700">·</span>
+                <button disabled={busy} onClick={() => run("/api/expert-liaison/packet", { action: "send", id: packet.id }, "marked sent — all bundled asks advanced")}
+                  className="rounded border border-ok/40 bg-ok/10 px-2.5 py-1 text-[11px] text-ok hover:bg-ok/20 disabled:opacity-40"
+                  title="after you've sent the email, mark it sent here to advance all bundled asks">Mark sent (advances all {memberIds.length})</button>
+                {ok && <span className="text-[10px] text-ok">{ok}</span>}
+                {err && <span className="text-[10px] text-bad">{err}</span>}
+              </div>
+            </>
+          ) : (
+            <div className="rounded border border-ink-800 bg-ink-850 p-2 text-[11px] leading-relaxed text-[#9fb0c0] whitespace-pre-wrap">{packet.composed_subject}{"\n\n"}{packet.composed_body}</div>
+          )}
+        </div>
+      )}
+
+      {/* distribute the reply back (sent -> answered) */}
+      {packet && isSent && (
+        <div className="border-t border-ink-800 px-4 py-3">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-ink-600">The reply — distribute each item&apos;s outcome</div>
+          <textarea value={response} onChange={(e) => setResponse(e.target.value)} rows={3} placeholder="paste the expert's full reply here…"
+            className="w-full rounded border border-ink-800 bg-ink-850 p-2 text-[11px] text-[#cdd9e5] outline-none focus:border-accent" />
+          <div className="mt-2 space-y-1.5">
+            {memberIds.map((id) => {
+              const x = exById.get(id);
+              const v = verdicts[id];
+              return (
+                <div key={id} className="flex flex-wrap items-center gap-2 text-[11px]">
+                  <span className="min-w-0 flex-1 truncate text-[#cdd9e5]">{x?.subject ?? id}</span>
+                  {(["approved", "flagged"] as const).map((opt) => (
+                    <button key={opt} onClick={() => setVerdicts((prev) => ({ ...prev, [id]: prev[id] === opt ? "" : opt }))}
+                      className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-wider ${v === opt ? (opt === "approved" ? "bg-ok/20 text-ok" : "bg-warn/20 text-warn") : "bg-ink-800 text-ink-600 hover:text-white"}`}>{opt}</button>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <button disabled={busy} onClick={() => run("/api/expert-liaison/packet", { action: "answer", id: packet.id, response, member_verdicts: Object.fromEntries(Object.entries(verdicts).filter(([, val]) => val)) }, "reply distributed — sign-off lanes updated on /outreach")}
+              className="rounded border border-ok/40 bg-ok/10 px-2.5 py-1 text-[11px] text-ok hover:bg-ok/20 disabled:opacity-40">Record reply</button>
+            {ok && <span className="text-[10px] text-ok">{ok}</span>}
+            {err && <span className="text-[10px] text-bad">{err}</span>}
+          </div>
+        </div>
+      )}
+
+      {packet && isAnswered && packet.response && (
+        <div className="border-t border-ink-800 px-4 py-3">
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-ink-600">Reply on record</div>
+          <p className="text-[11px] leading-relaxed text-muted whitespace-pre-wrap">{packet.response}</p>
+        </div>
+      )}
+    </section>
   );
 }
 

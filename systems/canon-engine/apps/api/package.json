@@ -1,0 +1,32 @@
+{
+  "name": "@canon-engine/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "npx tsx --watch src/server.ts",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.0",
+    "@canon-engine/core": "workspace:*",
+    "@canon-engine/db": "workspace:*",
+    "@canon-engine/ingestion": "workspace:*",
+    "@anthropic-ai/sdk": "^0.54.0",
+    "@hono/node-server": "^1.13.0",
+    "@supabase/supabase-js": "^2.99.3",
+    "ai": "^4.3.0",
+    "hono": "^4.7.0",
+    "openai": "^6.32.0",
+    "youtube-transcript": "^1.2.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "tsx": "^4.0.0",
+    "typescript": "*"
+  }
+}

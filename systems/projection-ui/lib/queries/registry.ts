@@ -1,16 +1,20 @@
 import "server-only";
 import { canonDb } from "@/lib/canon";
+import { systemStates } from "@/lib/queries/systemState";
+import type { EvidencedState } from "@/lib/systemState";
 
 // The ecosystem map, read from canon_engine.public.systems (the canonical registry).
-// Shapes systems for the /system constellation grid.
+// Shapes systems for the /system constellation grid. The displayed lifecycle is the EVIDENCED
+// state (computed from activities/assets/triggers), NOT the self-reported status label.
 
-const STATUS_TO_LIFECYCLE: Record<string, string> = {
-  operating: "operating",
-  building: "engineering",
-  emerging: "defined",
-  paused: "defined",
-  archived: "defined",
-};
+// Honest claim-divergence + gaps → warnings the surface shows.
+function evidenceWarnings(st: EvidencedState | undefined, claimed: string | null): string[] {
+  if (!st) return [];
+  const w: string[] = [];
+  if (st.claim_diverges) w.push(`claims "${claimed}", evidence supports "${st.state}"`);
+  w.push(...st.gaps);
+  return w;
+}
 
 export interface RegSys {
   name: string;
@@ -27,15 +31,20 @@ export interface RegSys {
 }
 
 export async function listRegistrySystems(): Promise<RegSys[]> {
-  const { data, error } = await canonDb()
-    .from("systems")
-    .select("system_slug,name,constellation,class,coverage,status,purpose,system_type")
-    .neq("status", "archived")
-    .order("system_slug", { ascending: true });
+  const [{ data, error }, states] = await Promise.all([
+    canonDb()
+      .from("systems")
+      .select("system_slug,name,constellation,class,coverage,status,purpose,system_type")
+      .neq("status", "archived")
+      .order("system_slug", { ascending: true }),
+    systemStates(),
+  ]);
   if (error) throw new Error(error.message);
   return (data ?? []).map((s: Record<string, unknown>) => {
     const status = (s.status as string) ?? "emerging";
     const coverage = (s.coverage as string) ?? null;
+    const st = states.get(s.system_slug as string);
+    const evidenced = st?.state ?? "stub";
     const home = s.constellation
       ? String(s.constellation).toLowerCase()
       : s.system_type === "client_engagement" ? "engagements" : "unassigned";
@@ -44,13 +53,14 @@ export async function listRegistrySystems(): Promise<RegSys[]> {
       slug: s.system_slug as string,
       home,
       class: s.class ? String(s.class).toLowerCase() : "supporting",
-      lifecycle: STATUS_TO_LIFECYCLE[status] ?? "defined",
+      lifecycle: evidenced, // evidenced state, not the self-reported status
       autonomy: "manual",
-      stub: !s.purpose,
+      stub: evidenced === "stub",
       outcome: (s.purpose as string) ?? "",
-      warnings: coverage === "Missing"
-        ? ["coverage: Missing — required by its constellation, not built"]
-        : [],
+      warnings: [
+        ...evidenceWarnings(st, status),
+        ...(coverage === "Missing" ? ["coverage: Missing — required by its constellation, not built"] : []),
+      ],
       dates: [],
       now: [],
     };
@@ -69,15 +79,19 @@ function mapAssets(rows: Record<string, unknown>[]) {
   }));
 }
 
-function toRecord(s: Record<string, unknown>, assets: Record<string, unknown>[]) {
+function toRecord(s: Record<string, unknown>, assets: Record<string, unknown>[], st?: EvidencedState) {
   const status = (s.status as string) ?? "emerging";
+  const evidenced = st?.state ?? "stub";
   return {
     name: (s.name as string) ?? (s.system_slug as string),
     slug: s.system_slug as string,
     home: s.constellation ? String(s.constellation).toLowerCase() : "unassigned",
     clusters: [] as string[],
     class: s.class ? String(s.class).toLowerCase() : "supporting",
-    lifecycle: STATUS_TO_LIFECYCLE[status] ?? "defined",
+    lifecycle: evidenced, // evidenced state, not the claimed status
+    claimed_status: status, // what the system claims (shown beside the evidenced state)
+    claim_diverges: st?.claim_diverges ?? false,
+    gaps: st?.gaps ?? [],
     flags: [] as string[],
     autonomy: "manual",
     outcome: (s.purpose as string) ?? "",
@@ -104,21 +118,30 @@ function warningsFor(s: Record<string, unknown>): string[] {
 
 export async function getSystemDetail(slug: string) {
   const db = canonDb();
-  const { data: sys, error } = await db.from("systems").select("*").eq("system_slug", slug).maybeSingle();
+  const [{ data: sys, error }, states] = await Promise.all([
+    db.from("systems").select("*").eq("system_slug", slug).maybeSingle(),
+    systemStates(),
+  ]);
   if (error) throw new Error(error.message);
   if (!sys) return null;
   const { data: assets } = await db
     .from("assets")
     .select("name,asset_type,write_owner,lifecycle_state,reconciled_against_reality,source_path,description,url")
     .eq("system_id", (sys as Record<string, unknown>).id as string);
-  return { record: toRecord(sys, assets ?? []), warnings: warningsFor(sys), history: [] };
+  const st = states.get(slug);
+  return {
+    record: toRecord(sys, assets ?? [], st),
+    warnings: [...evidenceWarnings(st, (sys as Record<string, unknown>).status as string), ...warningsFor(sys)],
+    history: [],
+  };
 }
 
 export async function listInventory() {
   const db = canonDb();
-  const [{ data: sys, error }, { data: assets }] = await Promise.all([
+  const [{ data: sys, error }, { data: assets }, states] = await Promise.all([
     db.from("systems").select("*").order("system_slug", { ascending: true }),
     db.from("assets").select("system_id,name,asset_type,write_owner,lifecycle_state,reconciled_against_reality,source_path,description,url"),
+    systemStates(),
   ]);
   if (error) throw new Error(error.message);
   const byId = new Map<string, Record<string, unknown>[]>();
@@ -129,11 +152,14 @@ export async function listInventory() {
     byId.get(k)!.push(a as Record<string, unknown>);
   }
   const systems = (sys ?? []).map((s) => {
-    const r = toRecord(s, byId.get((s as Record<string, unknown>).id as string) ?? []);
+    const sr = s as Record<string, unknown>;
+    const st = states.get(sr.system_slug as string);
+    const r = toRecord(s, byId.get(sr.id as string) ?? [], st);
     return {
       name: r.name, slug: r.slug, home: r.home, class: r.class,
       lifecycle: r.lifecycle, autonomy: r.autonomy, stub: r.stub,
-      assets: r.assets, context: r.context, warnings: warningsFor(s),
+      assets: r.assets, context: r.context,
+      warnings: [...evidenceWarnings(st, sr.status as string), ...warningsFor(s)],
     };
   });
   return { count: systems.length, systems, errors: [] as string[] };

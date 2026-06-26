@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.turbo/
+.env
+.env.local
+*.log
+!logs/.gitkeep
+.DS_Store
+.vercel/
+*.tsbuildinfo
+**/.fetch-state/

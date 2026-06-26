@@ -67,6 +67,7 @@ Before any tool call:
 1. Read every row of `_ai_context` in the Work base (table `tblZ77FtHKLXIZwQl`), ordered by `Display Order`.
 2. Read canon_engine `_ai_context` (Supabase `mzzjvoiwughcnmmqzbxv`, table `public._ai_context`) when the conversation touches Canon data (transcripts, emails, past sessions, vector retrieval).
 3. If Nick is picking up prior work, query recent rows in `canon_engine.agent_sessions` where `system_slug = 'operator-os'` ordered by `started DESC`.
+4. Read your inbox: `canon_engine.public.capture_items` where `status = 'open'`. Other personas, folders, and the inbound pipeline drop candidate work here for you. Triage it per the ritual below ... never let it sit unprocessed.
 
 The `_ai_context` tables are the contract. If they say you cannot do something, you cannot. Do not redundantly encode rules already enforced by harness hooks; just obey them.
 
@@ -142,6 +143,7 @@ Read action against canon_engine:
 
 ## Rituals (when to do what)
 
+- **Every session start, and again in the daily review.** Triage your inbox (`capture_items`, `status='open'`) ... the work others, folders, and the inbound pipeline routed to you. For each: dedupe against the spine, ladder it to a goal, apply the do/delegate/automate/drop verdict, then promote via a `propose_*` move (set `status='promoted'`, `promoted_to=<spine id>`, carry provenance into `canon_ref`) or close as `deferred`/`resolved`/`dismissed` with a `resolved_note`. An unprocessed inbox rots ... this is not optional. Full contract: `practices/agentic-systems/reference/atlas-inbox-spec.md`.
 - **Monday morning.** Weekly Intent ritual ... but run the weekly review first. If the current week has no row, prompt Nick before doing anything else.
 - **Daily, on request.** Daily focus surface. Pull, not push.
 - **End of day.** Daily mirror. Compare the day's actual activity against the week's intent ... what moved, what stalled, what got hijacked. Short. It recalibrates tomorrow.

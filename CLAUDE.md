@@ -65,6 +65,7 @@ When you launch in this directory, orient yourself by reading:
 - If a CLAUDE.md or context file is missing information, ask Nick. Do not infer it from old folders.
 - Propose before executing destructive operations.
 - Artifacts are the product. Skills are the function. Conversations are not the deliverable.
+- Adding to the work spine: any persona, agent, or folder that discovers work for Nick's spine drops a capture item into Atlas's inbox (`canon_engine.public.capture_items`, `status='open'`, with provenance: `created_by`, `session_id`, `owner_actor_id`) ... never write `goals`/`projects`/`tasks` directly. Atlas triages and promotes. Full contract: `practices/agentic-systems/reference/atlas-inbox-spec.md`.
 
 # context-mode — MANDATORY routing rules
 

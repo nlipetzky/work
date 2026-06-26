@@ -6,6 +6,7 @@
 import { getGovernedArtifacts } from "@/lib/queries/governedArtifacts";
 import { getSourceAssessments } from "@/lib/queries/sourceAssessments";
 import { getExperts, getExchanges } from "@/lib/queries/expertLiaison";
+import { getReviewPackets } from "@/lib/queries/packets";
 import ExpertLiaisonSurface from "./ExpertLiaisonSurface";
 
 export const runtime = "nodejs";
@@ -19,7 +20,8 @@ export default async function ExpertLiaisonPage() {
       getExperts(),
       getExchanges(),
     ]);
-    return <ExpertLiaisonSurface governed={governed} ledger={ledger} experts={experts} exchanges={exchanges} />;
+    const packets = await getReviewPackets(experts, exchanges);
+    return <ExpertLiaisonSurface governed={governed} ledger={ledger} experts={experts} exchanges={exchanges} packets={packets} />;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return <main className="p-6 font-mono text-sm text-bad">canon_engine: {msg}</main>;

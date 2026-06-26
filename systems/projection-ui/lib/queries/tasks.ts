@@ -30,6 +30,20 @@ export async function listOpenTasks(): Promise<Task[]> {
   return (data ?? []) as unknown as Task[];
 }
 
+// Open + done tasks (excludes dropped). Used by the Projects view, which needs
+// completed tasks to render strike-through checklist rows and "X / Y done" progress.
+export async function listAllTasks(): Promise<Task[]> {
+  const { data, error } = await canonDb()
+    .from("tasks")
+    .select(
+      "id,title,status,importance,urgency,due,first_5_minutes,project:projects(id,name,goal_id,goal:goals(id,title))",
+    )
+    .in("status", ["open", "done"])
+    .order("due", { ascending: true, nullsFirst: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as unknown as Task[];
+}
+
 export function isDoFirst(t: Task): boolean {
   return t.importance === "important" && t.urgency === "urgent";
 }

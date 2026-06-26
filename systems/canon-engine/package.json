@@ -1,0 +1,21 @@
+{
+  "name": "canon-engine",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && find . -name 'dist' -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null; true"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.3"
+  }
+}

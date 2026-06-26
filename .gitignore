@@ -14,3 +14,11 @@ node_modules/
 __pycache__/
 *.pyc
 node-compile-cache/
+.next/
+.next-preview/
+.turbo/
+*.tsbuildinfo
+# git worktrees nested in the repo are not project content (never commit as gitlinks)
+practices/agentic-systems/.claude/worktrees/
+# NOTE: deliberately NOT ignoring bare `build`/`dist` — real source lives under
+# systems/projection-ui/app/build/, app/api/build/, lib/builds/ (the /build console).

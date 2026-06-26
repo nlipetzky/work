@@ -105,11 +105,14 @@ async function review({ artifact_type, rubric, content }) {
   const system =
     "You are an adversarial reviewer scoring a canon artifact against its standard. " +
     "Judge only the fuzzy quality the rules cannot check. Be strict. " +
-    "Return STRICT JSON: {\"pass\": boolean, \"feedback\": \"specific, actionable\"}.";
+    "Output ONLY the JSON object, with no reasoning or text before or after it: " +
+    "{\"pass\": boolean, \"feedback\": \"specific, actionable\"}.";
   const user = `ARTIFACT: ${artifact_type}\nSTANDARD: ${rubric || "(none)"}\n\nCONTENT:\n${content}`;
-  const raw = await callModel(system, user, 1000);
-  try { const j = JSON.parse(raw.replace(/^```json?|```$/g, "").trim()); return { pass: !!j.pass, feedback: j.feedback || "" }; }
-  catch { return { pass: false, feedback: `reviewer returned non-JSON: ${raw.slice(0, 200)}` }; }
+  const raw = await callModel(system, user, 1500);
+  // robust extraction: the model sometimes prefixes prose before the JSON object
+  const m = raw.match(/\{[\s\S]*\}/);
+  if (m) { try { const j = JSON.parse(m[0]); return { pass: !!j.pass, feedback: j.feedback || "" }; } catch { /* fall through */ } }
+  return { pass: false, feedback: `reviewer returned non-JSON: ${raw.slice(0, 200)}` };
 }
 
 // When an artifact can't be produced, the Assembler ARTICULATES what it needs:

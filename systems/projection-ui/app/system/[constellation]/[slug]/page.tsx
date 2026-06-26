@@ -9,7 +9,17 @@ import { getSystemAnatomy, type SysActivity, type SysAsset } from "@/lib/queries
 import { getNorthStar } from "@/lib/queries/northStar";
 import { getGovernedArtifacts, type GovernedArtifacts } from "@/lib/queries/governedArtifacts";
 import { getSourceAssessments, type SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
+import { systemStates } from "@/lib/queries/systemState";
 import { RunButton, ArtifactChip } from "./AssemblerActions";
+
+// Evidenced-state chip color by rung (the truth, computed from evidence).
+const RUNG_CLASS: Record<string, string> = {
+  operating: "bg-ok/15 text-ok border border-ok/30",
+  beta: "bg-accent/15 text-accent border border-accent/30",
+  building: "bg-warn/15 text-warn border border-warn/30",
+  emerging: "bg-ink-800 text-muted border border-ink-700",
+  stub: "bg-bad/15 text-bad border border-bad/30",
+};
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -104,6 +114,9 @@ export default async function SystemAnatomyPage({ params }: { params: Promise<{ 
   const wiredTriggers = triggers.filter((t) => t.status === "wired");
   const gapTriggers = triggers.filter((t) => t.status !== "wired");
 
+  // Honest evidenced state (computed from activities/assets/triggers, not the claimed status label).
+  const est = (await systemStates()).get(s.system_slug);
+
   const now = Date.now();
   function ago(iso: string | null): string {
     if (!iso) return "never";
@@ -154,7 +167,15 @@ export default async function SystemAnatomyPage({ params }: { params: Promise<{ 
         <div className="mb-5 rounded-xl border border-ink-700 bg-gradient-to-b from-ink-850 to-ink-900 p-5">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight text-white">{s.name}</h1>
-            {s.status && <span className="rounded bg-ink-800 px-2 py-0.5 text-xs text-muted">{s.status}</span>}
+            {/* evidenced state = the truth, computed from evidence */}
+            <span className={`rounded px-2 py-0.5 text-xs font-semibold ${RUNG_CLASS[est?.state ?? "stub"] ?? "bg-ink-800 text-muted"}`}>
+              {est?.state ?? "—"}
+            </span>
+            {est?.claim_diverges && (
+              <span className="rounded bg-ink-800 px-2 py-0.5 text-xs text-ink-600 line-through" title="self-reported status, not supported by evidence">
+                claims {s.status}
+              </span>
+            )}
             {s.system_type && <span className="rounded bg-ink-800 px-2 py-0.5 text-xs text-muted">{s.system_type}</span>}
             {s.class && <span className="rounded bg-ink-800 px-2 py-0.5 text-xs text-muted">{s.class}</span>}
           </div>
@@ -165,6 +186,16 @@ export default async function SystemAnatomyPage({ params }: { params: Promise<{ 
             </p>
           ) : (
             <p className="mt-3"><Stub>No purpose statement — define what it ensures.</Stub></p>
+          )}
+
+          {/* what's missing to advance — the honest gap list */}
+          {est && est.gaps.length > 0 && (
+            <div className="mt-3 rounded-lg border border-warn/25 bg-warn/[0.04] p-3">
+              <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-warn">What&apos;s missing to advance</div>
+              <ul className="space-y-0.5 text-xs text-[#cdd9e5]">
+                {est.gaps.map((g, i) => <li key={i}>· {g}</li>)}
+              </ul>
+            </div>
           )}
 
           {/* ladder + owner + autonomy */}
