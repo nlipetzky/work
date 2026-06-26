@@ -106,6 +106,47 @@ completion / approval. Code: a projection-ui lib query (model on `lib/queries/ro
 
 ---
 
+## Execution model (the core requirement: the surface EXECUTES, not just tracks)
+
+`/operate` is where you RUN each step, not just watch it. Each SOP step is an activity,
+and the surface renders the right control from the activity's declared execution
+binding ... ONE generic surface, the per-system difference living in DATA, not bespoke UI:
+
+- automatic + has a runner -> `[Run]` invokes the activity's runner via its trigger/route;
+  then `[watching]` tails the run ledger; the output appears.
+- approve-nick / approve-will -> `[Approve]` + the artifact to review (Will's route to the
+  expert-liaison packets; Nick's land on him).
+- AI-produced artifact -> `[Produce]` runs the govern-artifacts produce -> gate -> judge
+  loop; you approve the result.
+- needs-build -> `[Build]` routes to Claude Code (the step is greyed until its system is
+  operational), linked to the build item.
+- manual -> `[Mark done]` + note.
+
+When a step's output is produced and its activity's verification gate is green (read
+live), the step flips done and the next control lights up.
+
+### Why this is not simple (the real engineering)
+1. Most activities have no UI-invokable execution binding yet. The runners are CLI `.mjs`
+   scripts (read `.env`, call Anthropic directly) ... not reachable from a web surface.
+   Executing-from-the-UI needs each runner exposed behind a uniform trigger (Inngest
+   function / n8n webhook / edge function / job), not a local CLI. **That invocation
+   layer is the hard part, not the tab.**
+2. A general run/output ledger to watch async runs (enrichment takes minutes, spends
+   provider credits). `prep_run_status` exists for revops plays; this generalizes it.
+3. Heterogeneity: script vs n8n vs approval vs AI-producer. The surface stays generic
+   only if each activity carries an `execution` descriptor (gate + runner type + locator
+   + run-ledger). That is a canon schema addition on `activities`.
+
+### What it composes (not built from scratch)
+- `canon.activities` (the steps) + a new `execution` descriptor per activity.
+- `canon.system_triggers` + `trigger_routes` (the invocation binding ... partly built).
+- a runs/output ledger (generalize `prep_run_status`).
+- `govern-artifacts` produce -> gate -> judge (the AI-producer steps).
+- `systemState` (operational? -> the build-gate).
+
+So `/operate` is the composition layer over machinery that mostly exists; the missing
+pieces are the per-activity execution binding and a uniform invocation endpoint.
+
 ## The first SOP (grounds the spec): "Launch CIPO outreach"
 
 Hand-defined steps with their REAL status today ... this is what `/operate` would show:
