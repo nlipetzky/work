@@ -221,16 +221,25 @@ function RequestExpertApprovalButton({ payload, expert }: { payload: Record<stri
 }
 
 function ExpertReviewState({ review, expert }: { review: NonNullable<Sequence["expert_review"]>; expert: string }) {
+  // When the reply is distributed back from a review packet, the per-item verdict supersedes the
+  // bare "answered" label: approved => expert-certified (the binding sign-off); flagged => revise.
+  const certified = review.status === "answered" && review.verdict === "approved";
+  const flagged = review.status === "answered" && review.verdict === "flagged";
   const label: Record<string, string> = {
     drafted: `Queued for ${expert} in Expert Liaison ... Hermes packages the batch before it sends`,
     sent: `Sent to ${expert} ... awaiting reply`,
     answered: `${expert} replied ... review the answer in Expert Liaison`,
     closed: "Closed",
   };
-  const tone = review.status === "answered" ? "text-ok" : review.status === "sent" ? "text-warn" : "text-ink-600";
+  const text = certified
+    ? `✓ Expert-certified by ${expert}`
+    : flagged
+      ? `${expert} flagged this ... needs revision`
+      : (label[review.status] ?? review.status);
+  const tone = certified ? "text-ok" : flagged ? "text-warn" : review.status === "answered" ? "text-ok" : review.status === "sent" ? "text-warn" : "text-ink-600";
   return (
     <div className="text-[11px]">
-      <span className={tone}>● {label[review.status] ?? review.status}</span>{" "}
+      <span className={tone}>● {text}</span>{" "}
       <a href="/expert-liaison" className="text-accent underline hover:opacity-80">open Expert Liaison →</a>
       {review.response && <p className="mt-1 rounded border border-ink-700 bg-ink-900/50 p-2 text-[11px] text-[#cdd9e5]">{review.response}</p>}
     </div>

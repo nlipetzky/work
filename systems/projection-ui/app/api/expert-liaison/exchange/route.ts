@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { canonDb } from "@/lib/canon";
+import { toPlainText } from "@/lib/text/plain";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
     }
     const { data, error } = await db.rpc("record_expert_exchange", {
       p_expert_slug: expert_slug, p_engagement_type: engagement_type, p_engagement_id: engagement_id,
-      p_subject: subject ?? null, p_body: ask_body ?? null, p_artifact_types: artifact_types ?? [],
+      p_subject: subject ?? null, p_body: ask_body != null ? toPlainText(ask_body) : null, p_artifact_types: artifact_types ?? [],
     });
     if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
     return NextResponse.json({ ok: true, exchange: Array.isArray(data) ? data[0] : data });
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
     const { data, error } = await db.rpc("update_expert_exchange", {
       p_id: id,
       p_subject: subject ?? null,
-      p_body: ask_body ?? null,
+      p_body: ask_body != null ? toPlainText(ask_body) : null,
       p_status: status ?? null,
       p_response: response ?? null,
       p_sent_at: status === "sent" ? nowIso : null,

@@ -34,6 +34,7 @@ export interface Exchange {
   sent_at: string | null;
   answered_at: string | null;
   created_at: string;
+  metadata: Record<string, unknown>;
 }
 
 export async function getExperts(): Promise<Expert[]> {
@@ -56,7 +57,7 @@ export async function getExperts(): Promise<Expert[]> {
 export async function getExchanges(): Promise<Exchange[]> {
   const { data, error } = await canonDb()
     .from("expert_exchanges")
-    .select("id, expert_slug, engagement_type, engagement_id, channel, subject, body, artifact_types, status, response, sent_at, answered_at, created_at")
+    .select("id, expert_slug, engagement_type, engagement_id, channel, subject, body, artifact_types, status, response, sent_at, answered_at, created_at, metadata")
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []).map((x) => ({
@@ -65,6 +66,7 @@ export async function getExchanges(): Promise<Exchange[]> {
     artifact_types: (x.artifact_types as string[] | null) ?? [],
     status: x.status as ExchangeStatus, response: x.response ?? null,
     sent_at: x.sent_at ?? null, answered_at: x.answered_at ?? null, created_at: x.created_at,
+    metadata: (x.metadata as Record<string, unknown> | null) ?? {},
   }));
 }
 

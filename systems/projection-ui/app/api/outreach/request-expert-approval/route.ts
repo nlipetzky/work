@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { canonDb } from "@/lib/canon";
+import { toPlainText } from "@/lib/text/plain";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -79,7 +80,7 @@ export async function POST(req: Request) {
     p_engagement_type: engagement_type,
     p_engagement_id: engagement_id,
     p_subject: subject,
-    p_body: askBody,
+    p_body: toPlainText(askBody), // expert-facing: store plain (artifact content_md is markdown)
     p_artifact_types: artifact_types,
     p_channel: "email",
     p_status: "drafted",

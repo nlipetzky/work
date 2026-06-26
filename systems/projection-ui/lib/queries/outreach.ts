@@ -87,6 +87,7 @@ export interface ExpertReview {
   expert_slug: string;
   status: "drafted" | "sent" | "answered" | "closed";
   response: string | null;
+  verdict: "approved" | "flagged" | null; // per-item outcome distributed back from a review packet
 }
 export interface ChannelSequences { linkedin: Sequence | null; email: Sequence | null }
 
@@ -135,8 +136,9 @@ export async function getOutreachSystem(): Promise<OutreachSystem> {
   const reviewMap = new Map<string, ExpertReview>();          // sequence_id -> review
   const artifactReviewMap = new Map<string, ExpertReview>();  // artifact_id -> review
   for (const x of exch ?? []) {
-    const md = (x.metadata as { sequence_id?: string; artifact_id?: string } | null) ?? {};
-    const review: ExpertReview = { exchange_id: x.id, expert_slug: x.expert_slug, status: x.status, response: x.response ?? null };
+    const md = (x.metadata as { sequence_id?: string; artifact_id?: string; verdict?: string } | null) ?? {};
+    const verdict = md.verdict === "approved" || md.verdict === "flagged" ? md.verdict : null;
+    const review: ExpertReview = { exchange_id: x.id, expert_slug: x.expert_slug, status: x.status, response: x.response ?? null, verdict };
     if (md.sequence_id && !reviewMap.has(md.sequence_id)) reviewMap.set(md.sequence_id, review);
     if (md.artifact_id && !artifactReviewMap.has(md.artifact_id)) artifactReviewMap.set(md.artifact_id, review);
   }
