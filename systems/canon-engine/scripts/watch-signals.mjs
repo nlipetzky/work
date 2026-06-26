@@ -70,26 +70,28 @@ async function watchClinicalTrials() {
   console.log(`clinicaltrials: ${fetched} fresh industry studies, ${inserted} new companies landed (since ${sinceDate})`);
 }
 
-// ---- USPTO PatentsView (needs free PATENTSVIEW_API_KEY) ----
+// ---- USPTO Open Data Portal (needs USPTO_API key; api.uspto.gov) ----
 async function watchPatents() {
-  const key = process.env.PATENTSVIEW_API_KEY;
-  if (!key) { console.log("patentsview: skipped (no PATENTSVIEW_API_KEY ... register free at patentsview.org, add to .env to enable the patent watch)"); return; }
+  const key = process.env.USPTO_API || process.env.PATENTSVIEW_API_KEY;
+  if (!key) { console.log("uspto: skipped (no USPTO_API in .env)"); return; }
   let fetched = 0, inserted = 0;
   try {
-    const q = { _and: [{ _gte: { patent_date: sinceDate } }, { _text_phrase: { cpc_subgroup_id: "A61" } }] };
-    const url = "https://search.patentsview.org/api/v1/patent/?" + new URLSearchParams({
-      q: JSON.stringify(q), f: JSON.stringify(["patent_id", "patent_date", "patent_title", "assignees.assignee_organization"]),
-      o: JSON.stringify({ size: 100 }),
-    });
-    const j = await (await fetch(url, { headers: { "X-Api-Key": key } })).json();
-    for (const pt of j.patents || []) {
-      const company = pt.assignees?.[0]?.assignee_organization;
-      const signal = { type: "patent", patent_id: pt.patent_id, date: pt.patent_date, title: pt.patent_title };
+    // CPC A61 = Medical / veterinary science / hygiene (medical-device + biotech). Most recent filings first.
+    const q = `applicationMetaData.cpcClassificationBag:A61* AND applicationMetaData.filingDate:[${sinceDate} TO *]`;
+    const url = "https://api.uspto.gov/api/v1/patent/applications/search?" +
+      `q=${encodeURIComponent(q)}&sort=${encodeURIComponent("applicationMetaData.filingDate desc")}&limit=100`;
+    const j = await (await fetch(url, { headers: { "X-API-KEY": key } })).json();
+    for (const rec of j.patentFileWrapperDataBag || []) {
+      const md = rec.applicationMetaData || {};
+      const company = md.firstApplicantName || md.applicantBag?.[0]?.applicantNameText;
+      const ref = rec.applicationNumberText;
+      if (!company || !ref) continue;
+      const signal = { type: "patent", application: ref, filingDate: md.filingDate, title: md.inventionTitle, cpc: md.class || null };
       fetched++;
-      if (await land("patentsview", pt.patent_id, company, signal)) inserted++;
+      if (await land("uspto", ref, company, signal)) inserted++;
     }
-  } catch (e) { console.error(`  patentsview error: ${e.message}`); }
-  console.log(`patentsview: ${fetched} fresh filings, ${inserted} new companies landed`);
+  } catch (e) { console.error(`  uspto error: ${e.message}`); }
+  console.log(`uspto (patents): ${fetched} fresh A61 filings, ${inserted} new companies landed`);
 }
 
 console.log(`\n▸ signal watch for ${ET}/${EID} (window: last ${SINCE_DAYS}d)\n`);
