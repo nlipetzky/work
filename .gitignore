@@ -24,6 +24,11 @@ dist/
 next-env.d.ts
 # registry-generation scratch dirs (random 6-char suffix); the real registry is registry/
 reg-??????/
+# per-system ephemeral runtime state (never commit)
+systems/*/runtime/
+# tool caches that leaked into the tree (bunx/tsx keyed to uid)
+practices/agentic-systems/bunx-*/
+practices/agentic-systems/tsx-501/
 # NOTE: `dist/` is build output (verified: no tracked source under any dist/).
 # Do NOT ignore bare `build` ... real source lives under
 # systems/projection-ui/app/build/, app/api/build/, lib/builds/ (the /build console).
