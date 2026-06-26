@@ -12,6 +12,12 @@ import type { Activity } from "@/lib/queries/activities";
 import type { Goal } from "@/lib/queries/goals";
 import type { NorthStar } from "@/lib/queries/northStar";
 import type { CalendarEvent } from "@/lib/queries/calendar";
+import type { RoadmapGoal, RoadmapProject } from "@/lib/queries/roadmap";
+import ProtocolBar from "./ProtocolBar";
+
+// evidenced-rung + mode colors (mirror the /system surface) for the roadmap view.
+const RUNG_COLOR: Record<string, string> = { stub: "#f85149", emerging: "#7d8590", building: "#d29922", beta: "#5b9dff", operating: "#3fb950" };
+const MODE_COLOR: Record<string, string> = { build: "#3fb950", iterate: "#d29922", run: "#5b9dff" };
 
 const AREA_COLORS: Record<string, string> = {
   "Client engagement": "#5b9dff",
@@ -161,10 +167,11 @@ interface Props {
   goals: Goal[];
   northStar: NorthStar | null;
   events: CalendarEvent[];
+  roadmap: { goals: RoadmapGoal[]; orphans: RoadmapProject[] } | null;
   error: string | null;
 }
 
-export default function WorkSurface({ projects, tasks, intent, activities, goals, northStar, events, error }: Props) {
+export default function WorkSurface({ projects, tasks, intent, activities, goals, northStar, events, roadmap, error }: Props) {
   const [tab, setTab] = useState<"focus" | "projects" | "goals">("focus");
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [areaFilter, setAreaFilter] = useState<string>("all");
@@ -291,6 +298,9 @@ export default function WorkSurface({ projects, tasks, intent, activities, goals
   function renderFocus() {
     return (
       <>
+        {/* daily-protocol runner: Start my day → orient + computed next action + flags → triage → close */}
+        <ProtocolBar />
+
         {/* interpretive header */}
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: 24 }}>
           <div>
@@ -732,160 +742,119 @@ export default function WorkSurface({ projects, tasks, intent, activities, goals
   }
 
   // ============================================================ PROJECTS
+  // A single roadmap project card — system header (rung + mode), outcome, tasks, progress.
+  function roadmapCard(rp: RoadmapProject, compact: boolean) {
+    const all = tasksByProject[rp.id] ?? [];
+    const open = all.filter((t) => t.status === "open");
+    const done = all.filter((t) => t.status === "done");
+    const ordered = [...done, ...rankTasks(open)];
+    const rung = rp.evidenced_state;
+    return (
+      <div key={rp.id} style={{ border: "1px solid #1d2430", background: "#151a23", borderRadius: 12, padding: compact ? "12px 16px" : "16px 18px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{rp.name}</div>
+            {rp.system_slug ? (
+              <div style={{ fontSize: 11.5, color: "#7d8590", marginTop: 3 }}>
+                {rp.mode === "build" ? "builds" : rp.mode === "iterate" ? "iterates" : "runs"} system <span style={{ color: "#cdd9e5" }}>{rp.system_name}</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 11, color: "#7d8590", marginTop: 3 }}>human work — not a system</div>
+            )}
+          </div>
+          {rp.system_slug && (
+            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+              {rp.mode && <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: MODE_COLOR[rp.mode], whiteSpace: "nowrap" }}>{rp.mode}</span>}
+              {rung && <span style={{ fontSize: 10, borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap", color: RUNG_COLOR[rung] ?? "#7d8590", background: "#10141c", border: `1px solid ${RUNG_COLOR[rung] ?? "#1d2430"}40` }}>{rung}</span>}
+            </div>
+          )}
+        </div>
+
+        {!compact && rp.outcome && (
+          <div style={{ marginTop: 10, fontSize: 12.5, color: "#7d8590" }}><span style={{ color: "#5c6470" }}>Done when</span> — {rp.outcome}</div>
+        )}
+        {rp.system_slug && !rp.dependency_wired && (
+          <div style={{ marginTop: 8, fontSize: 11, color: "#d29922" }}>dependency order not wired — sequence is best-effort</div>
+        )}
+
+        {!compact && ordered.length > 0 && (
+          <div style={{ marginTop: 12, paddingTop: 4, borderTop: "1px solid #1d2430" }}>
+            {ordered.map((t) => {
+              const isDone = t.status === "done";
+              const df = !isDone && isDoFirst(t);
+              return (
+                <div key={t.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "5px 0" }}>
+                  <span style={{ width: 14, height: 14, flexShrink: 0, marginTop: 1, borderRadius: 4, background: isDone ? "#3fb950" : "transparent", border: isDone ? "none" : `1px solid ${df ? "#d29922" : "#2a3342"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#0b0e14" }}>{isDone ? "✓" : ""}</span>
+                  <span style={{ fontSize: 12.5, color: isDone ? "#5c6470" : "#e6edf3", textDecoration: isDone ? "line-through" : "none" }}>{t.title}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ marginTop: 11, paddingTop: 10, borderTop: "1px solid #1d2430", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ flex: 1, height: 4, borderRadius: 999, background: "#10141c", overflow: "hidden" }}>
+            <div style={{ width: `${rp.tasks_total === 0 ? 0 : Math.round((rp.tasks_done / rp.tasks_total) * 100)}%`, height: "100%", background: "#3fb950" }} />
+          </div>
+          <span style={{ fontSize: 11, color: "#7d8590", whiteSpace: "nowrap" }}>{rp.tasks_done}/{rp.tasks_total} done</span>
+        </div>
+      </div>
+    );
+  }
+
   function renderProjects() {
-    const shown = projects.filter((p) => p.status === "active" || p.status === "paused");
-    const sorted = [...shown].sort((a, b) => (a.status === b.status ? 0 : a.status === "active" ? -1 : 1));
-    const filtered = sorted.filter((p) => areaFilter === "all" || p.area === areaFilter);
-    const openTaskTotal = shown.reduce((n, p) => n + (tasksByProject[p.id] ?? []).filter((t) => t.status === "open").length, 0);
-    // Chips derived from canon areas present on shown projects (+ "All").
-    const projectAreas = Array.from(
-      new Set(shown.map((p) => p.area).filter((a): a is string => !!a)),
-    ).sort();
-    const chips: [string, string][] = [
-      ["all", "All"],
-      ...projectAreas.map((a) => [a, AREA_LABELS[a] ?? a] as [string, string]),
-    ];
+    const rmGoals = roadmap?.goals ?? [];
+    const totalBuilds = rmGoals.reduce((n, g) => n + g.system_builds.length, 0);
+    const groupLabel: React.CSSProperties = { fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#5c6470", fontWeight: 600, marginBottom: 8 };
 
     return (
       <>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: 20 }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 600, color: "#fff", letterSpacing: "-0.01em" }}>Projects</h1>
-            <div style={{ marginTop: 8, fontSize: 14, color: "#7d8590" }}>
-              Active work, grouped by project — what each is for, what &apos;done&apos; looks like, and the next move.
-            </div>
-          </div>
-          <div style={{ textAlign: "right", flexShrink: 0, fontSize: 12, color: "#5c6470" }}>
-            {shown.length} project{shown.length !== 1 ? "s" : ""} · {openTaskTotal} open task{openTaskTotal !== 1 ? "s" : ""}
+        <div style={{ marginBottom: 22 }}>
+          <h1 style={{ margin: 0, fontSize: 30, fontWeight: 600, color: "#fff", letterSpacing: "-0.01em" }}>Roadmap</h1>
+          <div style={{ marginTop: 8, fontSize: 14, color: "#7d8590" }}>
+            The work as systems to build, iterate, and run — ordered by goal, foundation first. {totalBuilds} system build{totalBuilds !== 1 ? "s" : ""} in flight. Computed live from system state.
           </div>
         </div>
 
-        {/* area filter */}
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 18 }}>
-          {chips.map(([val, label]) => {
-            const on = areaFilter === val;
-            return (
-              <button
-                key={val}
-                onClick={() => setAreaFilter(val)}
-                style={{
-                  cursor: "pointer",
-                  fontSize: 12,
-                  borderRadius: 999,
-                  padding: "5px 13px",
-                  fontFamily: "inherit",
-                  background: on ? "#1d2430" : "transparent",
-                  color: on ? "#fff" : "#7d8590",
-                  border: `1px solid ${on ? "#2a3342" : "#1d2430"}`,
-                }}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-
-        {filtered.length === 0 ? (
-          <div style={{ ...sectionCard, fontSize: 14, color: "#7d8590" }}>No projects in this area.</div>
+        {rmGoals.length === 0 ? (
+          <div style={{ ...sectionCard, fontSize: 14, color: "#7d8590" }}>Roadmap unavailable.</div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {filtered.map((p) => {
-              const all = tasksByProject[p.id] ?? [];
-              const open = all.filter((t) => t.status === "open");
-              const done = all.filter((t) => t.status === "done");
-              const total = all.length;
-              const pct = total === 0 ? 0 : Math.round((done.length / total) * 100);
-              const paused = p.status === "paused";
-              const areaColor = (p.area && AREA_COLORS[p.area]) || "#7d8590";
-              const ordered = [...done, ...rankTasks(open)];
+          <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+            {rmGoals.map((g) => {
+              const empty = g.system_builds.length === 0 && g.human_work.length === 0;
+              const areaColor = (g.area && AREA_COLORS[g.area]) || "#7d8590";
               return (
-                <div key={p.id} style={{ border: "1px solid #1d2430", background: "#151a23", borderRadius: 12, padding: "18px 20px", opacity: paused ? 0.72 : 1 }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
-                      <span style={{ width: 9, height: 9, borderRadius: "50%", background: areaColor, marginTop: 5, flexShrink: 0 }} />
-                      <div>
-                        <div style={{ fontSize: 16, fontWeight: 600, color: "#fff" }}>{p.name}</div>
-                        {p.goal ? <div style={{ fontSize: 11, color: "#5c6470", marginTop: 3 }}>→ {p.goal.title}</div> : <div style={{ fontSize: 11, color: "#d29922", marginTop: 3 }}>not tied to a goal</div>}
-                      </div>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 11,
-                        whiteSpace: "nowrap",
-                        borderRadius: 999,
-                        padding: "3px 10px",
-                        color: paused ? "#7d8590" : "#3fb950",
-                        background: paused ? "#10141c" : "rgba(63,185,80,0.1)",
-                        border: `1px solid ${paused ? "#1d2430" : "rgba(63,185,80,0.2)"}`,
-                      }}
-                    >
-                      {p.status}
-                    </span>
+                <div key={g.id}>
+                  {/* goal header */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                    <span style={{ fontSize: 12, color: "#5c6470", fontWeight: 700 }}>{String(g.rank ?? "—").padStart(2, "0")}</span>
+                    <span style={{ width: 9, height: 9, borderRadius: "50%", background: areaColor, flexShrink: 0 }} />
+                    <span style={{ fontSize: 17, fontWeight: 600, color: "#fff" }}>{g.title}</span>
+                    {g.is_binding_constraint && (
+                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#5b9dff", border: "1px solid rgba(91,157,255,0.3)", background: "rgba(91,157,255,0.08)", borderRadius: 999, padding: "2px 9px" }}>
+                        the binding constraint
+                      </span>
+                    )}
                   </div>
 
-                  {p.outcome && (
-                    <div style={{ marginTop: 11, fontSize: 12.5, color: "#7d8590" }}>
-                      <span style={{ color: "#5c6470" }}>Done when</span> — {p.outcome}
+                  {empty ? (
+                    <div style={{ fontSize: 12.5, color: "#5c6470", paddingLeft: 22 }}>no work on the spine yet — plan it from /work/plan</div>
+                  ) : (
+                    <div style={{ paddingLeft: 22, display: "flex", flexDirection: "column", gap: 12 }}>
+                      {g.system_builds.length > 0 && (
+                        <div>
+                          <div style={groupLabel}>Systems · build → iterate → run</div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>{g.system_builds.map((rp) => roadmapCard(rp, false))}</div>
+                        </div>
+                      )}
+                      {g.human_work.length > 0 && (
+                        <div>
+                          <div style={groupLabel}>Human work</div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>{g.human_work.map((rp) => roadmapCard(rp, true))}</div>
+                        </div>
+                      )}
                     </div>
                   )}
-
-                  {p.next_action && (
-                    <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 10, borderLeft: "2px solid #5b9dff", background: "rgba(91,157,255,0.05)", padding: "8px 12px", borderRadius: "0 8px 8px 0" }}>
-                      <span style={{ fontSize: 9, letterSpacing: "0.13em", textTransform: "uppercase", color: "#5b9dff", fontWeight: 700 }}>Next</span>
-                      <span style={{ fontSize: 13, color: "#e6edf3" }}>{p.next_action}</span>
-                    </div>
-                  )}
-
-                  {ordered.length > 0 && (
-                    <div style={{ marginTop: 14, paddingTop: 4, borderTop: "1px solid #1d2430" }}>
-                      {ordered.map((t) => {
-                        const isDone = t.status === "done";
-                        const df = !isDone && isDoFirst(t);
-                        return (
-                          <div key={t.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "6px 0" }}>
-                            <span
-                              style={{
-                                width: 15,
-                                height: 15,
-                                flexShrink: 0,
-                                marginTop: 1,
-                                borderRadius: 4,
-                                background: isDone ? "#3fb950" : "transparent",
-                                border: isDone ? "none" : `1px solid ${df ? "#d29922" : "#2a3342"}`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: 10,
-                                color: "#0b0e14",
-                              }}
-                            >
-                              {isDone ? "✓" : ""}
-                            </span>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <span style={{ fontSize: 13, color: isDone ? "#5c6470" : "#fff", textDecoration: isDone ? "line-through" : "none" }}>
-                                {t.title}
-                              </span>
-                              {df && (
-                                <span style={{ fontSize: 10, color: "#d29922", border: "1px solid rgba(210,153,34,0.3)", background: "rgba(210,153,34,0.08)", borderRadius: 4, padding: "1px 6px", marginLeft: 8, letterSpacing: "0.04em" }}>
-                                  DO FIRST
-                                </span>
-                              )}
-                              {!isDone && fmtDue(t.due) && <span style={{ fontSize: 11.5, color: "#d29922", marginLeft: 8 }}>due {fmtDue(t.due)}</span>}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  <div style={{ marginTop: 12, paddingTop: 11, borderTop: "1px solid #1d2430", display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ flex: 1, height: 5, borderRadius: 999, background: "#10141c", overflow: "hidden" }}>
-                      <div style={{ width: `${pct}%`, height: "100%", background: "#3fb950" }} />
-                    </div>
-                    <span style={{ fontSize: 11.5, color: "#7d8590", whiteSpace: "nowrap" }}>
-                      {done.length} / {total} done · {open.length} open
-                    </span>
-                  </div>
                 </div>
               );
             })}

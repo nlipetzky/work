@@ -11,6 +11,8 @@ export interface Goal {
   status: string;
   area: string | null;
   rank: number | null;
+  leverage: "code" | "media" | "capital" | "labor" | "none" | null;
+  wealth_test: "asset" | "rented_time" | null;
 }
 
 // operator-os Goals, top of the spine. Active goals first, ordered by rank.
@@ -18,7 +20,7 @@ export interface Goal {
 export async function listGoals(): Promise<Goal[]> {
   const { data, error } = await canonDb()
     .from("goals")
-    .select("id, slug, title, why_it_matters, horizon, target, status, area, rank")
+    .select("id, slug, title, why_it_matters, horizon, target, status, area, rank, leverage, wealth_test")
     .eq("status", "active")
     .order("rank", { ascending: true, nullsFirst: false });
   if (error) throw new Error(error.message);

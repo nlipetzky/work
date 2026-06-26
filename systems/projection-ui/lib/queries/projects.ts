@@ -10,6 +10,7 @@ export interface Project {
   status: string;
   outcome: string | null;
   next_action: string | null;
+  system_slug: string | null; // the system this project builds/iterates (project ≡ system build)
   goal: { id: string; title: string } | null;
 }
 
@@ -17,7 +18,7 @@ export interface Project {
 export async function listProjects(): Promise<Project[]> {
   const { data, error } = await canonDb()
     .from("projects")
-    .select("id, slug, name, goal_id, area, status, outcome, next_action, goal:goals(id,title)")
+    .select("id, slug, name, goal_id, area, status, outcome, next_action, system_slug, goal:goals(id,title)")
     .order("name", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as Project[];

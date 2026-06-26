@@ -1,5 +1,9 @@
 # System-Building Methodology (first cut)
 
+> SUPERSEDED 2026-06-23 by `practices/agentic-systems/reference/system-building-method.md` (v1), which
+> folds in the maturity ladder + stage-gates and the software-engineering grounding. This draft is kept
+> for its §2a (architecture ladder) and §7 (run-layer schema) detail, which v1 references.
+
 Status: DRAFT, 2026-06-22. Atlas's first cut of the operator-os half + the shared framing.
 Boris filled his half (architecture selection §2a, the schema and wiring in §7) the same day and
 folded in current agent-architecture research (§8 references). Still a draft to work with Nick.

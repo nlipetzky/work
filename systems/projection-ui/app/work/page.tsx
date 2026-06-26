@@ -12,6 +12,7 @@ import { listActivities, type Activity } from "@/lib/queries/activities";
 import { listGoals, type Goal } from "@/lib/queries/goals";
 import { getNorthStar, type NorthStar } from "@/lib/queries/northStar";
 import { listUpcomingEvents, type CalendarEvent } from "@/lib/queries/calendar";
+import { buildRoadmap } from "@/lib/queries/roadmap";
 import WorkSurface from "./WorkSurface";
 
 export const runtime = "nodejs";
@@ -25,9 +26,10 @@ export default async function WorkPage() {
   let goals: Goal[] = [];
   let northStar: NorthStar | null = null;
   let events: CalendarEvent[] = [];
+  let roadmap: Awaited<ReturnType<typeof buildRoadmap>> | null = null;
   let error: string | null = null;
   try {
-    [projects, tasks, intent, activities, goals, northStar, events] = await Promise.all([
+    [projects, tasks, intent, activities, goals, northStar, events, roadmap] = await Promise.all([
       listProjects(),
       listAllTasks(),
       latestWeeklyIntent(),
@@ -35,6 +37,7 @@ export default async function WorkPage() {
       listGoals(),
       getNorthStar(),
       listUpcomingEvents(),
+      buildRoadmap(),
     ]);
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
@@ -49,6 +52,7 @@ export default async function WorkPage() {
       goals={goals}
       northStar={northStar}
       events={events}
+      roadmap={roadmap}
       error={error}
     />
   );

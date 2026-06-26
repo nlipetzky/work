@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  html, body { margin: 0; padding: 0; background: #0b0e14; }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-track { background: #10141c; }
+  *::-webkit-scrollbar-thumb { background: #2a3342; border-radius: 6px; }
+  *::-webkit-scrollbar-thumb:hover { background: #3a4556; }
+  @keyframes lp-pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+</style>
+</helmet>
+
+<div style="display:flex; height:100vh; width:100%; overflow:hidden; background:#0b0e14; color:#e6edf3; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:14px;">
+
+  <!-- NAV RAIL (app shell) -->
+  <aside style="width:212px; flex-shrink:0; border-right:1px solid #1d2430; background:#10141c; padding:14px 12px; box-sizing:border-box;">
+    <div style="padding:6px 8px 16px;">
+      <div style="font-size:13px; font-weight:600; letter-spacing:.06em; color:#7d8590;">PROJECTION</div>
+      <div style="font-size:10px; color:#2a3342; margin-top:2px;">revops-engine-dev</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:2px;">
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; background:#1d2430; color:#fff;">Work</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Records</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Runs</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Duplicates</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Gaps</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Staging</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">Context</div>
+      <div style="border-radius:6px; padding:8px 12px; font-size:13px; color:#7d8590;">System</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="flex:1; overflow-y:auto;">
+    <div style="max-width:1040px; margin:0 auto; padding:36px 40px 64px;">
+
+      <!-- sub-nav tabs -->
+      <div style="display:flex; gap:6px; margin-bottom:26px;">
+        <div onClick="{{ setFocus }}" style="border-radius:7px; padding:6px 14px; font-size:13px; font-weight:500; cursor:pointer; background:{{ focusTabBg }}; color:{{ focusTabCol }};">Focus</div>
+        <div onClick="{{ setGoals }}" style="border-radius:7px; padding:6px 14px; font-size:13px; font-weight:500; cursor:pointer; background:{{ goalsTabBg }}; color:{{ goalsTabCol }};">Goals</div>
+        <div onClick="{{ setProjects }}" style="border-radius:7px; padding:6px 14px; font-size:13px; font-weight:500; cursor:pointer; background:{{ projTabBg }}; color:{{ projTabCol }};">Projects</div>
+      </div>
+
+      <sc-if value="{{ isFocus }}" hint-placeholder-val="{{ true }}">
+
+      <!-- interpretive header -->
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:24px;">
+        <div>
+          <div style="font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#5c6470; margin-bottom:8px;">Tuesday · June 23</div>
+          <h1 style="margin:0; font-size:30px; font-weight:600; color:#fff; letter-spacing:-0.01em;">One thing this morning.</h1>
+          <div style="margin-top:8px; font-size:14px; color:#7d8590;">Everything under it is either handled or honestly flagged. Start at the top — don't go reading the table.</div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div style="display:inline-flex; align-items:center; gap:7px; border:1px solid #1d2430; background:#151a23; border-radius:999px; padding:6px 13px;">
+            <span style="width:7px; height:7px; border-radius:50%; background:#3fb950; animation:lp-pulse 2.4s ease-in-out infinite;"></span>
+            <span style="font-size:12px; color:#cdd9e5;">system green · 14 things running for you</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 1. ONE NEXT ACTION (HERO) ============ -->
+      <section style="margin-bottom:30px; border:1px solid rgba(91,157,255,0.45); border-radius:14px; background:linear-gradient(180deg,#161d29 0%,#141a24 100%); padding:22px 24px; box-shadow:0 0 0 1px rgba(91,157,255,0.06), 0 18px 40px -28px rgba(91,157,255,0.5);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Do this next</span>
+          </div>
+          <span style="font-size:11px; color:#8fbcff; background:rgba(91,157,255,0.1); border:1px solid rgba(91,157,255,0.2); border-radius:999px; padding:4px 11px;">highest leverage · not a recurring chore</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:26px; align-items:start;">
+          <!-- left: the action + why + ladder -->
+          <div>
+            <div style="font-size:23px; line-height:1.25; font-weight:600; color:#fff; letter-spacing:-0.01em;">Send the Meridian retainer proposal</div>
+            <div style="margin-top:8px; font-size:12.5px; color:#7d8590;">
+              <span style="color:#d29922;">due Thu — before their board meets</span>
+              <span style="color:#2a3342; margin:0 8px;">·</span>~40 min of real work
+            </div>
+
+            <!-- why it's the lever -->
+            <div style="margin-top:16px; border-left:2px solid #5b9dff; padding:2px 0 2px 14px;">
+              <div style="font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:#5c6470; margin-bottom:6px;">Why this is the lever</div>
+              <p style="margin:0; font-size:14.5px; line-height:1.6; color:#cdd9e5;">
+                The only thing on today's list that moves money. Sending it closes a <span style="color:#3fb950; font-weight:600;">$4k/mo retainer</span> — the line between this month landing net-positive or not — and the window shuts the moment their board meets Thursday. Everything else can wait a day. This can't.
+              </p>
+            </div>
+
+            <!-- ladder: activity -> project -> goal -> vision -->
+            <div style="margin-top:20px;">
+              <div style="font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:#5c6470; margin-bottom:10px;">Where it ladders up to</div>
+              <div style="display:flex; align-items:stretch; gap:8px; flex-wrap:wrap;">
+                <div style="display:flex; flex-direction:column; gap:3px; padding:8px 11px; border-radius:8px; background:#0f141d; border:1px solid #1d2430;">
+                  <span style="font-size:9px; letter-spacing:.12em; color:#5c6470;">ACTIVITY</span>
+                  <span style="font-size:12.5px; color:#cdd9e5;">Send proposal</span>
+                </div>
+                <span style="align-self:center; color:#2a3342;">→</span>
+                <div style="display:flex; flex-direction:column; gap:3px; padding:8px 11px; border-radius:8px; background:#0f141d; border:1px solid #1d2430;">
+                  <span style="font-size:9px; letter-spacing:.12em; color:#5c6470;">PROJECT</span>
+                  <span style="font-size:12.5px; color:#e6edf3;">Meridian retainer</span>
+                </div>
+                <span style="align-self:center; color:#2a3342;">→</span>
+                <div style="display:flex; flex-direction:column; gap:3px; padding:8px 11px; border-radius:8px; background:#0f141d; border:1px solid #1d2430;">
+                  <span style="font-size:9px; letter-spacing:.12em; color:#5c6470;">GOAL</span>
+                  <span style="font-size:12.5px; color:#e6edf3;">$15k MRR by Q3</span>
+                </div>
+                <span style="align-self:center; color:#2a3342;">→</span>
+                <div style="display:flex; flex-direction:column; gap:3px; padding:8px 11px; border-radius:8px; background:rgba(91,157,255,0.08); border:1px solid rgba(91,157,255,0.3);">
+                  <span style="font-size:9px; letter-spacing:.12em; color:#5b9dff;">VISION</span>
+                  <span style="font-size:12.5px; color:#8fbcff; font-style:italic;">Autonomous revenue env</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- right: first 5 minutes -->
+          <div style="border:1px solid #1d2430; background:#0f141d; border-radius:11px; padding:16px 16px 14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <span style="font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">First 5 minutes</span>
+              <span style="font-size:11px; color:#5c6470;">tap to check</span>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <div onClick="{{ t0 }}" style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+                <span style="width:16px; height:16px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid {{ chkBd0 }}; background:{{ chkBg0 }}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;"><sc-if value="{{ tick0 }}" hint-placeholder-val="{{ false }}">✓</sc-if></span>
+                <span style="font-size:13px; line-height:1.45; color:{{ txtCol0 }}; text-decoration:{{ txtDec0 }};">Open the Meridian proposal doc — it's already scaffolded.</span>
+              </div>
+              <div onClick="{{ t1 }}" style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+                <span style="width:16px; height:16px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid {{ chkBd1 }}; background:{{ chkBg1 }}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;"><sc-if value="{{ tick1 }}" hint-placeholder-val="{{ false }}">✓</sc-if></span>
+                <span style="font-size:13px; line-height:1.45; color:{{ txtCol1 }}; text-decoration:{{ txtDec1 }};">Paste the scope from the discovery-call notes.</span>
+              </div>
+              <div onClick="{{ t2 }}" style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+                <span style="width:16px; height:16px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid {{ chkBd2 }}; background:{{ chkBg2 }}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;"><sc-if value="{{ tick2 }}" hint-placeholder-val="{{ false }}">✓</sc-if></span>
+                <span style="font-size:13px; line-height:1.45; color:{{ txtCol2 }}; text-decoration:{{ txtDec2 }};">Fill the price table: $4k/mo, 3-month minimum.</span>
+              </div>
+              <div onClick="{{ t3 }}" style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+                <span style="width:16px; height:16px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid {{ chkBd3 }}; background:{{ chkBg3 }}; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;"><sc-if value="{{ tick3 }}" hint-placeholder-val="{{ false }}">✓</sc-if></span>
+                <span style="font-size:13px; line-height:1.45; color:{{ txtCol3 }}; text-decoration:{{ txtDec3 }};">Send to Dana. Don't polish — ship a complete draft.</span>
+              </div>
+            </div>
+
+            <div style="margin-top:14px; padding-top:11px; border-top:1px solid #1d2430; font-size:12px; color:{{ progressCol }};">{{ progress }}</div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px; padding-top:13px; border-top:1px solid #1d2430; font-size:11.5px; color:#5c6470;">Ranked across every open obligation by importance × urgency × leverage. Recurring chores are excluded by design.</div>
+      </section>
+
+      <!-- ============ CALENDAR ============ -->
+      <section style="margin-bottom:30px; border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+          <div>
+            <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">Calendar</span>
+            <span style="font-size:13px; color:#cdd9e5; margin-left:10px;">Free until 11:00 — that's your window to send the proposal before anything interrupts.</span>
+          </div>
+          <span style="font-size:11px; color:#5c6470; white-space:nowrap;">3 today · 3 later</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:22px;">
+          <!-- today -->
+          <div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin-bottom:10px;">Today · Tue 23</div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <div style="display:flex; gap:12px; align-items:baseline; padding:8px 0; border-bottom:1px solid #12161e;">
+                <span style="font-size:12.5px; color:#8fbcff; width:48px; flex-shrink:0;">11:00</span>
+                <span style="width:8px; height:8px; border-radius:50%; background:#5b9dff; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px; color:#fff;">Meridian — proposal walkthrough</div>
+                  <div style="font-size:11.5px; color:#7d8590; margin-top:2px;">30 min · the one above lands here — send before this</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:baseline; padding:8px 0; border-bottom:1px solid #12161e;">
+                <span style="font-size:12.5px; color:#7d8590; width:48px; flex-shrink:0;">14:30</span>
+                <span style="width:8px; height:8px; border-radius:50%; background:#7d8590; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px; color:#e6edf3;">Studio standup</div>
+                  <div style="font-size:11.5px; color:#7d8590; margin-top:2px;">15 min · async-able if you're heads-down</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:baseline; padding:8px 0;">
+                <span style="font-size:12.5px; color:#7d8590; width:48px; flex-shrink:0;">16:00</span>
+                <span style="width:8px; height:8px; border-radius:50%; background:#5b9dff; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px; color:#e6edf3;">Harbor onboarding call</div>
+                  <div style="font-size:11.5px; color:#7d8590; margin-top:2px;">45 min · bring answers to their scope questions</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- later this week -->
+          <div style="border-left:1px solid #1d2430; padding-left:22px;">
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin-bottom:10px;">Later this week</div>
+            <div style="display:flex; flex-direction:column; gap:11px;">
+              <div style="display:flex; gap:10px; align-items:baseline;">
+                <span style="font-size:11px; color:#5c6470; width:54px; flex-shrink:0;">Thu 09:00</span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#3fb950; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0; font-size:12.5px; color:#cdd9e5;">Investor update</div>
+              </div>
+              <div style="display:flex; gap:10px; align-items:baseline;">
+                <span style="font-size:11px; color:#5c6470; width:54px; flex-shrink:0;">Thu 15:00</span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#5b9dff; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0;"><span style="font-size:12.5px; color:#cdd9e5;">Meridian board meets</span><span style="font-size:11px; color:#d29922; margin-left:6px;">— proposal deadline</span></div>
+              </div>
+              <div style="display:flex; gap:10px; align-items:baseline;">
+                <span style="font-size:11px; color:#5c6470; width:54px; flex-shrink:0;">Fri 11:00</span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#7d8590; flex-shrink:0; transform:translateY(1px);"></span>
+                <div style="flex:1; min-width:0; font-size:12.5px; color:#cdd9e5;">Contractor interview</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 2. THIS WEEK + AUTONOMY ============ -->
+      <div style="display:grid; grid-template-columns:1.7fr 1fr; gap:18px; margin-bottom:30px;">
+        <!-- this week -->
+        <section style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">This week</span>
+            <span style="font-size:11px; color:#5c6470;">declared Mon · current</span>
+          </div>
+          <p style="margin:0 0 16px; font-size:14px; line-height:1.55; color:#cdd9e5;">Convert the warm pipeline. <span style="color:#7d8590;">Proposals out the door; infra work stays parked until the cash lands.</span></p>
+
+          <div style="display:flex; height:10px; width:100%; border-radius:999px; overflow:hidden;">
+            <div style="width:45%; background:#5b9dff;" title="Client engagement 45%"></div>
+            <div style="width:25%; background:#8957e5;" title="Prospect engagement 25%"></div>
+            <div style="width:15%; background:#3fb950;" title="Finance 15%"></div>
+            <div style="width:10%; background:#d29922;" title="Infrastructure 10%"></div>
+            <div style="width:5%; background:#7d8590;" title="Admin 5%"></div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:13px;">
+            <span style="display:flex; align-items:center; gap:7px; font-size:12px; color:#7d8590;"><span style="width:8px; height:8px; border-radius:50%; background:#5b9dff;"></span>Client engagement <span style="color:#e6edf3;">45%</span></span>
+            <span style="display:flex; align-items:center; gap:7px; font-size:12px; color:#7d8590;"><span style="width:8px; height:8px; border-radius:50%; background:#8957e5;"></span>Prospect <span style="color:#e6edf3;">25%</span></span>
+            <span style="display:flex; align-items:center; gap:7px; font-size:12px; color:#7d8590;"><span style="width:8px; height:8px; border-radius:50%; background:#3fb950;"></span>Finance <span style="color:#e6edf3;">15%</span></span>
+            <span style="display:flex; align-items:center; gap:7px; font-size:12px; color:#7d8590;"><span style="width:8px; height:8px; border-radius:50%; background:#d29922;"></span>Infrastructure <span style="color:#e6edf3;">10%</span></span>
+            <span style="display:flex; align-items:center; gap:7px; font-size:12px; color:#7d8590;"><span style="width:8px; height:8px; border-radius:50%; background:#7d8590;"></span>Admin <span style="color:#e6edf3;">5%</span></span>
+          </div>
+        </section>
+
+        <!-- autonomy -->
+        <section style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px; display:flex; flex-direction:column;">
+          <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">Autonomy</span>
+          <div style="display:flex; align-items:baseline; gap:9px; margin-top:8px;">
+            <span style="font-size:42px; font-weight:700; color:#fff; line-height:1; letter-spacing:-0.02em;">62%</span>
+            <span style="font-size:12px; color:#3fb950;">▲ 7 this month</span>
+          </div>
+          <div style="margin-top:7px; font-size:12.5px; color:#7d8590;">18 of 29 repeating activities run without you.</div>
+          <div style="margin-top:auto; padding-top:14px; font-size:12px; line-height:1.5; color:#5c6470;">Most of your recurring work now happens whether or not you open this page. The 11 that still need you are the next things worth automating.</div>
+        </section>
+      </div>
+
+      <!-- ============ 3. SYSTEMS ============ -->
+      <section style="margin-bottom:30px;">
+        <div style="margin-bottom:14px;">
+          <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">Systems · what's running for you</span>
+          <p style="margin:6px 0 0; font-size:13.5px; color:#cdd9e5;">Whatever's flagged <span style="color:#d29922;">needs you</span>. Everything else is off your plate — that's the point.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+
+          <!-- Pipeline & proposals -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:16px 18px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px;">
+              <div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">Pipeline &amp; proposals</div>
+                <div style="font-size:11px; color:#5c6470; margin-top:2px;">→ $15k MRR by Q3</div>
+              </div>
+              <span style="font-size:11px; color:#7d8590; white-space:nowrap;"><span style="color:#d29922;">1 needs you</span> · 4 don't</span>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#d29922; font-weight:700; margin-bottom:8px;">Needs you</div>
+            <div style="border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.06); border-radius:8px; padding:10px 12px;">
+              <div style="font-size:13px; color:#fff;">Send proposals to qualified leads</div>
+              <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">lands in your review queue · manual today, aiming for half-automated</div>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin:14px 0 8px;">Runs without you</div>
+            <sc-if value="{{ showFull }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Capture inbound from the site form</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Enrich company + contact data</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Book discovery calls</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Send the first-touch reply</span></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCounts }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#3fb950;">✓ 4 activities, all green</div>
+            </sc-if>
+          </div>
+
+          <!-- Billing & cash -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:16px 18px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px;">
+              <div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">Billing &amp; cash</div>
+                <div style="font-size:11px; color:#5c6470; margin-top:2px;">→ Stay net-positive every month</div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; white-space:nowrap;">fully hands-off</span>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin-bottom:8px;">Needs you</div>
+            <div style="border:1px dashed #1d2430; border-radius:8px; padding:10px 12px; font-size:12.5px; color:#7d8590;">Nothing — this whole system runs without you.</div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin:14px 0 8px;">Runs without you</div>
+            <sc-if value="{{ showFull }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Generate monthly invoices</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Chase overdue payments</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Reconcile Stripe deposits</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Send receipts</span></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCounts }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#3fb950;">✓ 4 activities, all green</div>
+            </sc-if>
+          </div>
+
+          <!-- Content & audience -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:16px 18px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px;">
+              <div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">Content &amp; audience</div>
+                <div style="font-size:11px; color:#5c6470; margin-top:2px;">→ Build an inbound pipeline</div>
+              </div>
+              <span style="font-size:11px; color:#7d8590; white-space:nowrap;"><span style="color:#d29922;">1 needs you</span> · 3 don't</span>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#d29922; font-weight:700; margin-bottom:8px;">Needs you</div>
+            <div style="border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.06); border-radius:8px; padding:10px 12px;">
+              <div style="font-size:13px; color:#fff;">Approve the weekly essay before it ships</div>
+              <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">comes to you by email · 2 min to approve</div>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin:14px 0 8px;">Runs without you</div>
+            <sc-if value="{{ showFull }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Draft the essay from your voice notes</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Schedule the social posts</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Repurpose it into threads</span></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCounts }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#3fb950;">✓ 3 activities, all green</div>
+            </sc-if>
+          </div>
+
+          <!-- Client delivery -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:16px 18px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px;">
+              <div>
+                <div style="font-size:15px; font-weight:600; color:#fff;">Client delivery</div>
+                <div style="font-size:11px; color:#5c6470; margin-top:2px;">→ Keep every retainer renewing</div>
+              </div>
+              <span style="font-size:11px; color:#7d8590; white-space:nowrap;"><span style="color:#d29922;">2 need you</span> · 3 don't</span>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#d29922; font-weight:700; margin-bottom:8px;">Needs you</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.06); border-radius:8px; padding:10px 12px;">
+                <div style="font-size:13px; color:#fff;">Review Meridian's weekly report before send</div>
+                <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">lands in your review queue</div>
+              </div>
+              <div style="border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.06); border-radius:8px; padding:10px 12px;">
+                <div style="font-size:13px; color:#fff;">Reply to threads flagged urgent</div>
+                <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">pings you · only the urgent ones</div>
+              </div>
+            </div>
+            <div style="font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#5c6470; font-weight:700; margin:14px 0 8px;">Runs without you</div>
+            <sc-if value="{{ showFull }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Compile weekly client reports</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Log delivery hours</span></div>
+                <div style="display:flex; gap:8px; font-size:12.5px;"><span style="color:#3fb950;">✓</span><span style="color:#b6c2cf;">Send daily standups</span></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCounts }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#3fb950;">✓ 3 activities, all green</div>
+            </sc-if>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ 4. DO FIRST + ACTIVE PROJECTS ============ -->
+      <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:24px; margin-bottom:30px;">
+        <!-- do first -->
+        <section>
+          <div style="margin-bottom:12px;">
+            <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">Then, in order</span>
+            <span style="font-size:11px; color:#5c6470; margin-left:8px;">important + urgent · after the one above</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; align-items:flex-start; gap:11px; border:1px solid #1d2430; background:#151a23; border-radius:9px; padding:12px 14px;">
+              <span style="font-size:12px; color:#5c6470; width:14px; margin-top:1px;">2</span>
+              <div>
+                <div style="font-size:13.5px; color:#e6edf3;">Reply to Harbor's scope questions</div>
+                <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">Harbor onboarding · <span style="color:#d29922;">due today</span></div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:11px; border:1px solid #1d2430; background:#151a23; border-radius:9px; padding:12px 14px;">
+              <span style="font-size:12px; color:#5c6470; width:14px; margin-top:1px;">3</span>
+              <div>
+                <div style="font-size:13.5px; color:#e6edf3;">Sign + return the contractor NDA</div>
+                <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">Studio ops · <span style="color:#d29922;">due today</span></div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:11px; border:1px solid #1d2430; background:#151a23; border-radius:9px; padding:12px 14px;">
+              <span style="font-size:12px; color:#5c6470; width:14px; margin-top:1px;">4</span>
+              <div>
+                <div style="font-size:13.5px; color:#e6edf3;">Confirm the Thursday investor-update slot</div>
+                <div style="font-size:11.5px; color:#7d8590; margin-top:3px;">Q3 fundraise · due tomorrow</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- active projects -->
+        <section>
+          <div style="margin-bottom:12px;">
+            <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">Active projects</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div style="border:1px solid #1d2430; background:#151a23; border-radius:10px; padding:13px 14px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:#5b9dff;"></span>
+                <span style="font-size:13.5px; color:#fff; font-weight:500;">Meridian retainer</span>
+                <span style="font-size:11px; color:#5c6470; margin-left:auto;">3 open</span>
+              </div>
+              <sc-if value="{{ drill }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:9px; padding-top:9px; border-top:1px solid #1d2430; display:flex; flex-direction:column; gap:5px;">
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#d29922; margin-top:6px; flex-shrink:0;"></span><span style="color:#cdd9e5;">Send the proposal</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Schedule the kickoff call</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Draft SOW v2</span></div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="border:1px solid #1d2430; background:#151a23; border-radius:10px; padding:13px 14px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:#5b9dff;"></span>
+                <span style="font-size:13.5px; color:#fff; font-weight:500;">Harbor onboarding</span>
+                <span style="font-size:11px; color:#5c6470; margin-left:auto;">3 open</span>
+              </div>
+              <sc-if value="{{ drill }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:9px; padding-top:9px; border-top:1px solid #1d2430; display:flex; flex-direction:column; gap:5px;">
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#d29922; margin-top:6px; flex-shrink:0;"></span><span style="color:#cdd9e5;">Answer scope questions</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Set up the shared workspace</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Book the week-1 check-in</span></div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="border:1px solid #1d2430; background:#151a23; border-radius:10px; padding:13px 14px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:#d29922;"></span>
+                <span style="font-size:13.5px; color:#fff; font-weight:500;">Studio automation v2</span>
+                <span style="font-size:11px; color:#5c6470; margin-left:auto;">4 open</span>
+              </div>
+              <sc-if value="{{ drill }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:9px; padding-top:9px; border-top:1px solid #1d2430; display:flex; flex-direction:column; gap:5px;">
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Decompose the delivery system</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Wire the triage inbox</span></div>
+                  <div style="font-size:11px; color:#5c6470; padding-left:13px;">+2 more</div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="border:1px solid #1d2430; background:#151a23; border-radius:10px; padding:13px 14px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:#3fb950;"></span>
+                <span style="font-size:13.5px; color:#fff; font-weight:500;">Q3 fundraise prep</span>
+                <span style="font-size:11px; color:#5c6470; margin-left:auto;">2 open</span>
+              </div>
+              <sc-if value="{{ drill }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:9px; padding-top:9px; border-top:1px solid #1d2430; display:flex; flex-direction:column; gap:5px;">
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#d29922; margin-top:6px; flex-shrink:0;"></span><span style="color:#cdd9e5;">Confirm the investor slot</span></div>
+                  <div style="display:flex; gap:8px; font-size:12px;"><span style="width:5px; height:5px; border-radius:50%; background:#2a3342; margin-top:6px; flex-shrink:0;"></span><span style="color:#7d8590;">Update the metrics deck</span></div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ============ 5. WHAT THIS SURFACE DOESN'T KNOW ============ -->
+      <section style="border:1px solid #1d2430; background:rgba(21,26,35,0.5); border-radius:12px; padding:16px 20px;">
+        <div style="display:flex; align-items:center; gap:9px; margin-bottom:12px;">
+          <span style="font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:#7d8590; font-weight:600;">What this surface doesn't know</span>
+          <span style="font-size:11px; color:#5c6470;">— trust comes from the gaps, not the polish</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+          <div style="border-left:2px solid #2a3342; padding-left:12px;">
+            <div style="font-size:20px; font-weight:700; color:#d29922;">12</div>
+            <div style="font-size:12px; color:#7d8590; margin-top:3px; line-height:1.45;">emails un-triaged. The inbox isn't wired in, so obligations sitting in mail aren't counted here.</div>
+          </div>
+          <div style="border-left:2px solid #2a3342; padding-left:12px;">
+            <div style="font-size:20px; font-weight:700; color:#d29922;">5</div>
+            <div style="font-size:12px; color:#7d8590; margin-top:3px; line-height:1.45;">tasks with no project. Unlinked, so they never make it into the ranking above.</div>
+          </div>
+          <div style="border-left:2px solid #2a3342; padding-left:12px;">
+            <div style="font-size:20px; font-weight:700; color:#d29922;">11/15</div>
+            <div style="font-size:12px; color:#7d8590; margin-top:3px; line-height:1.45;">systems not yet decomposed. Their repeating work is still on your plate — and may be showing up as one-off tasks.</div>
+          </div>
+        </div>
+      </section>
+
+      <div style="margin-top:26px; text-align:center; font-size:11px; color:#2a3342;">live · canon_engine · tasks · projects · goals · systems · activities · weekly intent</div>
+      </sc-if>
+
+      <!-- ============ PROJECTS VIEW ============ -->
+      <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:20px;">
+          <div>
+            <h1 style="margin:0; font-size:30px; font-weight:600; color:#fff; letter-spacing:-0.01em;">Projects</h1>
+            <div style="margin-top:8px; font-size:14px; color:#7d8590;">Active work, grouped by project — what each is for, what 'done' looks like, and the next move.</div>
+          </div>
+          <div style="text-align:right; flex-shrink:0; font-size:12px; color:#5c6470;">6 projects · 18 open tasks</div>
+        </div>
+
+        <!-- area filter -->
+        <div style="display:flex; gap:7px; flex-wrap:wrap; margin-bottom:18px;">
+          <div onClick="{{ chipSet0 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg0 }}; color:{{ chipCol0 }}; border:1px solid {{ chipBd0 }};">All</div>
+          <div onClick="{{ chipSet1 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg1 }}; color:{{ chipCol1 }}; border:1px solid {{ chipBd1 }};">Client</div>
+          <div onClick="{{ chipSet2 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg2 }}; color:{{ chipCol2 }}; border:1px solid {{ chipBd2 }};">Prospect</div>
+          <div onClick="{{ chipSet3 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg3 }}; color:{{ chipCol3 }}; border:1px solid {{ chipBd3 }};">Infra</div>
+          <div onClick="{{ chipSet4 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg4 }}; color:{{ chipCol4 }}; border:1px solid {{ chipBd4 }};">Finance</div>
+          <div onClick="{{ chipSet5 }}" style="cursor:pointer; font-size:12px; border-radius:999px; padding:5px 13px; background:{{ chipBg5 }}; color:{{ chipCol5 }}; border:1px solid {{ chipBd5 }};">Admin</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+
+          <!-- P1 Meridian -->
+          <sc-if value="{{ show_p1 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#5b9dff; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#fff;">Meridian retainer</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ $15k MRR by Q3</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">active</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — signed retainer, kickoff booked.</div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:10px; border-left:2px solid #5b9dff; background:rgba(91,157,255,0.05); padding:8px 12px; border-radius:0 8px 8px 0;">
+              <span style="font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Next</span>
+              <span style="font-size:13px; color:#e6edf3;">Send the proposal</span>
+            </div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; background:#3fb950; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;">✓</span>
+                <span style="font-size:13px; color:#5c6470; text-decoration:line-through;">Write discovery-call notes</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #d29922;"></span>
+                <div style="flex:1; min-width:0;"><span style="font-size:13px; color:#fff;">Send the proposal</span><span style="font-size:10px; color:#d29922; border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.08); border-radius:4px; padding:1px 6px; margin-left:8px; letter-spacing:.04em;">DO FIRST</span><span style="font-size:11.5px; color:#d29922; margin-left:8px;">due Thu</span></div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Schedule the kickoff call</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Draft SOW v2</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:25%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">1 / 4 done · 3 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- P2 Harbor -->
+          <sc-if value="{{ show_p2 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#5b9dff; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#fff;">Harbor onboarding</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ Keep every retainer renewing</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">active</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — Harbor live in their workspace, week-1 check-in done.</div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:10px; border-left:2px solid #5b9dff; background:rgba(91,157,255,0.05); padding:8px 12px; border-radius:0 8px 8px 0;">
+              <span style="font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Next</span>
+              <span style="font-size:13px; color:#e6edf3;">Answer scope questions</span>
+            </div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; background:#3fb950; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;">✓</span>
+                <span style="font-size:13px; color:#5c6470; text-decoration:line-through;">Send the welcome packet</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #d29922;"></span>
+                <div style="flex:1; min-width:0;"><span style="font-size:13px; color:#fff;">Answer scope questions</span><span style="font-size:10px; color:#d29922; border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.08); border-radius:4px; padding:1px 6px; margin-left:8px; letter-spacing:.04em;">DO FIRST</span><span style="font-size:11.5px; color:#d29922; margin-left:8px;">due today</span></div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Set up the shared workspace</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Book the week-1 check-in</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:25%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">1 / 4 done · 3 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- P3 Studio automation -->
+          <sc-if value="{{ show_p3 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#d29922; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#fff;">Studio automation v2</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ Run a week without me</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">active</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — delivery + triage systems decomposed and ensured.</div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:10px; border-left:2px solid #5b9dff; background:rgba(91,157,255,0.05); padding:8px 12px; border-radius:0 8px 8px 0;">
+              <span style="font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Next</span>
+              <span style="font-size:13px; color:#e6edf3;">Decompose the delivery system</span>
+            </div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; background:#3fb950; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;">✓</span>
+                <span style="font-size:13px; color:#5c6470; text-decoration:line-through;">Audit current automations</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Decompose the delivery system</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Wire the triage inbox</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Map the manual activities</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Write the context contracts</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:20%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">1 / 5 done · 4 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- P4 Fundraise -->
+          <sc-if value="{{ show_p4 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#3fb950; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#fff;">Q3 fundraise prep</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ Extend runway to 18 months</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">active</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — updated deck + metrics, investor slot confirmed.</div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:10px; border-left:2px solid #5b9dff; background:rgba(91,157,255,0.05); padding:8px 12px; border-radius:0 8px 8px 0;">
+              <span style="font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Next</span>
+              <span style="font-size:13px; color:#e6edf3;">Confirm the investor slot</span>
+            </div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; background:#3fb950; display:flex; align-items:center; justify-content:center; font-size:10px; color:#0b0e14;">✓</span>
+                <span style="font-size:13px; color:#5c6470; text-decoration:line-through;">Pull Q2 financials</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #d29922;"></span>
+                <div style="flex:1; min-width:0;"><span style="font-size:13px; color:#fff;">Confirm the investor slot</span><span style="font-size:10px; color:#d29922; border:1px solid rgba(210,153,34,0.3); background:rgba(210,153,34,0.08); border-radius:4px; padding:1px 6px; margin-left:8px; letter-spacing:.04em;">DO FIRST</span><span style="font-size:11.5px; color:#d29922; margin-left:8px;">due tomorrow</span></div>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Update the metrics deck</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:33%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">1 / 3 done · 2 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- P5 Brand & site -->
+          <sc-if value="{{ show_p5 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#8957e5; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#fff;">Brand &amp; site refresh</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ Build an inbound pipeline</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">active</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — new positioning live on the site.</div>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:10px; border-left:2px solid #5b9dff; background:rgba(91,157,255,0.05); padding:8px 12px; border-radius:0 8px 8px 0;">
+              <span style="font-size:9px; letter-spacing:.13em; text-transform:uppercase; color:#5b9dff; font-weight:700;">Next</span>
+              <span style="font-size:13px; color:#e6edf3;">Finalize the positioning copy</span>
+            </div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Finalize the positioning copy</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Rework the homepage hero</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Ship the case-study page</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:4%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">0 / 3 done · 3 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- P6 Taxes (paused) -->
+          <sc-if value="{{ show_p6 }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px; opacity:0.72;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+              <div style="display:flex; gap:11px; align-items:flex-start;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#7d8590; margin-top:5px; flex-shrink:0;"></span>
+                <div>
+                  <div style="font-size:16px; font-weight:600; color:#e6edf3;">2025 taxes</div>
+                  <div style="font-size:11px; color:#5c6470; margin-top:3px;">→ Stay compliant</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#7d8590; background:#10141c; border:1px solid #1d2430; border-radius:999px; padding:3px 10px; white-space:nowrap;">paused</span>
+            </div>
+            <div style="margin-top:11px; font-size:12.5px; color:#7d8590;"><span style="color:#5c6470;">Done when</span> — filed, no penalties owed.</div>
+            <div style="margin-top:14px; padding-top:4px; border-top:1px solid #1d2430;">
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Send docs to the accountant</span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:10px; padding:6px 0;">
+                <span style="width:15px; height:15px; flex-shrink:0; margin-top:1px; border-radius:4px; border:1px solid #2a3342;"></span>
+                <span style="font-size:13px; color:#cdd9e5;">Reconcile expenses</span>
+              </div>
+            </div>
+            <div style="margin-top:12px; padding-top:11px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:5px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:0%; height:100%; background:#3fb950;"></div></div>
+              <span style="font-size:11.5px; color:#7d8590; white-space:nowrap;">parked until April · 2 open</span>
+            </div>
+          </div>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+      <!-- ============ GOALS VIEW ============ -->
+      <sc-if value="{{ isGoals }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:20px;">
+          <div>
+            <h1 style="margin:0; font-size:30px; font-weight:600; color:#fff; letter-spacing:-0.01em;">Goals</h1>
+            <div style="margin-top:8px; font-size:14px; color:#7d8590;">Ranked by leverage on the vision. Each one says why it exists and whether it's on pace.</div>
+          </div>
+          <div style="text-align:right; flex-shrink:0; font-size:12px; color:#5c6470;">5 goals · <span style="color:#3fb950;">3 on track</span> · <span style="color:#d29922;">1 at risk</span> · <span style="color:#f85149;">1 behind</span></div>
+        </div>
+
+        <!-- vision apex -->
+        <div style="margin-bottom:22px; border:1px solid rgba(91,157,255,0.4); border-radius:14px; background:linear-gradient(180deg,#161d29 0%,#141a24 100%); padding:20px 24px;">
+          <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#5b9dff; font-weight:700;">The vision · what every goal ladders up to</div>
+          <div style="font-size:23px; font-weight:600; color:#fff; margin-top:9px; letter-spacing:-0.01em;">Autonomous revenue-generating environment</div>
+          <div style="font-size:13.5px; line-height:1.55; color:#cdd9e5; margin-top:9px; max-width:62ch;">The studio earns while the systems — not you — do the work. Each goal below is one rung closer to a business that runs without its founder in the loop.</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(91,157,255,0.18);">
+            <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">62%</span> autonomous</span>
+            <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">$9.2k</span> MRR</span>
+            <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">11 mo</span> runway</span>
+            <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">3</span> retained clients</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px;">
+
+          <!-- G1 -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+              <div style="display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:13px; color:#2a3342; font-weight:700; margin-top:4px;">01</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#5b9dff; flex-shrink:0;"></span>
+                    <span style="font-size:17px; font-weight:600; color:#fff;">$15k MRR in retainers by Q3</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5c6470; margin-top:4px;">Client engagement · horizon Q3 2026</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">on track</span>
+            </div>
+            <p style="margin:13px 0 0; font-size:13.5px; line-height:1.55; color:#cdd9e5;">Retainers are the only revenue that compounds without re-selling. Three at ~$5k/mo covers the studio and buys the time to automate everything else.</p>
+            <div style="margin-top:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;">
+                <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#5c6470;">Toward target</span>
+                <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">$9.2k</span> now → $15k</span>
+              </div>
+              <div style="height:6px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:61%; height:100%; background:#3fb950;"></div></div>
+            </div>
+            <div style="margin-top:15px; padding-top:13px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:11px; color:#5c6470;">Driven by</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#5b9dff;"></span>Meridian retainer</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#5b9dff;"></span>Harbor onboarding</span>
+            </div>
+          </div>
+
+          <!-- G2 -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+              <div style="display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:13px; color:#2a3342; font-weight:700; margin-top:4px;">02</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#d29922; flex-shrink:0;"></span>
+                    <span style="font-size:17px; font-weight:600; color:#fff;">Run the studio a week without me</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5c6470; margin-top:4px;">Infrastructure · horizon Dec 2026</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#d29922; background:rgba(210,153,34,0.1); border:1px solid rgba(210,153,34,0.25); border-radius:999px; padding:3px 10px; white-space:nowrap;">at risk</span>
+            </div>
+            <p style="margin:13px 0 0; font-size:13.5px; line-height:1.55; color:#cdd9e5;">The whole point. If a week off doesn't break anything, the system is real — and every manual task left is a single point of failure that runs through you.</p>
+            <div style="margin-top:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;">
+                <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#5c6470;">Toward target</span>
+                <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">62%</span> now → 85% autonomous</span>
+              </div>
+              <div style="height:6px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:62%; height:100%; background:#d29922;"></div></div>
+            </div>
+            <div style="margin-top:15px; padding-top:13px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:11px; color:#5c6470;">Driven by</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#d29922;"></span>Studio automation v2</span>
+            </div>
+          </div>
+
+          <!-- G3 -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+              <div style="display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:13px; color:#2a3342; font-weight:700; margin-top:4px;">03</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#3fb950; flex-shrink:0;"></span>
+                    <span style="font-size:17px; font-weight:600; color:#fff;">Extend runway to 18 months</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5c6470; margin-top:4px;">Finance · horizon Q3 2026</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">on track</span>
+            </div>
+            <p style="margin:13px 0 0; font-size:13.5px; line-height:1.55; color:#cdd9e5;">Runway is optionality. Eighteen months means the next big calls get made from conviction, not from cash panic.</p>
+            <div style="margin-top:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;">
+                <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#5c6470;">Toward target</span>
+                <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">11 mo</span> now → 18 mo</span>
+              </div>
+              <div style="height:6px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:61%; height:100%; background:#3fb950;"></div></div>
+            </div>
+            <div style="margin-top:15px; padding-top:13px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:11px; color:#5c6470;">Driven by</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#3fb950;"></span>Q3 fundraise prep</span>
+            </div>
+          </div>
+
+          <!-- G4 -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+              <div style="display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:13px; color:#2a3342; font-weight:700; margin-top:4px;">04</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#8957e5; flex-shrink:0;"></span>
+                    <span style="font-size:17px; font-weight:600; color:#fff;">Build a self-feeding inbound pipeline</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5c6470; margin-top:4px;">Prospect engagement · horizon Q4 2026</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#f85149; background:rgba(248,81,73,0.1); border:1px solid rgba(248,81,73,0.25); border-radius:999px; padding:3px 10px; white-space:nowrap;">behind</span>
+            </div>
+            <p style="margin:13px 0 0; font-size:13.5px; line-height:1.55; color:#cdd9e5;">Outbound doesn't scale past you. Inbound that the content system feeds is how the pipeline fills while you sleep — and right now it's the weakest link in the vision.</p>
+            <div style="margin-top:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;">
+                <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#5c6470;">Toward target</span>
+                <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">7</span> leads/mo now → 20/mo</span>
+              </div>
+              <div style="height:6px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:35%; height:100%; background:#f85149;"></div></div>
+            </div>
+            <div style="margin-top:15px; padding-top:13px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:11px; color:#5c6470;">Driven by</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#8957e5;"></span>Brand &amp; site refresh</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#8957e5;"></span>Content &amp; audience</span>
+            </div>
+          </div>
+
+          <!-- G5 -->
+          <div style="border:1px solid #1d2430; background:#151a23; border-radius:12px; padding:18px 20px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px;">
+              <div style="display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:13px; color:#2a3342; font-weight:700; margin-top:4px;">05</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:9px;">
+                    <span style="width:9px; height:9px; border-radius:50%; background:#5b9dff; flex-shrink:0;"></span>
+                    <span style="font-size:17px; font-weight:600; color:#fff;">Keep every retainer renewing</span>
+                  </div>
+                  <div style="font-size:11.5px; color:#5c6470; margin-top:4px;">Client engagement · horizon ongoing</div>
+                </div>
+              </div>
+              <span style="font-size:11px; color:#3fb950; background:rgba(63,185,80,0.1); border:1px solid rgba(63,185,80,0.2); border-radius:999px; padding:3px 10px; white-space:nowrap;">on track</span>
+            </div>
+            <p style="margin:13px 0 0; font-size:13.5px; line-height:1.55; color:#cdd9e5;">It's cheaper to keep a client than to land one. Renewals are the base the MRR goal compounds on — churn quietly undoes everything above it.</p>
+            <div style="margin-top:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:7px;">
+                <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#5c6470;">Toward target</span>
+                <span style="font-size:12.5px; color:#7d8590;"><span style="color:#fff; font-weight:600;">3 / 3</span> retained · 0 churn</span>
+              </div>
+              <div style="height:6px; border-radius:999px; background:#10141c; overflow:hidden;"><div style="width:100%; height:100%; background:#3fb950;"></div></div>
+            </div>
+            <div style="margin-top:15px; padding-top:13px; border-top:1px solid #1d2430; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span style="font-size:11px; color:#5c6470;">Driven by</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#5b9dff;"></span>Client delivery</span>
+              <span style="display:inline-flex; align-items:center; gap:6px; border:1px solid #1d2430; background:#10141c; border-radius:6px; padding:3px 10px; font-size:11.5px; color:#cdd9e5;"><span style="width:6px; height:6px; border-radius:50%; background:#5b9dff;"></span>Harbor onboarding</span>
+            </div>
+          </div>
+
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1280, &quot;height&quot;: 1500 },
+  &quot;reassuranceDetail&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;full&quot;, &quot;counts&quot;], &quot;default&quot;: &quot;full&quot;, &quot;tsType&quot;: &quot;'full' | 'counts'&quot; },
+  &quot;projectDrill&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  state = { done: [false, false, false, false], tab: "focus", areaFilter: "all" };
+
+  toggle(i) {
+    this.setState((s) => {
+      const done = s.done.slice();
+      done[i] = !done[i];
+      return { done };
+    });
+  }
+
+  renderVals() {
+    const done = this.state.done;
+    const ok = "#3fb950";
+    const faint = "#5c6470";
+    const text2 = "#cdd9e5";
+    const v = {};
+    done.forEach((d, i) => {
+      v["t" + i] = () => this.toggle(i);
+      v["tick" + i] = d;
+      v["chkBg" + i] = d ? ok : "transparent";
+      v["chkBd" + i] = d ? ok : "#2a3342";
+      v["txtCol" + i] = d ? faint : text2;
+      v["txtDec" + i] = d ? "line-through" : "none";
+    });
+    const n = done.filter(Boolean).length;
+    v.progress =
+      n === 0
+        ? "Not started — do the first line, the rest follows."
+        : n === 4
+        ? "Draft's complete. Send it before their board meets."
+        : n + " of 4 done — keep going.";
+    v.progressCol = n === 4 ? ok : "#7d8590";
+
+    const tab = this.state.tab || "focus";
+    v.isFocus = tab === "focus";
+    v.isProjects = tab === "projects";
+    v.setFocus = () => this.setState({ tab: "focus" });
+    v.setProjects = () => this.setState({ tab: "projects" });
+    v.focusTabBg = v.isFocus ? "#1d2430" : "transparent";
+    v.focusTabCol = v.isFocus ? "#fff" : "#7d8590";
+    v.projTabBg = v.isProjects ? "#1d2430" : "transparent";
+    v.projTabCol = v.isProjects ? "#fff" : "#7d8590";
+    v.isGoals = tab === "goals";
+    v.setGoals = () => this.setState({ tab: "goals" });
+    v.goalsTabBg = v.isGoals ? "#1d2430" : "transparent";
+    v.goalsTabCol = v.isGoals ? "#fff" : "#7d8590";
+
+    const area = this.state.areaFilter || "all";
+    const projAreas = { p1: "Client engagement", p2: "Client engagement", p3: "Infrastructure", p4: "Finance", p5: "Prospect engagement", p6: "Admin" };
+    Object.keys(projAreas).forEach((k) => {
+      v["show_" + k] = area === "all" || area === projAreas[k];
+    });
+    const chips = [["all", "All"], ["Client engagement", "Client"], ["Prospect engagement", "Prospect"], ["Infrastructure", "Infra"], ["Finance", "Finance"], ["Admin", "Admin"]];
+    chips.forEach((c, i) => {
+      v["chipSet" + i] = () => this.setState({ areaFilter: c[0] });
+      const on = area === c[0];
+      v["chipBg" + i] = on ? "#1d2430" : "transparent";
+      v["chipCol" + i] = on ? "#fff" : "#7d8590";
+      v["chipBd" + i] = on ? "#2a3342" : "#1d2430";
+    });
+
+    const detail = this.props.reassuranceDetail ?? "full";
+    v.showFull = detail === "full";
+    v.showCounts = detail !== "full";
+    v.drill = this.props.projectDrill ?? true;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

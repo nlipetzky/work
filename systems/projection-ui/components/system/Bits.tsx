@@ -20,6 +20,9 @@ const LIFE_TONE: Record<string, string> = {
   defined: "bg-ink-800 text-muted", designed: "bg-sky-900/60 text-sky-300",
   architected: "bg-sky-900/60 text-sky-300", engineering: "bg-amber-900/60 text-amber-300",
   operating: "bg-emerald-900/60 text-emerald-300",
+  // evidenced rungs (System State) — color-honest by how built it really is
+  stub: "bg-red-900/60 text-red-300", emerging: "bg-ink-800 text-muted",
+  building: "bg-amber-900/60 text-amber-300", beta: "bg-sky-900/60 text-sky-300",
 };
 
 export function LifecycleChip({ value }: { value: string }) {
