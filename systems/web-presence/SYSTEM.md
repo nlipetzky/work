@@ -30,7 +30,9 @@ plus a shared component kit that carries portfolio-wide conversion learnings.
 - `capabilities/agents/<vega>` — creative-director builder persona (reused).
 - canon-engine (Supabase) — scale path for the optimization pattern ledger
   (experiment results), once volume warrants. v1 ledger is markdown in this folder.
-- Vercel — hosting + per-site deploy.
+- Vercel — hosting; git-connected to `github.com/nlipetzky/web-portfolio` (project
+  `web-portfolio`, root dir `apps/cipo`), push `main` → deploy. Code repo is the
+  system's build output, kept outside the work boundary.
 
 ## Depended on by
 

@@ -66,10 +66,12 @@ v1: a markdown ledger in this folder + kit changelog. Scale path: a canon table
 
 - **Doctrine** → `systems/web-presence/` (this folder): CLAUDE.md, SYSTEM.md,
   runbooks, scaffold, the pattern ledger, the projection-surface spec.
-- **Code** → monorepo under `~/code/` (working name `web-portfolio/`):
-  `packages/kit` (shared themeable components) + `apps/<venture>` (one thin app per
-  site). pnpm/Turborepo workspace. CIPO's provisional `~/code/konstellation-cipo-site/`
-  folds in as `apps/cipo`.
+- **Code** → `github.com/nlipetzky/web-portfolio` (private), cloned at
+  `~/code/web-portfolio`: `packages/kit` (shared themeable components) + `apps/<venture>`
+  (one thin app per site). pnpm/Turborepo. **Git-connected to Vercel** (project
+  `web-portfolio`, root dir `apps/cipo`): push `main` → Vercel builds + deploys. First
+  tenant `apps/cipo` (Shadow CIPO). The old `~/code/konstellation-cipo-site/` scaffold
+  is superseded by this repo (not migrated — it was an empty stub).
 - **Per-venture spec + theme** → stays in the venture folder:
   `accounts/ventures/<name>/context/website-spec.md` (skill output) and a
   `context/style-guide.md` theme.
