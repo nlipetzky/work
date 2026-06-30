@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{background:#FAF8F3;}
+    button{font-family:inherit;}
+    input,textarea{font-family:inherit;}
+    ::selection{background:rgba(161,98,7,0.16);}
+    input::placeholder{color:#9AA6B4;}
+  </style>
+</helmet>
+<div ref="{{ rootRef }}" style="--accent:{{ accent }};--accent-dark:{{ accentDark }};--accent-strong:{{ accentStrong }};--paper:{{ paper }};min-height:100vh;background:var(--paper,#FAF8F3);color:#0F172A;font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;">
+
+  <sc-if value="{{ showDraft }}" hint-placeholder-val="{{ true }}">
+    <div style="background:#160F05;border-bottom:1px solid rgba(207,162,74,0.22);">
+      <div style="max-width:1140px;margin:0 auto;padding:8px clamp(20px,5vw,40px);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:7px;flex:none;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent-dark,#CFA24A);display:inline-block;"></span>Draft</span>
+        <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:0.02em;color:#B6AB92;">Staging preview. Copy pending Will sign-off; pricing and visual identity not yet approved.</span>
+      </div>
+    </div>
+  </sc-if>
+
+  <nav style="position:sticky;top:0;z-index:60;background:#0B1220;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="max-width:1140px;margin:0 auto;padding:10px clamp(20px,5vw,40px);min-height:66px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;">
+      <button type="button" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:12px;background:none;border:none;padding:0;cursor:pointer;color:#F4F1EA;text-align:left;white-space:nowrap;">
+        <span aria-hidden="true" style="display:inline-flex;flex:none;width:22px;height:22px;border-radius:6px;background:linear-gradient(122deg,#F4F1EA 0 47%,#172339 53% 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.18);position:relative;overflow:hidden;"><span style="position:absolute;top:-12%;bottom:-12%;left:50%;width:1.5px;background:var(--accent-dark,#CFA24A);transform:translateX(-50%) rotate(32deg);"></span></span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:18px;letter-spacing:0.01em;">Shadow CIPO</span>
+      </button>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button type="button" onClick="{{ goApproach }}" style="background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:#C4CCD6;padding:10px 14px;border-radius:7px;white-space:nowrap;transition:color .15s ease;" style-hover="color:#FFFFFF;">Approach</button>
+        <button type="button" onClick="{{ goTeardown }}" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent,#A16207);color:#FFFFFF;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;line-height:1;padding:10px 17px;border:none;border-radius:7px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 4px rgba(15,23,42,0.16);transition:background .18s ease,transform .18s ease,box-shadow .18s ease;" style-hover="background:var(--accent-strong,#855104);transform:translateY(-1px);box-shadow:0 8px 18px -8px rgba(15,23,42,0.45);">Request a teardown</button>
+      </div>
+    </div>
+  </nav>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <header style="position:relative;overflow:hidden;background:#0B1220;color:#F4F1EA;">
+      <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(108% 72% at 84% -10%, rgba(207,162,74,0.11), rgba(207,162,74,0) 56%);pointer-events:none;"></div>
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg, transparent, rgba(207,162,74,0.4), transparent);"></div>
+      <div style="position:relative;max-width:1140px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,40px) clamp(58px,8vw,96px);">
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:clamp(38px,6vw,62px);">
+          <span aria-hidden="true" style="display:inline-flex;flex:none;width:27px;height:27px;border-radius:7px;background:linear-gradient(122deg,#F4F1EA 0 47%,#172339 53% 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.18);position:relative;overflow:hidden;"><span style="position:absolute;top:-12%;bottom:-12%;left:50%;width:1.6px;background:var(--accent-dark,#CFA24A);transform:translateX(-50%) rotate(32deg);"></span></span>
+          <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:20px;letter-spacing:0.01em;color:#F4F1EA;">Shadow CIPO</span>
+          <span aria-hidden="true" style="width:1px;height:17px;background:rgba(255,255,255,0.22);"></span>
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;letter-spacing:0.02em;color:#9AA3B2;">your behind-the-scenes Chief IP Officer</span>
+        </div>
+        <p style="margin:0 0 22px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);font-weight:500;">For venture-backed founders raising or preparing to raise</p>
+        <h1 style="margin:0;max-width:900px;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(33px,5vw,55px);line-height:1.07;letter-spacing:-0.018em;color:#F8F6F0;text-wrap:balance;">Your Shadow CIPO: continuous IP intelligence and a Chief IP Officer&#39;s judgment <span style="color:var(--accent-dark,#CFA24A);">&mdash; at a subscription, not by the hour.</span></h1>
+        <p style="margin:26px 0 0;max-width:560px;font-family:'Inter',sans-serif;font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:#AEB7C5;">The AI does the analysis. A fractional Chief IP Officer does the judgment. You get both.</p>
+        <div style="margin-top:34px;">
+          <button type="button" onClick="{{ goTeardown }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent,#A16207);color:#FFFFFF;font-family:'Inter',sans-serif;font-weight:600;font-size:16px;line-height:1;padding:16px 24px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:background .18s ease,transform .18s ease,box-shadow .18s ease;" style-hover="background:var(--accent-strong,#855104);transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(0,0,0,0.6);">Get a teardown of your top competitor&#39;s filings <span aria-hidden="true" style="font-size:1.05em;">&rarr;</span></button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:clamp(40px,6vw,56px);padding-top:22px;border-top:1px solid rgba(255,255,255,0.1);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#919AAA;">
+          <span>Led by Will Rosellini</span>
+          <span aria-hidden="true" style="color:var(--accent-dark,#CFA24A);">&middot;</span>
+          <span>15 years in IP monetization</span>
+          <span aria-hidden="true" style="color:var(--accent-dark,#CFA24A);">&middot;</span>
+          <span>Raised a Series A himself</span>
+        </div>
+      </div>
+    </header>
+  </sc-if>
+
+  <sc-if value="{{ isApproach }}">
+    <header style="position:relative;overflow:hidden;background:#0B1220;color:#F4F1EA;">
+      <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(108% 72% at 84% -10%, rgba(207,162,74,0.11), rgba(207,162,74,0) 56%);pointer-events:none;"></div>
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg, transparent, rgba(207,162,74,0.4), transparent);"></div>
+      <div style="position:relative;max-width:1140px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,40px) clamp(52px,7vw,84px);">
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:clamp(38px,6vw,62px);">
+          <span aria-hidden="true" style="display:inline-flex;flex:none;width:27px;height:27px;border-radius:7px;background:linear-gradient(122deg,#F4F1EA 0 47%,#172339 53% 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.18);position:relative;overflow:hidden;"><span style="position:absolute;top:-12%;bottom:-12%;left:50%;width:1.6px;background:var(--accent-dark,#CFA24A);transform:translateX(-50%) rotate(32deg);"></span></span>
+          <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:20px;letter-spacing:0.01em;color:#F4F1EA;">Shadow CIPO</span>
+          <span aria-hidden="true" style="width:1px;height:17px;background:rgba(255,255,255,0.22);"></span>
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;letter-spacing:0.02em;color:#9AA3B2;">your behind-the-scenes Chief IP Officer</span>
+        </div>
+        <p style="margin:0 0 20px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);font-weight:500;">The approach</p>
+        <h1 style="margin:0;max-width:760px;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(32px,4.8vw,52px);line-height:1.08;letter-spacing:-0.018em;color:#F8F6F0;">The approach, in depth</h1>
+        <p style="margin:24px 0 0;max-width:600px;font-family:'Inter',sans-serif;font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:#C2CAD6;">Built for the founder who wants to see the mechanism before they trust it.</p>
+        <p style="margin:16px 0 0;max-width:600px;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#9AA3B2;">The same continuous-intelligence model, with more room to show how the analysis and the judgment fit together.</p>
+      </div>
+    </header>
+  </sc-if>
+
+  <sc-if value="{{ isTeardown }}">
+    <header style="position:relative;overflow:hidden;background:#0B1220;color:#F4F1EA;">
+      <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(108% 72% at 84% -10%, rgba(207,162,74,0.11), rgba(207,162,74,0) 56%);pointer-events:none;"></div>
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg, transparent, rgba(207,162,74,0.4), transparent);"></div>
+      <div style="position:relative;max-width:1140px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,40px) clamp(52px,7vw,84px);">
+        <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:clamp(38px,6vw,62px);">
+          <span aria-hidden="true" style="display:inline-flex;flex:none;width:27px;height:27px;border-radius:7px;background:linear-gradient(122deg,#F4F1EA 0 47%,#172339 53% 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.18);position:relative;overflow:hidden;"><span style="position:absolute;top:-12%;bottom:-12%;left:50%;width:1.6px;background:var(--accent-dark,#CFA24A);transform:translateX(-50%) rotate(32deg);"></span></span>
+          <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:20px;letter-spacing:0.01em;color:#F4F1EA;">Shadow CIPO</span>
+          <span aria-hidden="true" style="width:1px;height:17px;background:rgba(255,255,255,0.22);"></span>
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px;letter-spacing:0.02em;color:#9AA3B2;">your behind-the-scenes Chief IP Officer</span>
+        </div>
+        <p style="margin:0 0 20px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);font-weight:500;">Competitor filing teardown</p>
+        <h1 style="margin:0;max-width:820px;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(32px,4.8vw,52px);line-height:1.08;letter-spacing:-0.018em;color:#F8F6F0;text-wrap:balance;">A competitor filing teardown, prepared for you</h1>
+        <p style="margin:24px 0 0;max-width:640px;font-family:'Inter',sans-serif;font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:#C2CAD6;">We&#39;ll tear down your top competitor&#39;s recent patent filings &mdash; where they&#39;re building a wall, and the white space they&#39;ve left you.</p>
+        <p style="margin:16px 0 0;max-width:640px;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#9AA3B2;">Tell us your top competitor. We&#39;ll spend the time researching their filings and put a teardown together for you specifically &mdash; reviewed by a Chief IP Officer.</p>
+        <div style="margin-top:32px;">
+          <button type="button" onClick="{{ scrollToForm }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent,#A16207);color:#FFFFFF;font-family:'Inter',sans-serif;font-weight:600;font-size:16px;line-height:1;padding:16px 24px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:background .18s ease,transform .18s ease,box-shadow .18s ease;" style-hover="background:var(--accent-strong,#855104);transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(0,0,0,0.6);">Jump to the request form <span aria-hidden="true" style="font-size:1.05em;">&darr;</span></button>
+        </div>
+      </div>
+    </header>
+  </sc-if>
+
+  <sc-if value="{{ showDepth }}" hint-placeholder-val="{{ true }}">
+    <section data-reveal style="background:var(--paper,#FAF8F3);padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <div style="max-width:880px;">
+          <span aria-hidden="true" style="display:block;font-family:'Source Serif 4',Georgia,serif;font-size:64px;line-height:0.5;color:var(--accent,#A16207);height:34px;">&ldquo;</span>
+          <blockquote style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:500;font-size:clamp(23px,3.3vw,34px);line-height:1.32;letter-spacing:-0.01em;color:#0F172A;text-wrap:balance;">Hourly billing makes deferral the rational choice&hellip; until the bill comes due at the raise: a thin portfolio, a weaker round, blocking patents nobody saw.</blockquote>
+          <div style="display:flex;align-items:center;gap:13px;margin-top:28px;">
+            <span aria-hidden="true" style="width:30px;height:1px;background:var(--accent,#A16207);"></span>
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#64748B;">Will Rosellini &middot; Chief IP Officer</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showDepth }}" hint-placeholder-val="{{ true }}">
+    <section data-reveal style="background:#FFFFFF;border-top:1px solid #E8EBF0;padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(30px,4vw,56px);align-items:start;">
+          <div style="max-width:420px;">
+            <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent,#A16207);font-weight:500;">The operator</p>
+            <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(27px,3.4vw,34px);line-height:1.12;letter-spacing:-0.015em;color:#0F172A;">Led by Will Rosellini</h2>
+            <p style="margin:16px 0 0;font-family:'Inter',sans-serif;font-size:17px;line-height:1.6;color:#475569;">Your fractional Chief IP Officer. The judgment layer that turns the analysis into the IP story your round needs.</p>
+          </div>
+          <div>
+            <div style="display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,52px);padding-bottom:26px;border-bottom:1px solid #E8EBF0;">
+              <div>
+                <span aria-hidden="true" style="display:block;width:26px;height:2px;background:var(--accent,#A16207);margin-bottom:14px;"></span>
+                <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(40px,5vw,50px);line-height:0.95;color:#0F172A;letter-spacing:-0.02em;">15</span><span style="font-family:'Source Serif 4',Georgia,serif;font-weight:500;font-size:20px;color:#334155;">years</span></div>
+                <p style="margin:10px 0 0;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#64748B;">in IP monetization</p>
+              </div>
+              <div>
+                <span aria-hidden="true" style="display:block;width:26px;height:2px;background:var(--accent,#A16207);margin-bottom:14px;"></span>
+                <div style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(33px,4vw,40px);line-height:0.95;color:#0F172A;letter-spacing:-0.02em;">Series A</div>
+                <p style="margin:12px 0 0;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:#64748B;">raised one himself</p>
+              </div>
+            </div>
+            <blockquote style="margin:26px 0 0;font-family:'Source Serif 4',Georgia,serif;font-weight:500;font-style:italic;font-size:clamp(19px,2.3vw,23px);line-height:1.4;color:#1E293B;max-width:42ch;">&ldquo;I raised a Series A myself at the end of a Phase 2 &mdash; so I know exactly what an investor wants the IP story to look like.&rdquo;</blockquote>
+            <p style="margin:14px 0 0;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#94A3B8;">Will Rosellini</p>
+            <div style="margin-top:30px;padding-top:22px;border-top:1px solid #E8EBF0;">
+              <span style="display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent,#A16207);margin-bottom:8px;">On proof</span>
+              <p style="margin:0;max-width:60ch;font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;color:#64748B;">No customer logos yet &mdash; at this stage the proof is the mechanism and the track record, not a wall of logos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showDepth }}" hint-placeholder-val="{{ true }}">
+    <section data-reveal style="background:var(--paper,#FAF8F3);border-top:1px solid #E8EBF0;padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent,#A16207);font-weight:500;">The mechanism</p>
+        <h2 style="margin:0;max-width:18ch;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(27px,3.6vw,36px);line-height:1.1;letter-spacing:-0.015em;color:#0F172A;">How it works</h2>
+        <p style="margin:16px 0 0;max-width:64ch;font-family:'Inter',sans-serif;font-size:clamp(16px,1.4vw,18px);line-height:1.6;color:#475569;">Episodic consulting creates blind spots, and deferral compounds the risk. A subscription replaces the open-ended meter with continuous coverage.</p>
+        <div style="margin-top:clamp(36px,5vw,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:clamp(26px,3vw,40px);">
+          <div style="border-top:1px solid #D9DEE6;padding-top:24px;display:flex;gap:18px;align-items:flex-start;">
+            <span aria-hidden="true" style="flex:none;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(38px,4.6vw,50px);line-height:0.85;color:var(--accent,#A16207);letter-spacing:-0.02em;">01</span>
+            <div>
+              <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;line-height:1.2;color:#0F172A;">Automated analysis</h3>
+              <p style="margin:10px 0 0;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#475569;">Freedom-to-operate, prior art, landscape, and competitor filings &mdash; run continuously, not once a quarter.</p>
+            </div>
+          </div>
+          <div style="border-top:1px solid #D9DEE6;padding-top:24px;display:flex;gap:18px;align-items:flex-start;">
+            <span aria-hidden="true" style="flex:none;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(38px,4.6vw,50px);line-height:0.85;color:var(--accent,#A16207);letter-spacing:-0.02em;">02</span>
+            <div>
+              <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;line-height:1.2;color:#0F172A;">A Chief IP Officer&#39;s judgment</h3>
+              <p style="margin:10px 0 0;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#475569;">Analysis becomes strategy: portfolio framing and the investor narrative your round needs.</p>
+            </div>
+          </div>
+          <div style="border-top:1px solid #D9DEE6;padding-top:24px;display:flex;gap:18px;align-items:flex-start;">
+            <span aria-hidden="true" style="flex:none;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(38px,4.6vw,50px);line-height:0.85;color:var(--accent,#A16207);letter-spacing:-0.02em;">03</span>
+            <div>
+              <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;line-height:1.2;color:#0F172A;">Continuous monitoring</h3>
+              <p style="margin:10px 0 0;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#475569;">A monthly cadence catches the landscape shifts and competitor filings episodic consulting misses.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <section data-reveal style="background:#FFFFFF;border-top:1px solid #E8EBF0;padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent,#A16207);font-weight:500;">The engagement</p>
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(27px,3.6vw,36px);line-height:1.1;letter-spacing:-0.015em;color:#0F172A;">The shape of the engagement</h2>
+        <p style="margin:14px 0 0;max-width:62ch;font-family:'Inter',sans-serif;font-size:clamp(16px,1.4vw,18px);line-height:1.6;color:#475569;">One continuous relationship, three depths of coverage. Pricing is set with Will before any figure is published.</p>
+        <div style="margin-top:clamp(32px,4vw,48px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,258px),1fr));gap:clamp(18px,2vw,22px);">
+          <div style="position:relative;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;"><h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:24px;color:#0F172A;">Scout</h3><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.1em;color:#94A3B8;">01</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px;padding:15px 0;border-top:1px solid #EEF1F5;border-bottom:1px solid #EEF1F5;">
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent,#A16207);">Pricing</span>
+              <span style="font-family:'Inter',sans-serif;font-size:16px;font-weight:500;color:#0F172A;">Set with Will on the call</span>
+            </div>
+            <p style="margin:0;flex:1;font-family:'Inter',sans-serif;font-size:15.5px;line-height:1.6;color:#475569;">Continuous freedom-to-operate and landscape monitoring, with monthly IP strategy read-outs.</p>
+          </div>
+          <div style="position:relative;background:#FFFFFF;border:1px solid rgba(161,98,7,0.35);border-radius:14px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column;gap:18px;box-shadow:0 22px 48px -30px rgba(15,23,42,0.5);overflow:hidden;">
+            <span aria-hidden="true" style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,#A16207);"></span>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;"><h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:24px;color:#0F172A;">Shield</h3><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.1em;color:#94A3B8;">02</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px;padding:15px 0;border-top:1px solid #EEF1F5;border-bottom:1px solid #EEF1F5;">
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent,#A16207);">Pricing</span>
+              <span style="font-family:'Inter',sans-serif;font-size:16px;font-weight:500;color:#0F172A;">Set with Will on the call</span>
+            </div>
+            <p style="margin:0;flex:1;font-family:'Inter',sans-serif;font-size:15.5px;line-height:1.6;color:#475569;">Everything in Scout, plus competitor-filing intelligence and investor-narrative preparation.</p>
+          </div>
+          <div style="position:relative;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:clamp(24px,3vw,30px);display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;"><h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:24px;color:#0F172A;">Arsenal</h3><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.1em;color:#94A3B8;">03</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px;padding:15px 0;border-top:1px solid #EEF1F5;border-bottom:1px solid #EEF1F5;">
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent,#A16207);">Pricing</span>
+              <span style="font-family:'Inter',sans-serif;font-size:16px;font-weight:500;color:#0F172A;">Set with Will on the call</span>
+            </div>
+            <p style="margin:0;flex:1;font-family:'Inter',sans-serif;font-size:15.5px;line-height:1.6;color:#475569;">Everything in Shield, plus outcome-aligned participation when you monetize the portfolio.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showDepth }}" hint-placeholder-val="{{ true }}">
+    <section data-reveal style="background:var(--paper,#FAF8F3);border-top:1px solid #E8EBF0;padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:980px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent,#A16207);font-weight:500;">Straight talk</p>
+        <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(27px,3.6vw,36px);line-height:1.1;letter-spacing:-0.015em;color:#0F172A;">Honest answers</h2>
+        <div style="margin-top:clamp(28px,4vw,44px);">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px clamp(20px,4vw,48px);padding:clamp(24px,3vw,30px) 0;border-top:1px solid #DEE3EA;">
+            <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(20px,2.4vw,23px);line-height:1.25;color:#0F172A;">Why not a patent firm?</h3>
+            <p style="margin:0;font-family:'Inter',sans-serif;font-size:16.5px;line-height:1.65;color:#475569;">Continuous versus episodic, and a predictable subscription versus open-ended hourly billing.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px clamp(20px,4vw,48px);padding:clamp(24px,3vw,30px) 0;border-top:1px solid #DEE3EA;">
+            <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(20px,2.4vw,23px);line-height:1.25;color:#0F172A;">Why not wait until we raise?</h3>
+            <p style="margin:0;font-family:'Inter',sans-serif;font-size:16.5px;line-height:1.65;color:#475569;">That is exactly when the bill comes due. The portfolio you wish you had takes months to build.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:8px clamp(20px,4vw,48px);padding:clamp(24px,3vw,30px) 0;border-top:1px solid #DEE3EA;border-bottom:1px solid #DEE3EA;">
+            <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(20px,2.4vw,23px);line-height:1.25;color:#0F172A;">Is this legal representation?</h3>
+            <p style="margin:0;font-family:'Inter',sans-serif;font-size:16.5px;line-height:1.65;color:#475569;">No. Will is your fractional Chief IP Officer &mdash; strategy and judgment, not legal representation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+    <section ref="{{ formRef }}" style="background:#0B1220;color:#F4F1EA;padding:clamp(60px,9vw,104px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:clamp(34px,5vw,64px);align-items:center;">
+          <div>
+            <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-bottom:30px;">
+                <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);font-weight:500;">The one ask</p>
+                <h2 style="margin:0;max-width:18ch;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(26px,3.4vw,38px);line-height:1.12;letter-spacing:-0.015em;color:#F8F6F0;text-wrap:balance;">See where a competitor is boxing you in &mdash; before your next raise.</h2>
+                <p style="margin:18px 0 0;max-width:52ch;font-family:'Inter',sans-serif;font-size:17px;line-height:1.6;color:#AEB7C5;">Tell us your top competitor. We will research their recent filings and put a teardown together for you. No calendar, no commitment.</p>
+              </div>
+            </sc-if>
+            <div>
+              <div style="display:flex;align-items:flex-end;gap:5px;height:128px;padding:0 2px;">
+                <div style="flex:1 1 0;min-width:0;height:64px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:82px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:74px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:98px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:90px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:108px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:86px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:72px;background:rgba(244,241,234,0.24);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:46px;background:transparent;border:1.5px dashed var(--accent-dark,#CFA24A);border-bottom:none;border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:58px;background:transparent;border:1.5px dashed var(--accent-dark,#CFA24A);border-bottom:none;border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:50px;background:transparent;border:1.5px dashed var(--accent-dark,#CFA24A);border-bottom:none;border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:70px;background:rgba(244,241,234,0.14);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:86px;background:rgba(244,241,234,0.14);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:60px;background:rgba(244,241,234,0.14);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:78px;background:rgba(244,241,234,0.14);border-radius:3px 3px 0 0;"></div>
+                <div style="flex:1 1 0;min-width:0;height:54px;background:rgba(244,241,234,0.14);border-radius:3px 3px 0 0;"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+                <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);">White space</span>
+                <span aria-hidden="true" style="height:1px;flex:1;background:rgba(255,255,255,0.12);"></span>
+                <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#7E8798;">Competitor filings</span>
+              </div>
+              <p style="margin:14px 0 0;max-width:44ch;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.5;color:#8C95A4;">A competitor&#39;s filing wall, and the white space they&#39;ve left you. Illustrative.</p>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:clamp(24px,3vw,34px);box-shadow:0 30px 70px -30px rgba(0,0,0,0.6);">
+            <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+              <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(22px,2.6vw,26px);line-height:1.15;color:#0F172A;">Request your competitor teardown</h3>
+              <p style="margin:12px 0 22px;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.55;color:#64748B;">For venture-backed founders. Not a fit for law firms or patent-prosecution-only needs. Note: patent applications publish on an ~18-month lag, so a teardown reflects what is public to date.</p>
+              <form onSubmit="{{ submit }}">
+                <div style="margin-bottom:15px;">
+                  <label style="display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:7px;font-weight:500;">Name</label>
+                  <input type="text" value="{{ name }}" onChange="{{ onName }}" placeholder="Jane Rivera" style="width:100%;font-family:'Inter',sans-serif;font-size:15px;color:#0F172A;background:#FFFFFF;border:1px solid #D4DBE3;border-radius:8px;padding:12px 13px;outline:none;transition:border-color .15s ease,box-shadow .15s ease;" style-focus="border-color:var(--accent,#A16207);box-shadow:0 0 0 3px rgba(161,98,7,0.12);" />
+                </div>
+                <div style="margin-bottom:15px;">
+                  <label style="display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:7px;font-weight:500;">Work email</label>
+                  <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@company.com" style="width:100%;font-family:'Inter',sans-serif;font-size:15px;color:#0F172A;background:#FFFFFF;border:1px solid #D4DBE3;border-radius:8px;padding:12px 13px;outline:none;transition:border-color .15s ease,box-shadow .15s ease;" style-focus="border-color:var(--accent,#A16207);box-shadow:0 0 0 3px rgba(161,98,7,0.12);" />
+                </div>
+                <div style="margin-bottom:15px;">
+                  <label style="display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:7px;font-weight:500;">Company</label>
+                  <input type="text" value="{{ company }}" onChange="{{ onCompany }}" placeholder="Company, Inc." style="width:100%;font-family:'Inter',sans-serif;font-size:15px;color:#0F172A;background:#FFFFFF;border:1px solid #D4DBE3;border-radius:8px;padding:12px 13px;outline:none;transition:border-color .15s ease,box-shadow .15s ease;" style-focus="border-color:var(--accent,#A16207);box-shadow:0 0 0 3px rgba(161,98,7,0.12);" />
+                </div>
+                <div style="margin-bottom:18px;">
+                  <label style="display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:7px;font-weight:500;">Your top competitor <span style="text-transform:none;letter-spacing:0;color:#94A3B8;">(or the space you&#39;re worried about)</span></label>
+                  <input type="text" value="{{ competitor }}" onChange="{{ onCompetitor }}" placeholder="Acme Neuro &mdash; or the white space you&#39;re worried about" style="width:100%;font-family:'Inter',sans-serif;font-size:15px;color:#0F172A;background:#FFFFFF;border:1px solid #D4DBE3;border-radius:8px;padding:12px 13px;outline:none;transition:border-color .15s ease,box-shadow .15s ease;" style-focus="border-color:var(--accent,#A16207);box-shadow:0 0 0 3px rgba(161,98,7,0.12);" />
+                </div>
+                <sc-if value="{{ error }}">
+                  <p style="margin:0 0 14px;font-family:'Inter',sans-serif;font-size:13px;color:#B91C1C;">Please complete all four fields, including a valid work email.</p>
+                </sc-if>
+                <button type="submit" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent,#A16207);color:#FFFFFF;font-family:'Inter',sans-serif;font-weight:600;font-size:16px;line-height:1;padding:15px 22px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 4px rgba(15,23,42,0.14);transition:background .18s ease,transform .18s ease,box-shadow .18s ease;" style-hover="background:var(--accent-strong,#855104);transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(15,23,42,0.5);">Send me the teardown</button>
+              </form>
+            </sc-if>
+            <sc-if value="{{ submitted }}">
+              <div>
+                <div aria-hidden="true" style="width:46px;height:46px;border-radius:50%;background:rgba(161,98,7,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:18px;"><span style="color:var(--accent,#A16207);font-size:22px;line-height:1;">&#10003;</span></div>
+                <h3 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:24px;line-height:1.15;color:#0F172A;">Request received.</h3>
+                <p style="margin:12px 0 0;font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;color:#334155;">We&#39;ll research and send your teardown.</p>
+                <p style="margin:16px 0 0;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.55;color:#94A3B8;">Patent applications publish on an ~18-month lag, so your teardown reflects what is public to date.</p>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isApproach }}">
+    <section data-reveal style="background:#0B1220;color:#F4F1EA;padding:clamp(56px,8vw,92px) 0;">
+      <div style="max-width:1140px;margin:0 auto;padding:0 clamp(20px,5vw,40px);">
+        <div style="max-width:760px;">
+          <p style="margin:0 0 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent-dark,#CFA24A);font-weight:500;">Your move</p>
+          <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:clamp(26px,3.6vw,38px);line-height:1.14;letter-spacing:-0.015em;color:#F8F6F0;text-wrap:balance;">Ready to see it on your own competitor? Request a teardown of their recent filings.</h2>
+          <div style="margin-top:30px;">
+            <button type="button" onClick="{{ goTeardown }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent,#A16207);color:#FFFFFF;font-family:'Inter',sans-serif;font-weight:600;font-size:16px;line-height:1;padding:16px 24px;border:none;border-radius:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:background .18s ease,transform .18s ease,box-shadow .18s ease;" style-hover="background:var(--accent-strong,#855104);transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(0,0,0,0.6);">Request a teardown <span aria-hidden="true" style="font-size:1.05em;">&rarr;</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <footer style="background:#080D18;color:#8A93A2;">
+    <div style="max-width:1140px;margin:0 auto;padding:clamp(48px,6vw,72px) clamp(20px,5vw,40px) 40px;">
+      <div style="display:flex;flex-wrap:wrap;gap:28px 40px;justify-content:space-between;align-items:flex-start;">
+        <div style="max-width:380px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <span aria-hidden="true" style="display:inline-flex;flex:none;width:21px;height:21px;border-radius:6px;background:linear-gradient(122deg,#F4F1EA 0 47%,#172339 53% 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.16);position:relative;overflow:hidden;"><span style="position:absolute;top:-12%;bottom:-12%;left:50%;width:1.5px;background:var(--accent-dark,#CFA24A);transform:translateX(-50%) rotate(32deg);"></span></span>
+            <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:18px;color:#F4F1EA;">Shadow CIPO</span>
+          </div>
+          <p style="margin:0;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.02em;color:var(--accent-dark,#CFA24A);">your behind-the-scenes Chief IP Officer</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;">
+          <button type="button" onClick="{{ goHome }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;color:#C4CCD6;transition:color .15s ease;" style-hover="color:#FFFFFF;">Home</button>
+          <button type="button" onClick="{{ goApproach }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;color:#C4CCD6;transition:color .15s ease;" style-hover="color:#FFFFFF;">Approach</button>
+          <button type="button" onClick="{{ goTeardown }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;color:#C4CCD6;transition:color .15s ease;" style-hover="color:#FFFFFF;">Request a teardown</button>
+        </div>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,0.08);margin:32px 0 24px;"></div>
+      <p style="margin:0 0 8px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;color:#9AA3B1;max-width:62ch;">Shadow CIPO &mdash; fractional Chief IP Officer services. Led by Will Rosellini.</p>
+      <p style="margin:0;font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;color:#6B7484;max-width:62ch;">This is a strategy and judgment service, not legal representation.</p>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0369A1&quot;,&quot;options&quot;:[&quot;#A16207&quot;,&quot;#0369A1&quot;,&quot;#155E75&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;warmPaper&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showDraft&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'home', name: '', email: '', company: '', competitor: '', submitted: false, error: false };
+
+  rootRef = (el) => { this.rootEl = el; if (el) requestAnimationFrame(() => this.initReveal()); };
+  formRef = (el) => { this.formEl = el; };
+
+  initReveal = () => {
+    try {
+      if (!this.rootEl) return;
+      if (!this._io) {
+        this._handled = new WeakSet();
+        this._io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.style.opacity = '1';
+              e.target.style.transform = 'none';
+              this._io.unobserve(e.target);
+            }
+          });
+        }, { root: null, rootMargin: '0px 0px -7% 0px', threshold: 0.06 });
+      }
+      const els = this.rootEl.querySelectorAll('[data-reveal]');
+      els.forEach((el) => {
+        if (this._handled.has(el)) return;
+        this._handled.add(el);
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(18px)';
+        el.style.transition = 'opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1)';
+        el.style.willChange = 'opacity, transform';
+        this._io.observe(el);
+      });
+      clearTimeout(this._safety);
+      this._safety = setTimeout(() => {
+        try { this.rootEl.querySelectorAll('[data-reveal]').forEach((el) => { el.style.opacity = '1'; el.style.transform = 'none'; }); } catch (_) {}
+      }, 1800);
+    } catch (_) {}
+  };
+
+  componentDidUpdate(pp, ps) {
+    if (ps.view !== this.state.view) {
+      try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (_) { try { window.scrollTo(0, 0); } catch (e) {} }
+      requestAnimationFrame(() => this.initReveal());
+    }
+  }
+
+  go = (view) => (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (this.state.view === view) { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) {} return; }
+    this.setState({ view: view });
+  };
+
+  field = (key) => (e) => {
+    const v = e && e.target ? e.target.value : '';
+    this.setState({ [key]: v, error: false });
+  };
+
+  submit = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const s = this.state;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s.email || '').trim());
+    const ok = (s.name || '').trim() && emailOk && (s.company || '').trim() && (s.competitor || '').trim();
+    if (!ok) { this.setState({ error: true }); return; }
+    this.setState({ submitted: true, error: false });
+  };
+
+  scrollToForm = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    try {
+      const el = this.formEl;
+      if (el) {
+        const y = el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset || 0) - 64;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    } catch (_) {}
+  };
+
+  renderVals() {
+    const accent = this.props.accent || '#A16207';
+    const tones = {
+      '#A16207': { dark: '#CFA24A', strong: '#855104' },
+      '#0369A1': { dark: '#5FAEDD', strong: '#024E7C' },
+      '#155E75': { dark: '#54B4CE', strong: '#0E4456' }
+    };
+    const t = tones[accent] || { dark: accent, strong: accent };
+    const warm = this.props.warmPaper !== false;
+    const view = this.state.view;
+    return {
+      rootRef: this.rootRef,
+      formRef: this.formRef,
+      accent: accent,
+      accentDark: t.dark,
+      accentStrong: t.strong,
+      paper: warm ? '#FAF8F3' : '#F8FAFC',
+      showDraft: this.props.showDraft !== false,
+      isHome: view === 'home',
+      isApproach: view === 'approach',
+      isTeardown: view === 'teardown',
+      showDepth: view === 'home' || view === 'approach',
+      showForm: view === 'home' || view === 'teardown',
+      goHome: this.go('home'),
+      goApproach: this.go('approach'),
+      goTeardown: this.go('teardown'),
+      scrollToForm: this.scrollToForm,
+      name: this.state.name,
+      email: this.state.email,
+      company: this.state.company,
+      competitor: this.state.competitor,
+      onName: this.field('name'),
+      onEmail: this.field('email'),
+      onCompany: this.field('company'),
+      onCompetitor: this.field('competitor'),
+      submit: this.submit,
+      submitted: this.state.submitted,
+      notSubmitted: !this.state.submitted,
+      error: this.state.error
+    };
+  }
+}
+</script>
+</body>
+</html>
