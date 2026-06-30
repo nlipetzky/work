@@ -4,21 +4,25 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { GovernedArtifacts, GovernedEngagement, GovernedItem } from "@/lib/queries/governedArtifacts";
 import type { SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
-import type { Expert, Exchange } from "@/lib/queries/expertLiaison";
+import type { Expert, Exchange, ExpertRequest, Motion } from "@/lib/queries/expertLiaison-shared";
 import type { PacketView } from "@/lib/queries/packets";
 import { RunButton, ArtifactChip } from "@/app/system/[constellation]/[slug]/AssemblerActions";
+import InboundLane from "./InboundLane";
+import MotionsBoard from "./MotionsBoard";
 
-type Tab = "asks" | "packets" | "ledger" | "experts";
+type Tab = "inbound" | "motions" | "asks" | "packets" | "ledger" | "experts";
 const SELF_SLUG = "nick-lipetzky";
 
 export default function ExpertLiaisonSurface({
-  governed, ledger, experts, exchanges, packets,
+  governed, ledger, experts, exchanges, packets, requests, motions,
 }: {
   governed: GovernedArtifacts; ledger: SourceAssessmentLedger; experts: Expert[]; exchanges: Exchange[]; packets: PacketView[];
+  requests: ExpertRequest[]; motions: Motion[];
 }) {
-  const [tab, setTab] = useState<Tab>("asks");
+  const [tab, setTab] = useState<Tab>("inbound");
   const totalGaps = governed.engagements.reduce((n, e) => n + e.items.filter((i) => i.state === "gap").length, 0);
   const packetsPending = packets.filter((p) => p.pending.length > 0 || p.packet).length;
+  const overdueMotions = motions.filter((m) => m.overdue).length;
 
   return (
     <div className="h-full overflow-y-auto font-mono">
@@ -30,6 +34,8 @@ export default function ExpertLiaisonSurface({
             Curate domain-expert judgment into Canon. Answer what&apos;s yours, ask the expert for the rest, initiate to draft, approve — all here, not in a chat.
           </p>
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 border-t border-ink-700 pt-3 text-xs text-muted">
+            <span><span className="font-semibold text-white">{requests.length}</span> inbound</span>
+            <span><span className="font-semibold text-white">{motions.length}</span> motions{overdueMotions > 0 ? <span className="text-warn"> ({overdueMotions} overdue)</span> : null}</span>
             <span><span className="font-semibold text-white">{totalGaps}</span> open gaps</span>
             <span><span className="font-semibold text-white">{exchanges.filter((x) => x.status !== "closed").length}</span> open asks</span>
             <span><span className="font-semibold text-white">{ledger.totalSources}</span> sources assessed</span>
@@ -38,12 +44,14 @@ export default function ExpertLiaisonSurface({
         </div>
 
         <div className="mb-4 flex gap-1 border-b border-ink-800">
-          {([["asks", `Asks & Needs (${totalGaps})`], ["packets", `Review packets (${packetsPending})`], ["ledger", "Curation ledger"], ["experts", `Experts (${experts.length})`]] as [Tab, string][]).map(([t, label]) => (
+          {([["inbound", `Inbound (${requests.length})`], ["motions", `Motions (${overdueMotions} overdue)`], ["asks", `Asks & Needs (${totalGaps})`], ["packets", `Review packets (${packetsPending})`], ["ledger", "Curation ledger"], ["experts", `Experts (${experts.length})`]] as [Tab, string][]).map(([t, label]) => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-3 py-2 text-sm ${tab === t ? "border-b-2 border-accent text-white" : "text-muted hover:text-white"}`}>{label}</button>
           ))}
         </div>
 
+        {tab === "inbound" && <InboundLane requests={requests} experts={experts} motions={motions} />}
+        {tab === "motions" && <MotionsBoard motions={motions} experts={experts} />}
         {tab === "asks" && <AsksAndNeeds governed={governed} experts={experts} exchanges={exchanges} />}
         {tab === "packets" && <ReviewPackets packets={packets} exchanges={exchanges} />}
         {tab === "ledger" && <Ledger ledger={ledger} />}

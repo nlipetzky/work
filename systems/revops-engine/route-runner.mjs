@@ -8,6 +8,7 @@
 
 import fs from "fs";
 import { markDone } from "./lib/run-status.mjs";
+import { emitExpertRequest } from "./lib/canon-emit.mjs";
 
 const runId = (() => { const i = process.argv.indexOf("--run-id"); return i >= 0 ? process.argv[i + 1] : null; })();
 const ENV_PATH = "/Users/nplmini/code/work/.env";
@@ -80,5 +81,32 @@ console.log(`routing labels written to ${tbl}: ok=${ok}, matched=${matched}, rev
 const groups = await sql(`select company_name, prep_routed_domain, count(*) n from ${tbl}
   where prep_route_status='review' group by 1,2 order by 1`);
 if (groups.length) { console.log("review (operator decides acquirer vs alt-domain):"); for (const g of groups) console.log(`  - ${g.company_name}: contacts use @${g.prep_routed_domain} (${g.n})`); }
+
+// Hand each review group to the expert-liaison-engine as a verdict request (idempotent on source_ref).
+// The motion drives the expert's ruling to resolution; apply-expert-verdicts.mjs binds the answer back
+// (flips these rows from 'review' to 'matched', which unblocks promote_staging_batch).
+if (groups.length) {
+  const expertSlug = cfg.expert_slug || "ellie";
+  const engType = cfg.engagement_type || "client";
+  const engId = cfg.engagement_id || "teknova";
+  let emitted = 0;
+  for (const g of groups) {
+    try {
+      await emitExpertRequest({
+        requestType: "verdict", engagementType: engType, engagementId: engId,
+        expertSlug, concerningSystem: "revops-engine",
+        subject: `AAV route ruling — ${g.company_name} (@${g.prep_routed_domain})`,
+        body: `${g.n} contact(s) at ${g.company_name} use @${g.prep_routed_domain}, but the company is listed under a different domain. Confirm whether the company was acquired/renamed and the correct routing.`,
+        payload: { batch_id: batchId, entity, company_name: g.company_name, observed_domain: g.prep_routed_domain, count: Number(g.n) },
+        sourceSystem: "revops-engine",
+        sourceRef: `batch:${batchId}/route-review/${g.company_name}@${g.prep_routed_domain}`,
+        goalKey: `${engId}:revops-engine:route:${g.company_name}:${g.prep_routed_domain}`,
+        createdBy: "revops-engine/route-runner",
+      });
+      emitted++;
+    } catch (e) { console.error(`expert-liaison emit failed for ${g.company_name}: ${e.message}`); }
+  }
+  console.log(`expert-liaison: emitted ${emitted} verdict request(s) to canon`);
+}
 
 if (runId) await markDone(runId, "route", { ok, matched, review });

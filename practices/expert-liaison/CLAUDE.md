@@ -92,6 +92,7 @@ Do not bake engagement-specific assumptions into this practice's CLAUDE.md, refe
 ## Pointers
 
 - Methodology: `reference/methodology.md`
+- Engine system (the durable intake + persistent-motion engine this practice operates): `~/code/work/systems/expert-liaison-engine/` (canon `systems.system_slug = expert-liaison-engine`; surface `/expert-liaison`). Producers hand off via `record_expert_request`; motions drive each ask to resolution and bind the verdict back.
 - System Registry entry: `expert-liaison` (`recmzKMV2Judg4Sg3` in base `apppQjlZiktpbO4aX`)
 - Sibling platform for sponsor-side work: `engagement-governance` (`recSFTzbwv0059jGz`); see `~/code/work/practices/engagement-governance/reference/methodology.md`.
 - Active engagements: `~/code/work/accounts/ventures/konstellation-ai/CLAUDE.md`, `~/code/work/accounts/clients/teknova/`.
