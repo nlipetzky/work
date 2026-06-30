@@ -6,9 +6,9 @@ venture's context registry (`canon/`, `revops/`, `creative/`). **State: spec dra
 below are ready for the kit/site build into STAGING. Public launch is gated on the
 three decision gates at the bottom.
 
-**Objectives:** lead-gen (primary) — qualified founder → opts into a low-friction
-"IP exposure read" (interest-based, no calendar); engagement (secondary) — a return
-reason for founders not yet raising. One brand truth, both jobs.
+**Objectives:** lead-gen (primary) — qualified founder → opts into the front-end
+offer (interest-based, no calendar); engagement (secondary) — a return reason for
+founders not yet raising. One brand truth, both jobs.
 
 **Source discipline:** every load-bearing line traces to a registry artifact (cited
 inline as `[src: …]`). Anything unsourced is a marked gap, not a guess. No pricing
@@ -16,25 +16,33 @@ figures appear in copy (faithfulness-constraint #3). Will's refused vocabulary
 (agentic/agent/canon/constellation/orbit/star, attorney/lawyer/counsel for Will) is
 banned site-wide.
 
+**Front-end offer — Will-certified ranking.** Will ranked the three front-end offers
+**A > C > B** (email "offers for your review," reply 2026-06-26):
+- **A = Competitor Filing Teardown** (Reverse Lead Magnet) — his #1. **The site leads with this.**
+- **C = IP Velocity Score Read-Out** (Trojan Horse) — his #2. Documented secondary / campaign-landing variant.
+- **B = Single FTO on the lead product** (Loss Leader) — his #3.
+`[src: outreach-offer-ladder; Will email 2026-06-26]`
+
 ---
 
 ## 1. Information architecture (keep the path short)
 
 | Page | Route | Primary job | Conversion action |
 |------|-------|-------------|-------------------|
-| Home | `/` | Carry the full narrative for a raising founder | "Get your 1-page IP exposure read" |
-| IP Exposure Read (lead magnet) | `/ip-exposure-read` | Deliver the front-end offer; capture the lead | Opt-in form (interest-based) |
-| Approach | `/approach` | Depth for the skeptical/technical founder | Secondary CTA back to the read |
+| Home | `/` | Carry the full narrative for a raising founder | "Get a teardown of your top competitor's filings" |
+| Competitor Teardown (lead magnet) | `/competitor-teardown` | Deliver Will's #1 front-end offer; capture the lead | RLM opt-in (research-my-competitor) |
+| Approach | `/approach` | Depth for the skeptical/technical founder | Secondary CTA back to the teardown |
 
-Path: arrival (Home) → promise + proof → opt into the IP exposure read → research
-conversation → front-end offer delivery → retainer conversation. The website's only
-job is the first opt-in. `[src: offer-architecture-and-pricing, outreach-offer-ladder]`
+Path: arrival (Home) → promise + proof → opt into the competitor teardown → we
+research + deliver it → exploratory conversation → ascent to the Shield/Arsenal
+retainer. The website's only job is the first opt-in. `[src: offer-architecture-and-pricing,
+outreach-offer-ladder]`
 
-Front-end offer chosen for the site: **IP Velocity Score Read-Out** (the "Trojan
-Horse" — a one-page IP-readiness audit), because it is the lowest-commitment, most
-self-qualifying entry and ascends to Shield. The other two ladder options
-(Competitor Filing Teardown, Single FTO) become campaign landing variants later.
-`[src: outreach-offer-ladder]`
+The teardown is a **Reverse Lead Magnet**: the ask itself is the magnet — "tell us
+your top competitor; we'll spend the time researching their recent filings and put a
+teardown together for you specifically." It reads as custom 1:1 work (high perceived
+value up-market), lands on the founder's acute fixation ("is a competitor boxing me
+in?"), and ladders to Shield/Arsenal. `[src: outreach-offer-ladder Option A]`
 
 ---
 
@@ -46,7 +54,7 @@ self-qualifying entry and ascends to Shield. The other two ladder options
   customer-problem-model — competitor hourly range is Will's framing, flag for Will]`
 - **Subhead (draft):** "The AI does the analysis. A fractional Chief IP Officer does
   the judgment. You get both." `[src: value-proposition-canon; sme-voice — signature line]`
-- **Primary CTA:** "Get your 1-page IP exposure read" → `/ip-exposure-read`
+- **Primary CTA:** "Get a teardown of your top competitor's filings" → `/competitor-teardown`
 - **Proof strip (draft):** "Led by Will Rosellini · 15 years in IP monetization ·
   raised a Series A himself" `[src: sme-voice, sme-credibility]`
 
@@ -83,27 +91,39 @@ self-qualifying entry and ascends to Shield. The other two ladder options
   title rule — never imply attorney/counsel]`
 
 ### 2.6 Secondary CTA + capture  [block: CTA + Capture]
-- Repeat the IP exposure read CTA. Capture is interest-based: name, work email,
-  company, "what's the IP question keeping you up?" — no calendar, no commitment.
-  `[src: offer-architecture-and-pricing — cold-stage conversion = interest, no calendar]`
+- Repeat the competitor-teardown CTA. Capture is the RLM ask itself: name, work
+  email, company, and "your top competitor (or the space you're worried about)" — we
+  research and send the teardown; no calendar, no commitment. `[src: outreach-offer-ladder
+  Option A — the ask is the magnet; cold-stage conversion = interest, no calendar]`
 
 ### 2.7 Engagement hook (secondary objective)
-- For founders not yet raising: offer the read as a resource + a low-frequency note
-  on IP-at-the-raise. Return reason without a hard ask. `[src: objectives]`
+- For founders not yet raising: offer the teardown as the entry + a low-frequency
+  note on IP-at-the-raise. Return reason without a hard ask. `[src: objectives]`
 
 ---
 
-## 3. `/ip-exposure-read` — lead magnet page  [blocks: Hero (compact) + Capture]
-- Promise: "A one-page read on your IP exposure before your next raise."
-- What they get: the IP Velocity Score read-out (filing velocity, strategy
-  coherence, investor-narrative gaps). `[src: outreach-offer-ladder — Trojan Horse]`
-- Capture form (the site's primary conversion event). Disqualify-aware microcopy:
-  this is for venture-backed founders, not law firms or patent-prosecution-only
-  needs. `[src: icp-and-disqualifiers — hard exclusions]`
+## 3. `/competitor-teardown` — lead magnet page  [blocks: Hero (compact) + Capture]
+- Promise: "We'll tear down your top competitor's recent patent filings — where
+  they're building a wall, and the white space they've left you."
+- The ask IS the magnet (RLM): "Tell us your top competitor; we'll spend the time
+  researching their filings and put a teardown together for you." Custom 1:1 work,
+  CIPO-reviewed, carrying the 18-month publication-lag disclaimer. `[src:
+  outreach-offer-ladder Option A; mechanism-of-action steps 2–3]`
+- Capture form (the site's primary conversion event): name, work email, company,
+  top competitor / worried space. Disqualify-aware microcopy: for venture-backed
+  founders, not law firms or patent-prosecution-only needs. `[src: icp-and-disqualifiers
+  — hard exclusions]`
 
 ## 4. `/approach` — depth page  [blocks: HowItWorks + Proof + Objection]
 - Long-form mechanism + Will's credibility, for the technical/skeptical founder.
-  Same sourced content, more room. Secondary CTA back to the read.
+  Same sourced content, more room. Secondary CTA back to the teardown.
+
+## 4a. Secondary variant (build later, not in the staging slice)
+- `/ip-velocity-score` — Will's #2 offer (C, Trojan Horse): a one-time IP Velocity
+  Score read-out (depth, competitive position, prosecution velocity, commercial
+  alignment, risk), framed as a diagnostic. Reuses the same kit blocks; different
+  copy + capture. Stand up as a campaign-landing variant after the primary ships.
+  `[src: outreach-offer-ladder Option C]`
 
 ---
 
@@ -124,10 +144,10 @@ self-qualifying entry and ascends to Shield. The other two ladder options
   **ui-ux-pro-max**, fed the provisional theme tokens.
 
 ## 7. Instrumentation
-- **Primary conversion event:** `ip_exposure_read_submitted` (the capture form).
-- **Capture fields:** name, work email, company, IP question.
-- **Per-page success metric:** Home → CTA click-through to `/ip-exposure-read`;
-  `/ip-exposure-read` → form completion rate; `/approach` → CTA-back rate.
+- **Primary conversion event:** `competitor_teardown_requested` (the capture form).
+- **Capture fields:** name, work email, company, top competitor / worried space.
+- **Per-page success metric:** Home → CTA click-through to `/competitor-teardown`;
+  `/competitor-teardown` → form completion rate; `/approach` → CTA-back rate.
 - Analytics provider TBD at build (Vercel Analytics or PostHog).
 
 ---
@@ -137,5 +157,6 @@ self-qualifying entry and ascends to Shield. The other two ladder options
 2. **Visual identity** — define CIPO's own (refusal-safe). → Hermes routes to Will.
 3. **Copy + public pricing sign-off** — generated copy + any price figures. → Hermes routes to Will.
 
-Until all three clear: staging preview only, draft copy, `[pricing pending]`
-placeholders, no custom domain.
+Resolved (no longer open): front-end offer choice — Will ranked A>C>B; site leads
+with A (Competitor Filing Teardown). Until the three gates clear: staging preview
+only, draft copy, `[pricing pending]` placeholders, no custom domain.
