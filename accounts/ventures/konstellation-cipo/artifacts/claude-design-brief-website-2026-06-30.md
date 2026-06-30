@@ -62,6 +62,12 @@ Teardown** — a custom, 1:1 piece of work ("tell us your top competitor, we'll 
 their recent filings and put a teardown together for you"). That opt-in is the only
 conversion. Everything points to it. No calendar, no payment, no signup.
 
+**Reusable across campaigns:** the Competitor Teardown is the *home page's* hero lead
+magnet (the expert's ranked #1). But the hero + lead-magnet + capture is a **pattern**
+reused across multiple campaign-specific landing pages, each with its own unique lead
+magnet (e.g. a future NIH/TABA campaign page, or an IP-Velocity-Score page). Design the
+hero + capture as a clean, reusable, swappable block — not a one-off keyed to this one offer.
+
 **Tone:** authoritative, plain-spoken, a little blunt. "Fractional executive / boutique
 advisory," not "legal SaaS," not "startup playful."
 
@@ -292,9 +298,8 @@ onto the kit. Mobile and desktop both matter; founders read on phones.
 
 - Final brand identity, **Shadow CIPO** wordmark/logo treatment, and the exact accent
   color — go to the expert (Will) for sign-off. Give a strong candidate; expect iteration.
-- **Brand vs. parent:** the offering may run under or alongside "PatentVest." Design for
-  "Shadow CIPO" as the standalone brand; leave room for a "by PatentVest"-style
-  endorsement line if it's added later. Don't invent a PatentVest lockup.
+- **Brand is standalone Shadow CIPO** (confirmed 2026-06-30). Do NOT reference,
+  co-brand, endorse, or lock up with "PatentVest" or any parent. Shadow CIPO stands alone.
 - Domain unconfirmed (KonstellationAI.com vs its own) — don't hard-code a domain.
 - All copy is pending the expert's final sign-off; keep it editable (token/data-driven),
   not baked into images.
