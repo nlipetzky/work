@@ -6,11 +6,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /Users/nplmini/code/work/.claude/hooks/session-start-context.mjs",
-            "timeout": 1500
-          },
-          {
-            "type": "command",
             "command": "node /Users/nplmini/code/work/systems/operating-sop/.claude/hooks/persona-loader.mjs",
             "timeout": 1500
           }

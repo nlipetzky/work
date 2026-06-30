@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "verify-work-email.in",
+  "title": "verify-work-email — input",
+  "description": "Runner invocation parameters for verify-contacts.mjs. Selects prospects from revops.public.prospects by engagement, then iterates each contact with an email that has not been verified yet.",
+  "type": "object",
+  "required": ["engagement_type", "engagement_id"],
+  "properties": {
+    "engagement_type": {
+      "type": "string",
+      "description": "Matches prospects.engagement_type. e.g. 'venture'",
+      "example": "venture"
+    },
+    "engagement_id": {
+      "type": "string",
+      "description": "Matches prospects.engagement_id. e.g. 'konstellation-cipo'",
+      "example": "konstellation-cipo"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Max prospects to process. 0 or omitted = no limit.",
+      "default": 0
+    },
+    "execute": {
+      "type": "boolean",
+      "description": "PLAN mode if false/absent. EXECUTE mode if true — writes back to DB.",
+      "default": false
+    }
+  },
+  "x-source-table": {
+    "project_id": "mrmnyscurmkfppicqqhk",
+    "table": "public.prospects",
+    "filter": "engagement_type = :engagement_type AND engagement_id = :engagement_id AND stage = 'contacted'",
+    "select": "id, company_name, enrichment",
+    "note": "OPEN ITEM: stage filter is 'contacted' (slice-2 post-outreach posture). At SOP node n6 (pre-outreach), prospects may be in a different stage. Confirm correct stage value before executing against live CIPO data."
+  },
+  "x-contact-shape": {
+    "description": "Each qualifying row in prospects.enrichment.contacts[] where email is non-null and verified_by is absent",
+    "type": "object",
+    "properties": {
+      "first": { "type": "string" },
+      "last": { "type": "string" },
+      "email": { "type": "string", "format": "email" },
+      "verified_by": { "type": "string", "description": "Absent or null = not yet verified. Present = skip." }
+    }
+  }
+}

@@ -1,0 +1,278 @@
+<!--
+  BUILD-mode wireframe (canonical) — rendered 2026-06-29.
+
+  Same layout shell as RUN / ITERATE; affordances unlock for structural change.
+  - Purple accent (rgb(95,55,180)) on toggle + selected stage + selected node + actions
+  - Header carries "BUILDING TEMPLATE" pill (no SopRun in focus) + version stamp
+  - Top-right action row: "+ Open SOP-writer ›" + "Open in Claude Code (BUILD persona) ›"
+  - SOP spine: drag handles, "+ Add stage" button, "..." menu per stage
+  - Workflow grid: "..." menu per node + "+ Add activity" slot
+  - Composition: every row editable; "+ Author new schema/adapter" + "+ Create new skill (invokes skill-creator)"
+  - Provenance: editable contract (consumes / writes)
+  - System view: HIDDEN ("no live data while in BUILD")
+  - Runs history: HIDDEN ("no runs for a draft")
+  - Evals: authoring mode ("+ Add fixture for new contract")
+  - More: concurrency / retry editable
+  - Actions: Validate / Save draft / Publish v3 (gated until validate passes) / Discard
+-->
+<style>
+  .operate-wf { font-family: "Anthropic Sans", system-ui, -apple-system, sans-serif; color: var(--text-primary); font-size: 16px; line-height: 1.7; font-weight: 400; }
+  .operate-wf * { box-sizing: border-box; }
+  .op-nav { display: flex; align-items: center; gap: 4px; border-bottom: 0.5px solid var(--border); padding-bottom: 12px; margin-bottom: 1.5rem; }
+  .op-nav-tab { padding: 8px 16px; font-size: 14px; color: var(--text-secondary); border-radius: 8px; cursor: pointer; }
+  .op-nav-tab.active { background: var(--bg-accent); color: var(--text-accent); font-weight: 500; }
+  .op-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap; }
+  .op-header h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px 0; line-height: 1.3; }
+  .op-header .op-sub { font-size: 13px; color: var(--text-secondary); }
+  .op-header .op-sub code { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 6px; padding: 2px 6px; font-size: 12px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, monospace; }
+  .op-header .op-build-pill { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(120,90,200,0.12); color: rgb(95,55,180); border: 0.5px solid rgba(120,90,200,0.4); font-weight: 500; letter-spacing: 0.04em; margin-left: 8px; }
+  .op-header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .op-sopwriter-btn, .op-claude-btn { padding: 8px 14px; font-size: 13px; background: rgba(120,90,200,0.10); color: rgb(95,55,180); border: 0.5px solid rgba(120,90,200,0.4); border-radius: 8px; cursor: pointer; font-weight: 500; }
+  .op-mode-row { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; padding: 12px 14px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; flex-wrap: wrap; }
+  .op-mode-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .op-mode-toggle { display: inline-flex; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 999px; padding: 3px; }
+  .op-mode-seg { padding: 6px 16px; font-size: 13px; color: var(--text-secondary); border-radius: 999px; cursor: pointer; font-weight: 500; }
+  .op-mode-seg.active { background: rgba(120,90,200,0.15); color: rgb(95,55,180); }
+  .op-mode-hint { font-size: 12px; color: var(--text-muted); }
+  .op-grid { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+  .op-spine { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 0.75rem; }
+  .op-spine-head { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 8px 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .op-spine-head .op-version { font-size: 10px; color: rgb(95,55,180); padding: 2px 6px; border: 0.5px solid rgba(120,90,200,0.4); border-radius: 4px; letter-spacing: 0; text-transform: none; background: rgba(120,90,200,0.08); }
+  .op-stage { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 8px; margin-bottom: 2px; }
+  .op-stage:hover { background: var(--surface-1); }
+  .op-stage.selected { background: rgba(120,90,200,0.10); border: 0.5px solid rgba(120,90,200,0.3); }
+  .op-stage.selected .op-stage-name { color: rgb(95,55,180); font-weight: 500; }
+  .op-drag { color: var(--text-muted); font-size: 12px; cursor: grab; user-select: none; flex-shrink: 0; }
+  .op-stage-idx { font-size: 12px; color: var(--text-muted); width: 16px; flex-shrink: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  .op-stage-name { font-size: 13.5px; color: var(--text-primary); flex: 1; }
+  .op-stage-menu { color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 0 4px; }
+  .op-add-stage-btn { width: 100%; padding: 10px; font-size: 12.5px; background: transparent; border: 0.5px dashed var(--border-strong); color: var(--text-secondary); border-radius: 8px; cursor: pointer; font-family: inherit; margin-top: 8px; }
+  .op-add-stage-btn:hover { background: rgba(120,90,200,0.06); border-color: rgba(120,90,200,0.5); color: rgb(95,55,180); }
+  .op-right { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  .op-workflow { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .op-section-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; gap: 12px; flex-wrap: wrap; }
+  .op-section-head h2 { font-size: 18px; font-weight: 500; margin: 0; }
+  .op-section-head .op-section-meta { font-size: 13px; color: var(--text-secondary); }
+  .op-section-head .op-section-meta strong { color: rgb(95,55,180); font-weight: 500; }
+  .op-nodes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .op-node { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .op-node:hover { border-color: var(--border-strong); }
+  .op-node.selected { background: rgba(120,90,200,0.06); border: 1px solid rgba(120,90,200,0.45); padding: 11px; }
+  .op-node-menu { position: absolute; top: 8px; right: 8px; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 0 4px; line-height: 1; }
+  .op-node-idx { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .op-node-name { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3; padding-right: 16px; }
+  .op-node.selected .op-node-name { color: rgb(95,55,180); }
+  .op-node-owner { font-size: 11px; color: var(--text-secondary); font-family: ui-monospace, SFMono-Regular, monospace; margin-bottom: 2px; }
+  .op-node-skills { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 6px; border-top: 0.5px solid var(--border); }
+  .op-node-skills-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; width: 100%; margin-bottom: 2px; }
+  .op-skill-chip { font-size: 11px; color: var(--text-secondary); background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 999px; padding: 2px 8px; font-family: ui-monospace, SFMono-Regular, monospace; }
+  .op-skill-chip.more { background: transparent; border-style: dashed; color: var(--text-muted); }
+  .op-add-node { background: transparent; border: 0.5px dashed var(--border-strong); border-radius: 10px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 12px; gap: 4px; min-height: 120px; }
+  .op-add-node:hover { background: rgba(120,90,200,0.06); border-color: rgba(120,90,200,0.5); color: rgb(95,55,180); }
+  .op-add-node-plus { font-size: 22px; font-weight: 400; line-height: 1; }
+  .op-detail { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .op-detail h2 { font-size: 18px; font-weight: 500; margin: 0 0 4px 0; }
+  .op-detail-meta { font-size: 13px; color: var(--text-secondary); }
+  .op-detail-meta .op-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--surface-1); border: 0.5px solid var(--border); color: var(--text-secondary); margin-left: 6px; font-size: 12px; }
+  .op-detail-meta .op-pill.draft { background: rgba(120,90,200,0.12); color: rgb(95,55,180); border-color: rgba(120,90,200,0.4); }
+  .op-divider { height: 0.5px; background: var(--border); margin: 1.5rem 0; }
+  .op-detail-section h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin: 0 0 12px 0; }
+  .op-mono { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 12px; font-family: ui-monospace, SFMono-Regular, monospace; }
+  .op-input { width: 100%; background: var(--surface-1); border: 0.5px solid var(--border-strong); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); }
+  .op-comp-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .op-comp-row:last-child { border-bottom: none; }
+  .op-comp-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .op-row-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .op-mini-btn { font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--border-strong); background: var(--surface-2); color: var(--text-secondary); border-radius: 6px; cursor: pointer; }
+  .op-mini-btn.primary { color: rgb(95,55,180); border-color: rgba(120,90,200,0.5); background: rgba(120,90,200,0.10); }
+  .op-mini-btn.danger { color: rgb(190,40,40); border-color: rgba(190,40,40,0.3); }
+  .op-skill-edit-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 8px; font-size: 13px; gap: 12px; }
+  .op-skill-edit-name { font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); font-weight: 500; flex: 1; }
+  .op-skill-edit-actions { display: flex; gap: 6px; }
+  .op-add-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .op-add-existing-btn, .op-create-new-btn { padding: 10px; font-size: 12.5px; border-radius: 8px; cursor: pointer; font-family: inherit; border: 0.5px dashed var(--border-strong); background: var(--surface-1); color: var(--text-secondary); }
+  .op-create-new-btn { color: rgb(95,55,180); border-color: rgba(120,90,200,0.5); background: rgba(120,90,200,0.06); }
+  .op-prov-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .op-prov-edit-block { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 8px; padding: 12px; }
+  .op-prov-edit-block h4 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px 0; font-weight: 500; }
+  .op-hidden-block { background: var(--surface-1); border: 0.5px dashed var(--border); border-radius: 8px; padding: 14px; font-size: 12px; color: var(--text-muted); font-style: italic; text-align: center; }
+  .op-evals-row { display: flex; align-items: center; gap: 16px; padding: 12px 14px; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; flex-wrap: wrap; }
+  .op-evals-rate { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .op-evals-meta { font-size: 12px; color: var(--text-secondary); flex: 1; }
+  .op-add-fixture-btn { font-size: 11px; padding: 5px 10px; background: rgba(120,90,200,0.10); color: rgb(95,55,180); border: 0.5px solid rgba(120,90,200,0.4); border-radius: 6px; cursor: pointer; font-weight: 500; }
+  .op-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .op-btn { padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border-strong); background: var(--surface-1); color: var(--text-primary); font-family: inherit; }
+  .op-btn.primary { background: rgba(120,90,200,0.15); color: rgb(95,55,180); border-color: rgba(120,90,200,0.5); }
+  .op-btn.discard { color: rgb(190,40,40); border-color: rgba(190,40,40,0.3); }
+  .op-btn.gated { opacity: 0.6; cursor: not-allowed; }
+  .op-actions-note { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+</style>
+
+<div class="operate-wf">
+  <div class="op-nav">
+    <div class="op-nav-tab">Work</div>
+    <div class="op-nav-tab active">Operate</div>
+    <div class="op-nav-tab">System</div>
+    <div class="op-nav-tab">Records</div>
+  </div>
+
+  <div class="op-header">
+    <div>
+      <h1>Launch outbound for a venture<span class="op-build-pill">BUILDING TEMPLATE</span></h1>
+      <div class="op-sub">editing SOP definition &middot; <code>v2 draft</code> &middot; no SopRun in focus</div>
+    </div>
+    <div class="op-header-actions">
+      <button class="op-sopwriter-btn">+ Open SOP-writer &rsaquo;</button>
+      <button class="op-claude-btn">Open in Claude Code (BUILD persona) &rsaquo;</button>
+    </div>
+  </div>
+
+  <div class="op-mode-row">
+    <div class="op-mode-label">Mode</div>
+    <div class="op-mode-toggle">
+      <div class="op-mode-seg">RUN</div>
+      <div class="op-mode-seg">ITERATE</div>
+      <div class="op-mode-seg active">BUILD</div>
+    </div>
+    <div class="op-mode-hint">structural edit &middot; add/remove/reorder stages, nodes, skills &middot; scaffold new files &middot; publish a new version</div>
+  </div>
+
+  <div class="op-grid">
+    <div class="op-spine">
+      <div class="op-spine-head"><span>SOP spine</span><span class="op-version">draft &middot; v2</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">1</div><div class="op-stage-name">confirm-venture-active</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">2</div><div class="op-stage-name">verify-work-email</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">3</div><div class="op-stage-name">confirm-offer-doctrine</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">4</div><div class="op-stage-name">approve-offer-ladder</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">5</div><div class="op-stage-name">produce-channel-copy</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">6</div><div class="op-stage-name">approve-channel-copy</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">7</div><div class="op-stage-name">confirm-sender-identity</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">8</div><div class="op-stage-name">set-targeting-criteria</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage selected"><span class="op-drag">&equiv;</span><div class="op-stage-idx">9</div><div class="op-stage-name">build-the-list</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">10</div><div class="op-stage-name">enrich-contacts</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">11</div><div class="op-stage-name">score-and-rank</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">12</div><div class="op-stage-name">dedupe-against-crm</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">13</div><div class="op-stage-name">schedule-sends</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">14</div><div class="op-stage-name">monitor-deliverability</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <div class="op-stage"><span class="op-drag">&equiv;</span><div class="op-stage-idx">15</div><div class="op-stage-name">classify-replies</div><span class="op-stage-menu">&middot;&middot;&middot;</span></div>
+      <button class="op-add-stage-btn">+ Add stage</button>
+    </div>
+
+    <div class="op-right">
+      <div class="op-workflow">
+        <div class="op-section-head"><h2>build-the-list</h2><div class="op-section-meta">workflow &middot; 8 activities &middot; <strong>editable</strong></div></div>
+        <div class="op-nodes">
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">01</div><div class="op-node-name">fetch-signal-feed</div><div class="op-node-owner">signal-monitoring</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">parse-trial-feed</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">02</div><div class="op-node-name">apply-targeting-criteria</div><div class="op-node-owner">signal-targeting</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">segment-criteria</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">03</div><div class="op-node-name">fetch-candidate-companies</div><div class="op-node-owner">signal-prospecting</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">build-tam</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">04</div><div class="op-node-name">enrich-companies</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">enrich-business</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">05</div><div class="op-node-name">classify-tier</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">classify-tier</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">06</div><div class="op-node-name">score-fit</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">score-fit-against-icp</div></div></div>
+          <div class="op-node selected"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">07</div><div class="op-node-name">lookup-contacts</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">find-qualified-titles</div><div class="op-skill-chip">classify-contact-seniority</div><div class="op-skill-chip more">+1</div></div></div>
+          <div class="op-node"><span class="op-node-menu">&middot;&middot;&middot;</span><div class="op-node-idx">08</div><div class="op-node-name">promote-to-staging</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">dedupe-against-canon</div></div></div>
+          <div class="op-add-node"><span class="op-add-node-plus">+</span>Add activity</div>
+        </div>
+      </div>
+
+      <div class="op-detail">
+        <div class="op-section-head">
+          <div>
+            <h2>lookup-contacts</h2>
+            <div class="op-detail-meta">
+              owner <span class="op-pill">revops-engine</span>
+              <span class="op-pill draft">draft v3 &middot; structural</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="op-detail-section">
+          <h3>Description</h3>
+          <input class="op-input" style="font-family: inherit; font-size: 14px; padding: 10px 14px;" value="For each qualified company in the staging set, resolve 1-3 contact candidates by role + seniority filter."/>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Composition (full edit)</h3>
+          <div class="op-comp-row"><div class="op-comp-label">Function</div><div><input class="op-input" value="lookupContacts"/><div style="font-size:11px;color:var(--text-muted);margin-top:6px;">file: systems/revops-engine/workflows/lookup-contacts.ts</div><div class="op-row-actions"><span class="op-mini-btn">open in editor</span><span class="op-mini-btn primary">Scaffold new ...</span></div></div></div>
+          <div class="op-comp-row"><div class="op-comp-label">Trigger</div><div><input class="op-input" value="revops/list.build.step"/><div class="op-row-actions"><span class="op-mini-btn primary">+ New event type</span></div></div></div>
+          <div class="op-comp-row"><div class="op-comp-label">Schemas</div><div><input class="op-input" value="in: candidate-company.schema.json" style="margin-bottom:6px;"/><input class="op-input" value="out: contact-candidate.schema.json"/><div class="op-row-actions"><span class="op-mini-btn">view</span><span class="op-mini-btn primary">+ Author new schema</span></div></div></div>
+          <div class="op-comp-row"><div class="op-comp-label">Adapters</div><div><span class="op-skill-chip">findymail</span> <span class="op-skill-chip">supabase</span><div class="op-row-actions"><span class="op-mini-btn">+ existing adapter</span><span class="op-mini-btn primary">+ Author new adapter</span></div></div></div>
+          <div class="op-comp-row" style="display:block;">
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline;margin-bottom:12px;">
+              <div class="op-comp-label">Skills</div>
+              <div style="font-size:12px;color:var(--text-muted);">add / remove / create new</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="op-skill-edit-row"><div class="op-skill-edit-name">find-qualified-titles</div><div class="op-skill-edit-actions"><span class="op-mini-btn">view</span><span class="op-mini-btn danger">remove</span></div></div>
+              <div class="op-skill-edit-row"><div class="op-skill-edit-name">classify-contact-seniority</div><div class="op-skill-edit-actions"><span class="op-mini-btn">view</span><span class="op-mini-btn danger">remove</span></div></div>
+              <div class="op-skill-edit-row"><div class="op-skill-edit-name">pick-best-candidate</div><div class="op-skill-edit-actions"><span class="op-mini-btn">view</span><span class="op-mini-btn danger">remove</span></div></div>
+              <div class="op-add-row">
+                <button class="op-add-existing-btn">+ Add existing skill</button>
+                <button class="op-create-new-btn">+ Create new skill (invokes skill-creator)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Provenance contract (editable)</h3>
+          <div class="op-prov-edit">
+            <div class="op-prov-edit-block"><h4>Consumes</h4><input class="op-input" value="staging_companies"/><div class="op-row-actions"><span class="op-mini-btn">+ source</span></div></div>
+            <div class="op-prov-edit-block"><h4>Writes</h4><input class="op-input" value="revops.staging_contacts"/><div class="op-row-actions"><span class="op-mini-btn">+ target</span></div></div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>System view</h3>
+          <div class="op-hidden-block">no live data while in BUILD mode &middot; system view embeds again after publish</div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Runs history</h3>
+          <div class="op-hidden-block">no runs for a draft template &middot; publish v3 to start collecting runs</div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Evals (author fixtures while building)</h3>
+          <div class="op-evals-row">
+            <div class="op-evals-rate">25 fixtures</div>
+            <div class="op-evals-meta">inherits from v2 &middot; 2 stale &middot; 0 covering new contract</div>
+            <button class="op-add-fixture-btn">+ Add fixture for new contract</button>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>More (concurrency &middot; retry &middot; scripts &middot; deps)</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12.5px;">
+            <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Concurrency</div><input class="op-input" value="scope=env key='findymail-base' limit=1"/></div>
+            <div><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Retry</div><input class="op-input" value="attempts=4 backoff=exponential"/></div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Actions</h3>
+          <div class="op-actions">
+            <button class="op-btn primary">Validate</button>
+            <button class="op-btn">Save draft</button>
+            <button class="op-btn gated">Publish v3</button>
+            <span class="op-actions-note">publish gated until validate passes</span>
+            <button class="op-btn discard">Discard draft</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

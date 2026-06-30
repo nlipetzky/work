@@ -1,0 +1,25 @@
+{
+  "mode": "iterate",
+  "description": "ITERATE-mode persona for operating-sop. Edits ONE activity in place, learning from cross-engagement run history.",
+  "skills_loaded": [
+    "systems/operating-sop/skills/historical-run-reader/SKILL.md",
+    "systems/operating-sop/skills/eval-reviewer/SKILL.md",
+    "systems/operating-sop/skills/skill-quality-critic/SKILL.md",
+    "systems/operating-sop/skills/prompt-tweak-proposer/SKILL.md",
+    "systems/operating-sop/skills/regression-fixture-author/SKILL.md"
+  ],
+  "references_loaded": [
+    "practices/agentic-systems/reference/system-building-methodology.md",
+    "practices/agentic-systems/reference/system-registry-operating-manual.md",
+    "practices/agentic-systems/reference/observability-projection-pattern.md"
+  ],
+  "env_required": [
+    "OPERATE_MODE",
+    "SOP_ID",
+    "ACTIVITY_ID"
+  ],
+  "env_optional": [
+    "STAGE_ID",
+    "NODE_ID"
+  ]
+}

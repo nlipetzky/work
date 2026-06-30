@@ -1,0 +1,28 @@
+{
+  "mode": "build",
+  "description": "BUILD-mode persona for operating-sop. Authors SOPs/workflows/activities/skills and scaffolds supporting code per vertical-by-system, gated through govern-artifacts.",
+  "skills_loaded": [
+    "systems/operating-sop/skills/sop-writer/SKILL.md",
+    "systems/operating-sop/skills/workflow-composer/SKILL.md",
+    "systems/operating-sop/skills/activity-binder/SKILL.md",
+    "systems/operating-sop/skills/function-scaffolder/SKILL.md",
+    "systems/operating-sop/skills/schema-author/SKILL.md",
+    "systems/operating-sop/skills/adapter-author/SKILL.md"
+  ],
+  "references_loaded": [
+    "practices/agentic-systems/reference/system-folder-standard.md",
+    "practices/agentic-systems/reference/vertical-system-pattern.md",
+    "practices/agentic-systems/reference/three-layer-work-model.md",
+    "practices/agentic-systems/reference/system-anatomy.md",
+    "practices/agentic-systems/reference/folder-architecture-decision.md"
+  ],
+  "env_required": [
+    "OPERATE_MODE"
+  ],
+  "env_optional": [
+    "SOP_ID",
+    "STAGE_ID",
+    "NODE_ID",
+    "ACTIVITY_ID"
+  ]
+}

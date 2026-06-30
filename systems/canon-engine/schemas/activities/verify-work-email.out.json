@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "verify-work-email.out",
+  "title": "verify-work-email — output",
+  "description": "Fields written into each contact object inside revops.public.prospects.enrichment.contacts[] after Hunter.io verification. Written via UPDATE prospects SET enrichment = ... (JSONB merge). No new columns or tables required.",
+  "type": "object",
+  "properties": {
+    "verif": {
+      "type": "string",
+      "enum": ["valid", "invalid", "accept_all", "webmail", "disposable", "unknown"],
+      "description": "Hunter.io email-verifier status field (d.status). Null if Hunter API call fails."
+    },
+    "deliverable": {
+      "type": "string",
+      "enum": ["deliverable", "undeliverable", "risky", "unknown"],
+      "description": "Hunter.io email-verifier result field (d.result)."
+    },
+    "email_score": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Hunter.io deliverability confidence score (d.score)."
+    },
+    "accept_all": {
+      "type": "boolean",
+      "description": "True when the domain accepts all addresses regardless of validity (d.accept_all)."
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp of verification call."
+    },
+    "verified_by": {
+      "type": "string",
+      "const": "hunter",
+      "description": "Provenance stamp. Idempotency sentinel: contacts with this field set are skipped on re-run."
+    }
+  },
+  "required": ["verif", "deliverable", "email_score", "accept_all", "verified_at", "verified_by"],
+  "x-target-table": {
+    "project_id": "mrmnyscurmkfppicqqhk",
+    "table": "public.prospects",
+    "write_path": "enrichment.contacts[*] (where email non-null and verified_by absent)",
+    "write_op": "UPDATE prospects SET enrichment = jsonb_set(..., contacts) WHERE id = :id"
+  },
+  "x-migration-needed": false,
+  "x-secondary-output": {
+    "description": "verify-contacts.mjs also does LinkedIn backfill (Serper, name-validated) as a side effect, writing linkedin and linkedin_source into the same contacts JSONB. This is OUT OF SCOPE for verify-work-email. Should be a separate activity binding if formally tracked.",
+    "fields": ["enrichment.contacts[*].linkedin", "enrichment.contacts[*].linkedin_source"]
+  }
+}

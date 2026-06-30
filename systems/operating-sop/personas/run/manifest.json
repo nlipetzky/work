@@ -1,0 +1,27 @@
+{
+  "mode": "run",
+  "description": "RUN-mode persona for operating-sop. Advances live SopRuns through stages and activities with full engagement context loaded.",
+  "skills_loaded": [
+    "systems/operating-sop/skills/sop-run-advancer/SKILL.md",
+    "practices/revops/skills/play-prep/SKILL.md",
+    "practices/revops/skills/lead-gen-strategist/SKILL.md",
+    "practices/revops/skills/segment-criteria/SKILL.md",
+    "practices/revops/skills/offer-extract/SKILL.md"
+  ],
+  "references_loaded": [
+    "practices/agentic-systems/reference/three-layer-work-model.md",
+    "practices/agentic-systems/reference/vertical-system-pattern.md",
+    "practices/agentic-systems/reference/artifact-discipline.md"
+  ],
+  "env_required": [
+    "OPERATE_MODE",
+    "SOP_ID",
+    "RUN_ID",
+    "ENGAGEMENT_ID"
+  ],
+  "env_optional": [
+    "STAGE_ID",
+    "NODE_ID",
+    "ACTIVITY_ID"
+  ]
+}

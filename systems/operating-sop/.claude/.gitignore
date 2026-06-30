@@ -1,0 +1,4 @@
+# Generated mirror of systems/operating-sop/skills/* for Claude Code
+# auto-discovery (written by canon-engine/scripts/sync-skills.mjs). The
+# canonical skill bodies live in ../skills/; this is a build artifact.
+skills/
