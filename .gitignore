@@ -32,3 +32,4 @@ practices/agentic-systems/tsx-501/
 # NOTE: `dist/` is build output (verified: no tracked source under any dist/).
 # Do NOT ignore bare `build` ... real source lives under
 # systems/projection-ui/app/build/, app/api/build/, lib/builds/ (the /build console).
+tsx-501/
