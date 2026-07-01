@@ -9,14 +9,22 @@
 export interface AccountConfig {
   email: string;
   org: string;
-  pipelines: ('transcripts' | 'emails')[];
+  pipelines: ('transcripts' | 'emails' | 'calendar')[];
+  /**
+   * When true, ingest the entire mailbox instead of only INBOX +
+   * AOS/Ingest-labeled mail. For dedicated addresses (e.g. a partner's
+   * prospect-only mailbox) where every message is relevant.
+   */
+  ingestAll?: boolean;
 }
 
 export const ACCOUNTS: AccountConfig[] = [
-  { email: 'nick@konstellationai.com', org: 'konstellationai', pipelines: ['transcripts', 'emails'] },
-  { email: 'agent_8@konstellationai.com', org: 'konstellationai', pipelines: ['transcripts', 'emails'] },
-  { email: 'nick@instig8.ai', org: 'instig8', pipelines: ['transcripts', 'emails'] },
+  { email: 'nick@konstellationai.com', org: 'konstellationai', pipelines: ['transcripts', 'emails', 'calendar'] },
+  { email: 'nick@instig8.ai', org: 'instig8', pipelines: ['transcripts', 'emails', 'calendar'] },
   { email: 'agent_8@instig8.ai', org: 'instig8', pipelines: ['transcripts', 'emails'] },
+  // Will's dedicated Konstellation mailbox — partner + prospect comms only,
+  // so every message is relevant: ingestAll bypasses the AOS/Ingest gate.
+  { email: 'will@konstellationai.com', org: 'konstellationai', pipelines: ['emails', 'calendar', 'transcripts'], ingestAll: true },
 ];
 
 export const KNOWN_INTERNAL_DOMAINS = ['instig8.ai', 'konstellationai.com'];
