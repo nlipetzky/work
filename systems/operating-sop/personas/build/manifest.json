@@ -7,7 +7,8 @@
     "systems/operating-sop/skills/activity-binder/SKILL.md",
     "systems/operating-sop/skills/function-scaffolder/SKILL.md",
     "systems/operating-sop/skills/schema-author/SKILL.md",
-    "systems/operating-sop/skills/adapter-author/SKILL.md"
+    "systems/operating-sop/skills/adapter-author/SKILL.md",
+    "systems/operating-sop/skills/file-judgment-unit/SKILL.md"
   ],
   "references_loaded": [
     "practices/agentic-systems/reference/system-folder-standard.md",

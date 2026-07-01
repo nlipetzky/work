@@ -10,6 +10,7 @@ const PRIMARY = [
   { href: "/work", label: "Work" },
   { href: "/operate", label: "Operate" },
   { href: "/system", label: "System" },
+  { href: "/folder", label: "Folder" },
   { href: "/records", label: "Records" },
 ];
 

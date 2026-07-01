@@ -6,7 +6,8 @@
     "systems/operating-sop/skills/eval-reviewer/SKILL.md",
     "systems/operating-sop/skills/skill-quality-critic/SKILL.md",
     "systems/operating-sop/skills/prompt-tweak-proposer/SKILL.md",
-    "systems/operating-sop/skills/regression-fixture-author/SKILL.md"
+    "systems/operating-sop/skills/regression-fixture-author/SKILL.md",
+    "systems/operating-sop/skills/file-judgment-unit/SKILL.md"
   ],
   "references_loaded": [
     "practices/agentic-systems/reference/system-building-methodology.md",

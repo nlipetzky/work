@@ -50,6 +50,9 @@ export type ModeFeatures = {
     save_draft: boolean;
     publish: boolean;
     discard_draft: boolean;
+    // ── Judgment units (folder rulings/options) ──────────────
+    file_unit: boolean; // file a ruling/option judgment_unit against the activity
+    ratify_unit: boolean; // ratify (approve → active/locked) or veto (retire) a unit
   };
 };
 
@@ -85,6 +88,8 @@ export const FEATURES: Record<OperateMode, ModeFeatures> = {
       save_draft: false,
       publish: false,
       discard_draft: false,
+      file_unit: false, // run reads folder defaults; no filing
+      ratify_unit: false,
     },
   },
 
@@ -119,6 +124,8 @@ export const FEATURES: Record<OperateMode, ModeFeatures> = {
       save_draft: false,
       publish: false,
       discard_draft: false,
+      file_unit: true, // file rulings/options against the activity
+      ratify_unit: true, // ratify / veto a proposed unit
     },
   },
 
@@ -153,6 +160,8 @@ export const FEATURES: Record<OperateMode, ModeFeatures> = {
       save_draft: true,
       publish: true,
       discard_draft: true,
+      file_unit: true, // file rulings/options against the activity
+      ratify_unit: true, // ratify / veto a proposed unit
     },
   },
 };

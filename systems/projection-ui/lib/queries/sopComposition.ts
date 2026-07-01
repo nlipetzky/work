@@ -52,6 +52,44 @@ export type ActivityEvalsSummary = {
   staleCount: number;
 };
 
+// Active/locked judgment_units targeting an activity, surfaced in the /operate
+// cockpit as the activity's "defaults from the folder". Read from the canon view
+// v_folder_active_units (standing in (active,locked) AND retired_at is null).
+export type JudgmentRuling = {
+  id: string;
+  rulingKind: "constraint" | "disqualifier" | "default" | "entity_rule" | null;
+  assertion: string;
+  trigger: Record<string, unknown> | null;
+  reasoning: string | null;
+  standing: "proposed" | "active" | "locked";
+  gatePosture: "push_to_veto" | "pull_to_approve" | null;
+  provenance: string;
+};
+
+export type JudgmentOption = {
+  id: string; // judgment_unit id
+  assertion: string;
+  reasoning: string | null;
+  standing: "proposed" | "active" | "locked";
+  provenance: string;
+  targetOptionId: string | null;
+  // Hydrated from activity_options when target_option_id resolves.
+  option: {
+    id: string;
+    optionSlug: string;
+    kind: "source" | "tactic";
+    name: string;
+    whenToUse: string | null;
+    priority: number | null;
+  } | null;
+};
+
+export type ActivityJudgment = {
+  activityId: string;
+  rulings: JudgmentRuling[];
+  options: JudgmentOption[];
+};
+
 // ─── Error helpers ─────────────────────────────────────────────────────────
 
 // Missing-table errors come in three shapes:
@@ -254,6 +292,111 @@ export async function getActivityEvals(
       lastRunAt,
       staleCount,
     };
+  } catch (e) {
+    if (isMissingTable(e)) return null;
+    throw e;
+  }
+}
+
+// ─── Judgment (folder defaults) ──────────────────────────────────────────────
+
+// Active/locked judgment_units targeting this activity, partitioned into
+// rulings (recipe_edit + ruling kinds) and options (kind = "option"). The caller
+// surfaces these as the activity's "defaults from the folder". Reads the view
+// v_folder_active_units so only standing in (active,locked) + non-retired rows
+// land, matching the canon contract. Degrades to null when canon tables are absent.
+export async function getActivityJudgment(
+  activityId: string,
+): Promise<ActivityJudgment | null> {
+  const db = canonDb();
+  try {
+    const { data, error } = await db
+      .from("v_folder_active_units")
+      .select(
+        "id, kind, ruling_kind, assertion, trigger, reasoning, standing, gate_posture, provenance, target_option_id",
+      )
+      .eq("target_activity_id", activityId)
+      .order("created_at", { ascending: true });
+    if (error) {
+      if (isMissingTable(error)) return null;
+      throw error;
+    }
+    if (!data) return null;
+
+    const rulings: JudgmentRuling[] = [];
+    const optionUnits: {
+      id: string;
+      assertion: string;
+      reasoning: string | null;
+      standing: "proposed" | "active" | "locked";
+      provenance: string;
+      targetOptionId: string | null;
+    }[] = [];
+
+    for (const row of data) {
+      const kind = row.kind as string;
+      if (kind === "option") {
+        optionUnits.push({
+          id: row.id as string,
+          assertion: (row.assertion as string) ?? "",
+          reasoning: (row.reasoning as string | null) ?? null,
+          standing: (row.standing as JudgmentRuling["standing"]) ?? "active",
+          provenance: (row.provenance as string) ?? "",
+          targetOptionId: (row.target_option_id as string | null) ?? null,
+        });
+      } else {
+        // recipe_edit + ruling → surfaced as rulings
+        rulings.push({
+          id: row.id as string,
+          rulingKind: (row.ruling_kind as JudgmentRuling["rulingKind"]) ?? null,
+          assertion: (row.assertion as string) ?? "",
+          trigger: (row.trigger as Record<string, unknown> | null) ?? null,
+          reasoning: (row.reasoning as string | null) ?? null,
+          standing: (row.standing as JudgmentRuling["standing"]) ?? "active",
+          gatePosture: (row.gate_posture as JudgmentRuling["gatePosture"]) ?? null,
+          provenance: (row.provenance as string) ?? "",
+        });
+      }
+    }
+
+    // Hydrate activity_options for any target_option_id, preserving unit order.
+    const optionIds = optionUnits
+      .map((u) => u.targetOptionId)
+      .filter((id): id is string => typeof id === "string" && id.length > 0);
+
+    const byOptionId = new Map<string, JudgmentOption["option"]>();
+    if (optionIds.length > 0) {
+      try {
+        const { data: optRows, error: optErr } = await db
+          .from("activity_options")
+          .select("id, option_slug, kind, name, when_to_use, priority")
+          .in("id", optionIds);
+        if (optErr) {
+          if (!isMissingTable(optErr)) throw optErr;
+        } else if (optRows) {
+          for (const r of optRows) {
+            byOptionId.set(r.id as string, {
+              id: r.id as string,
+              optionSlug: (r.option_slug as string) ?? "",
+              kind: (r.kind as "source" | "tactic") ?? "source",
+              name: (r.name as string) ?? (r.option_slug as string) ?? "",
+              whenToUse: (r.when_to_use as string | null) ?? null,
+              priority: (r.priority as number | null) ?? null,
+            });
+          }
+        }
+      } catch (e) {
+        if (!isMissingTable(e)) throw e;
+        // activity_options missing → option units surface without hydration.
+      }
+    }
+
+    const options: JudgmentOption[] = optionUnits.map((u) => ({
+      ...u,
+      option: u.targetOptionId ? byOptionId.get(u.targetOptionId) ?? null : null,
+    }));
+
+    return { activityId, rulings, options };
   } catch (e) {
     if (isMissingTable(e)) return null;
     throw e;
