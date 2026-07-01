@@ -1,3 +1,9 @@
+# System: canon-crm-feed
+
+The projection layer that pushes canon-engine state out to operator CRM surfaces (currently Airtable). Sits downstream of `revops-engine`'s staging → promotion pipeline: when a batch promotes into the canonical companies/contacts tables, this system fans out to Airtable as the operator working surface. Designed so canon stays the source of truth and CRMs become render targets, not authoritative state.
+
+State: motions-rewire shipped 2026-06-04. Projection gate opens when the live Inngest sync (`syncCompaniesOnPromote`, `syncContactsOnPromote` in `systems/revops-engine/workflows/`) is verified clean end-to-end. The functions are owned by revops-engine but they serve canon-crm-feed's purpose; this system is the *contract* that the projection happens, revops-engine carries the runtime.
+
 # context-mode — MANDATORY routing rules
 
 You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.

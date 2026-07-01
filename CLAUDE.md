@@ -15,13 +15,40 @@ Nick is building an owned-asset studio with a JV venture arm. Service work funds
 
 Systems are the hinge: build/run/iterate each in its own folder, surfaced in the Projection UI. Practices hold the *how* (operator personas); `accounts/` holds the *what for* (engagements). They compose: launch Claude Code from `systems/<name>/` to work on a system, from a folder under `accounts/` for an engagement, or from a practice for org-wide work, and the right operator + context load. Owned monetizable properties are modeled as systems tagged in canon, not a separate `assets/` folder.
 
+## Topology indexes (auto-loaded)
+
+Each axis maintains an auto-generated INDEX.md with a one-line summary per child folder. These are loaded into every session via the @-imports below, so sibling axes are visible regardless of where Claude Code is launched.
+
+@systems/INDEX.md
+@practices/INDEX.md
+@accounts/INDEX.md
+@capabilities/INDEX.md
+
+Regenerate after adding or renaming a folder: `node scripts/generate-indexes.mjs`. Do not hand-edit the INDEX.md files.
+
 ## Studio thesis
 
-Read `reference/studio-thesis.md` before any work that touches the relationship between practices, assets, ventures, or clients. It defines the studio's strategic frame: owned-asset studio with a JV venture arm, the paradigm shift to context-driven agentic systems, and the locked vocabulary (practice, capability, play, asset, venture, client). All structural decisions in this workspace derive from it.
+The studio thesis doc at `reference/studio-thesis.md` is a known gap (not yet written). When present, it defines the strategic frame: owned-asset studio with a JV venture arm, the paradigm shift to context-driven agentic systems, and the locked vocabulary (practice, capability, play, asset, venture, client). Until it lands, treat the vocabulary in this file and the indexes as canonical and ask Nick before deriving strategic claims from absence.
 
-## What this is not
+## Architecture slogan
 
-Application code lives in `~/code/aos/`. That repo is a separate product. Do not mix operator system files with application code.
+**Systems are the unit of ownership; capabilities are the shared library.** That is the merged-repo discipline:
+
+- **Vertical ownership:** `systems/` groups by durable owned asset, not by execution layer. Each system contains its own workflows, scripts, schemas, references, and agentic leaves.
+- **Local layering:** the deterministic-spine + agentic-leaves principle applies *inside* each system folder, not at the repo root. There is no top-level `packages/workflows/` or `packages/schemas/`; each system carries its own.
+- **Canonical registry:** `canon_engine.public.systems` (the live Supabase table) is the source of truth for what systems exist and their lifecycle state. Filesystem mirrors but does not define.
+- **Single operator surface:** `systems/projection-ui/` is the cockpit. New systems mount as route groups inside it by default. Promote to a separate UI only when the interaction model is genuinely product-like.
+
+## Capabilities promotion rubric
+
+Move something into `capabilities/` only if it answers yes to all four:
+
+1. Used by 2+ systems?
+2. Stable upstream contract (interface won't churn per-consumer)?
+3. No system-specific assumptions baked in?
+4. Placement test ... if every system rebuilt this, would it duplicate?
+
+If any answer is no, leave it in the system that needs it. Premature promotion is the failure mode.
 
 ## Rules
 
@@ -54,10 +81,7 @@ If Nick explicitly asks you to read something outside this boundary ("look at th
 
 Practices define roles and workflows. Clients hold engagement-specific context and artifacts. Skills produce artifacts. Artifacts are the deliverables.
 
-When you launch in this directory, orient yourself by reading:
-1. The relevant practice CLAUDE.md (revops, automation, content, agentic-systems, sales-and-gtm, expert-liaison, engagement-governance, etc.)
-2. The relevant engagement CLAUDE.md (under `accounts/ventures/`, `accounts/clients/`, `accounts/prospects/`, or `assets/<name>/`)
-3. The architecture notes at `practices/agentic-systems/reference/architecture-notes.md` if you need broader context
+When you launch in this directory, the four INDEX.md files (auto-loaded above) tell you what every sibling axis contains. Use them as the topology map. The SessionStart hook adds a "you launched from X" pointer so you know which folder is in focus. For deeper architectural context, read `practices/agentic-systems/reference/architecture-notes.md`.
 
 ## Working principles
 

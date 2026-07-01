@@ -1,3 +1,11 @@
+# System: projection-ui
+
+The studio operator console. Next.js 15 app running on `localhost:4180` as a launchd service (`com.nick.projection-ui`, KeepAlive). The single human-facing surface for every other system: surfaces canon-engine state (work spine, registry, capture inbox), revops staging/promotion flow, the daily protocol runner, the `/operate` SOP runner, engagement views, expert-liaison curation, and any new system that mounts a route group here.
+
+Also serves the studio's Inngest endpoint at `/api/inngest`, unioning every system's `workflows/index.ts` into one durable runtime. The serving lives here because projection-ui is the operator process; the function definitions live in their owning system's `workflows/` folder.
+
+State: live, primary surface. Adding a new operator panel = a new route group + the system's own data layer. Adding a new background workflow = a new file in the owning system's `workflows/` folder + a one-line import in `app/api/inngest/route.ts`. Restart via `launchctl kickstart -k gui/501/com.nick.projection-ui`.
+
 # context-mode — MANDATORY routing rules
 
 You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
