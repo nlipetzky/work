@@ -1,0 +1,120 @@
+<!--
+  CANONICAL — admin-console dashboard, v3
+  Rendered: 2026-06-30 (mid-session, via show_widget)
+  Status: LOCKED. This is the agreed canonical layout for the admin-console dashboard surface.
+  Variant: v3 — combined activity log into the right rail (collapsed sidebar carried from v2).
+
+  Rendering caveat: this wireframe uses host CSS variables (--accent, --bg, --fg, --muted)
+  that resolve to the chat's theme tokens at show_widget time. Opened in a plain browser
+  with no host vars, colors fall through to the defaults declared in :root below.
+
+  Companion spec: ./README.md
+  Historical: ./_historical/ (v1 baseline + v2 collapsed-sidebar variant)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>admin-console — dashboard v3 (canonical)</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --fg: #e6e8eb;
+    --muted: #8a9099;
+    --panel: #14171c;
+    --border: #1e232a;
+    --accent: #6ea8fe;       /* primary action / selection */
+    --accent-warn: #ffb454;  /* warnings, pending state */
+    --accent-ok: #5fd38a;    /* success, healthy state */
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  .app { display: grid; grid-template-columns: 56px 1fr 320px; grid-template-rows: 48px 1fr; height: 100vh; }
+  .topnav { grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--panel); }
+  .topnav .brand { font-weight: 600; }
+  .topnav .nav { display: flex; gap: 16px; color: var(--muted); }
+  .topnav .nav .active { color: var(--fg); }
+  .sidebar { border-right: 1px solid var(--border); background: var(--panel); padding: 12px 8px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .sidebar .icon { width: 32px; height: 32px; border-radius: 6px; background: var(--border); }
+  .main { padding: 20px; overflow: auto; }
+  .main h1 { margin: 0 0 16px; font-size: 18px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .card .label { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+  .card .value { font-size: 22px; margin-top: 4px; }
+  .table { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+  .table .row { display: grid; grid-template-columns: 2fr 1fr 1fr 80px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+  .table .row:last-child { border-bottom: none; }
+  .table .head { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; background: var(--border); }
+  .pill.ok { background: rgba(95, 211, 138, 0.15); color: var(--accent-ok); }
+  .pill.warn { background: rgba(255, 180, 84, 0.15); color: var(--accent-warn); }
+  .rail { border-left: 1px solid var(--border); background: var(--panel); padding: 16px; overflow: auto; display: flex; flex-direction: column; gap: 20px; }
+  .rail h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+  .rail .item { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .rail .item:last-child { border-bottom: none; }
+  .rail .item .when { color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="topnav">
+      <div class="brand">admin-console</div>
+      <div class="nav">
+        <span class="active">Dashboard</span>
+        <span>Users</span>
+        <span>Systems</span>
+        <span>Logs</span>
+        <span>Settings</span>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="icon"></div>
+      <div class="icon"></div>
+      <div class="icon"></div>
+      <div class="icon"></div>
+    </div>
+    <div class="main">
+      <h1>Dashboard</h1>
+      <div class="cards">
+        <div class="card"><div class="label">Active users</div><div class="value">1,284</div></div>
+        <div class="card"><div class="label">Pending reviews</div><div class="value">17</div></div>
+        <div class="card"><div class="label">System health</div><div class="value">OK</div></div>
+      </div>
+      <div class="table">
+        <div class="row head">
+          <div>System</div><div>Owner</div><div>State</div><div>Action</div>
+        </div>
+        <div class="row">
+          <div>canon-engine</div><div>nick</div><div><span class="pill ok">healthy</span></div><div>Open</div>
+        </div>
+        <div class="row">
+          <div>revops-engine</div><div>nick</div><div><span class="pill ok">healthy</span></div><div>Open</div>
+        </div>
+        <div class="row">
+          <div>projection-ui</div><div>nick</div><div><span class="pill warn">degraded</span></div><div>Open</div>
+        </div>
+        <div class="row">
+          <div>operating-sop</div><div>nick</div><div><span class="pill ok">healthy</span></div><div>Open</div>
+        </div>
+      </div>
+    </div>
+    <aside class="rail">
+      <div>
+        <h3>Quick actions</h3>
+        <div class="item">Invite user</div>
+        <div class="item">Run health check</div>
+        <div class="item">Export audit log</div>
+      </div>
+      <div>
+        <h3>Activity</h3>
+        <div class="item">nick promoted batch <code>b-4421</code><div class="when">2m ago</div></div>
+        <div class="item">canon-engine migration <code>019</code> applied<div class="when">14m ago</div></div>
+        <div class="item">projection-ui restarted (launchd)<div class="when">38m ago</div></div>
+        <div class="item">ellie approved 12 contacts<div class="when">1h ago</div></div>
+        <div class="item">revops batch <code>b-4420</code> promoted<div class="when">2h ago</div></div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

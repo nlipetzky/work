@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "ui-surface-discipline", "runs": [{"id": "eval-1-preservation-concern-mid-session-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [], "grading": {"eval_id": 1, "eval_name": "preservation-concern-mid-session", "config": "with_skill", "expectations": [{"text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.", "passed": true, "evidence": "admin-dashboard-v3-canonical.html at outputs/systems/admin-console/reference/wireframes/ top level"}, {"text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.", "passed": true, "evidence": "_historical/ contains admin-dashboard-v1-baseline.html and admin-dashboard-v2-collapsed-sidebar.html"}, {"text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.", "passed": true, "evidence": "README.md exists with 14 distinct sections (canonical files index, locked rules, feature flag table, accents, sections, URL, status, handoff brief, reference points, lineage)"}, {"text": "The README has a section titled 'Locked design rules' or similar.", "passed": true, "evidence": "Explicit '## Locked design rules' section present"}, {"text": "The README has a section listing/indexing the canonical files.", "passed": true, "evidence": "Explicit '## Canonical files index' section present"}, {"text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.", "passed": true, "evidence": "## For the designer (handoff brief) section with ### Locked \u2014 do not change without re-discussion + ### Open for craft input subsections"}, {"text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).", "passed": true, "evidence": "v3 HTML header: 'CANONICAL \u2014 admin-console dashboard, v3 / Status: LOCKED / Variant: v3 \u2014 combined activity log into right rail'; _historical files also have explicit SUPERSEDED headers"}, {"text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.", "passed": true, "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"}], "summary": {"pass_rate": 1.0, "passed": 8, "failed": 0, "total": 8}, "timing": {"total_tokens": 85511, "duration_ms": 162196, "total_duration_seconds": 162.2}}}, {"id": "eval-1-preservation-concern-mid-session-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [], "grading": {"eval_id": 1, "eval_name": "preservation-concern-mid-session", "config": "without_skill", "expectations": [{"text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.", "passed": true, "evidence": "admin-dashboard-v3.html at outputs/systems/admin-console/reference/wireframes/ top level"}, {"text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.", "passed": false, "evidence": "Used 'archive/' not '_historical/'. The skill's prescribed quarantine naming was not followed; any reader expecting _historical/ won't find it. This is exactly the failure mode the skill prevents (ambiguity between canonical and superseded artifact naming)."}, {"text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.", "passed": true, "evidence": "README.md exists with sections: Selected, Iteration history, Recovery note, Process gap surfaced"}, {"text": "The README has a section titled 'Locked design rules' or similar.", "passed": false, "evidence": "No section names locked rules. README focuses on iteration history + recovery, not on what's immutable about the design."}, {"text": "The README has a section listing/indexing the canonical files.", "passed": false, "evidence": "No explicit 'Canonical files index' section. 'Selected: v3' implies it but doesn't list/index all files at the wireframes root."}, {"text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.", "passed": false, "evidence": "No designer handoff section. README is internal-facing (notes on the process gap, recovery), not designer-facing."}, {"text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).", "passed": true, "evidence": "v3 HTML header: 'PLACEHOLDER \u2014 admin-dashboard-v3 (SELECTED)' with design intent block. Clear about what it represents and that visuals were lost."}, {"text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.", "passed": true, "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"}], "summary": {"pass_rate": 0.5, "passed": 4, "failed": 4, "total": 8}, "timing": {"total_tokens": 74376, "duration_ms": 76853, "total_duration_seconds": 76.9}}}, {"id": "eval-2-designer-handoff-prep-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "CHANGES.md", "type": "text", "content": "# Audit + proposed augmentation: /operate wireframes handoff\n\nDate: 2026-06-30\nSource: `/Users/nplmini/code/work/systems/operating-sop/reference/wireframes/`\nTarget use: cold handoff to a freelance designer, scoped to typography refinement + empty/loading/error states.\n\n## Audit findings (what the folder already does well)\n\nEight-step ui-surface-discipline checklist against the real folder:\n\n1. **Inventory.** Three canonical HTMLs (run / iterate / build, dated 2026-06-29). Three superseded renders (v1, variant-a, variant-b) already segregated. CLEAN.\n2. **Persistent location.** `systems/operating-sop/reference/wireframes/`. Correct owning system. CLEAN.\n3. **HTML header comments.** Each canonical HTML carries a `<!-- ... -->` header block naming mode, render date, locked affordances per panel, and the chat-CSS-var rendering caveat. CLEAN.\n4. **Historical quarantine.** `_historical/` subfolder is real, contains exactly the 3 superseded files, and is named in the README. CLEAN.\n5. **README design-intent spec.** 144 lines, 10.4KB. Hits every required section: canonical files index, visual rendering note, locked rules (top nav, mode toggle, accent palette, feature flag table, detail panel sections, skill chips, URL pattern, Claude Code spawn), implementation status, handoff brief (Locked vs Open for craft), reference points. CLEAN.\n6. **Machine-readable encoding.** `lib/operate/mode-features.ts` is referenced in THREE places in the README (line 41 inline, line 83 implementation-status, line 125 reference-points with absolute path). Canonical file lives at `/Users/nplmini/code/work/systems/projection-ui/lib/operate/mode-features.ts` (5916 bytes, comment header explains its role as single source of truth). VERIFIED PRESENT AND REFERENCED.\n7. **Triangulation.** HTML header comments \u2192 README intent. README \u2192 mode-features.ts path + components path + plan path. CLEAN.\n8. **Folder verification.** Top level: 3 HTMLs + README + (snapshot copy of mode-features.ts). `_historical/`: 3 superseded files. CLEAN.\n\n**Skill verdict: the folder is already handoff-ready.** A cold designer opening it can navigate from any one of {HTML, README, mode-features.ts} to the other two.\n\n## One real anomaly (not blocking, worth a note)\n\n`wireframes/mode-features.ts` is a byte-identical duplicate of `projection-ui/lib/operate/mode-features.ts` (verified via `diff -q`, same 5916 bytes, same mtime 2026-06-29 21:13). The README treats projection-ui's copy as canonical. The local copy will drift the moment the canonical one is edited.\n\nTwo options, both fine:\n- **(a)** Delete the local snapshot; README already points to the canonical path.\n- **(b)** Keep it as a frozen snapshot, but rename it `mode-features.snapshot.ts` and add a header comment noting it's a snapshot of the canonical file at <date>.\n\nI did NOT touch the real folder (constraint #3). Flagged here so Nick can decide.\n\n## Why augment the README at all then?\n\nThe folder is generically handoff-ready, but the specific brief is narrow: **the designer is being scoped to typography + empty/loading/error states.** Today those two items are buried as bullets 1 and 9 (of 9) inside the \"Open for craft input\" list. A cold designer reading the README top-to-bottom will absorb the whole locked surface, hit the open-list, and have to infer their scope from \"you are working on items 1 and 9.\"\n\nThe augmentation adds a tightly-scoped \"**This engagement's scope**\" section near the top of the handoff brief that:\n\n- Names the two work items explicitly as in-scope for this engagement.\n- Pulls everything else in \"Open for craft input\" into an \"out-of-scope (future engagements)\" subsection so the designer doesn't accidentally redesign the workflow grid or the embedded SystemView pattern.\n- Adds a concrete deliverable list for each in-scope item (typography: scale spec + token names + one redlined HTML; empty/loading/error: state inventory + per-state mock per critical surface).\n- Adds an \"Inventory of surfaces that need empty/loading/error states\" subsection \u2014 the designer needs this list to know what to design.\n\nThis is the kind of thing a designer would ask in the first 30-min call. Putting it in the README means they can start cold.\n\n## What was NOT changed in the proposal\n\n- Locked design rules \u2014 untouched. They are locked.\n- Per-mode feature flag table \u2014 untouched.\n- Accent palette \u2014 untouched.\n- Detail panel section order \u2014 untouched.\n- Implementation status block \u2014 untouched (it's a snapshot of code state, not a design spec).\n- Reference points \u2014 untouched (still points at canonical mode-features.ts + components).\n- Historical / superseded section \u2014 untouched.\n- When to regenerate \u2014 untouched.\n\nThe augmentation is **additive** inside the \"For Claude Design (handoff brief)\" section, plus one new \"State inventory\" appendix. Locked rules stay locked.\n\n## Files written to this outputs/ folder\n\n- `PROPOSED-README.md` \u2014 the full augmented README, drop-in replacement candidate.\n- `CHANGES.md` \u2014 this file.\n\n## What the designer will receive when they open the folder cold (assuming the proposal lands)\n\n1. Three canonical HTMLs they can open in a browser (with the caveat that CSS vars resolve to defaults outside chat \u2014 already documented).\n2. A README that opens with the locked design, then in the handoff section tells them exactly what's in-scope for THEIR engagement, what's out, and what concrete deliverables look like.\n3. A state inventory listing every surface that needs empty/loading/error coverage, so they can produce a complete set without guessing.\n4. A reference to the canonical `mode-features.ts` so any feature flag change they propose has a code path to land in.\n5. A `_historical/` they will ignore (correctly).\n"}, {"name": "PROPOSED-README.md", "type": "text", "content": "# /operate wireframes ... canonical UI design\n\nThese wireframes are the **locked design** for `/operate` in projection-ui. They were converged on through the design session of 2026-06-29 and represent the three-mode cockpit (RUN / ITERATE / BUILD) that operating-sop slice 2 implements.\n\n## Canonical files (open these in a browser)\n\n- **`operate-run.html`** \u2014 RUN mode. The daily-driver cockpit. Read-only structure, fires activities, full Composition + Provenance + Runs history + Evals + More panels. Blue accent.\n- **`operate-iterate.html`** \u2014 ITERATE mode. Single-activity edit-in-place. Skill swap panel shown mid-action. Amber accent.\n- **`operate-build.html`** \u2014 BUILD mode. Structural edit unlocked. Drag handles, scaffold affordances, SOP-writer banner. Purple accent.\n\nAll three share the same shell: 4-tab top nav (Work / Operate / System / Records), header, mode toggle, SOP spine left, workflow grid right-top, activity detail panel right-bottom. The mode determines which affordances are live.\n\n## Visual rendering note\n\nEach HTML uses host CSS variables (`var(--surface-1)`, `var(--text-accent)`, etc.) that resolve cleanly inside Claude's chat widget but render as near-defaults in a plain browser. The visual STRUCTURE is correct; the color theme needs the surrounding chat host. For polished standalone visuals, the designer should re-skin with concrete colors per the accent palette documented below.\n\n## Locked design rules\n\n### Top nav (4 tabs only)\n\n`Work \u00b7 Operate \u00b7 System \u00b7 Records`. All other tabs (Outreach, Targeting, Prospects, Demand, Build, Runs, Duplicates, Gaps, Staging, Context, Expert-Liaison) get absorbed as embedded SystemView components inside the Activity detail panel. Old routes redirect.\n\n### Mode toggle\n\n3-segment pill. Writes `?mode=` to the URL via `router.replace` (no page reload). Active segment colors match the mode's accent. Hint line reads:\n\n- RUN: \"read-only on structure \u00b7 fire activities \u00b7 daily cockpit\"\n- ITERATE: \"single-activity edit \u00b7 swap skills / tweak prompts / change schemas \u00b7 no structural change\"\n- BUILD: \"structural edit \u00b7 add/remove/reorder stages, nodes, skills \u00b7 scaffold new files \u00b7 publish a new version\"\n\n### Accent palette (rotates per mode)\n\n| Mode | Hex | RGB | Use |\n|---|---|---|---|\n| RUN | \u2014 | `rgb(91,157,255)` | active toggle seg, selected stage/node, primary button |\n| ITERATE | \u2014 | `rgb(180,110,0)` | active toggle seg, selected stage/node, skill-swap panel border, primary button |\n| BUILD | \u2014 | `rgb(95,55,180)` | active toggle seg, selected stage/node, drag handles, primary button |\n\nMode-specific tints use the same hue at low alpha (0.08\u20130.15) for backgrounds, 0.40\u20130.50 for borders.\n\n### Per-mode feature flag table (machine-readable encoding lives at `lib/operate/mode-features.ts`)\n\n| Section | RUN | ITERATE | BUILD |\n|---|---|---|---|\n| SOP spine | read | locked (no add/remove) | drag handles + \"+ Add stage\" + per-stage \"...\" menu |\n| Workflow grid | read | locked | drag + \"+ Add activity\" slot + per-node \"...\" menu |\n| Composition rows | read | editable inputs + skill swap panel | editable + \"+ Author new schema/adapter\" + \"+ Create new skill\" (invokes skill-creator) |\n| Provenance | read | read + note (\"structural = BUILD\") | editable contracts (consumes / writes) |\n| Embedded System view | live | live read-only | HIDDEN (\"no live data while in BUILD\") |\n| Runs history | full (last 5) | with per-row Diff/Learn affordances | HIDDEN (\"no runs for a draft\") |\n| Evals | read (pass-rate + fixture count) | read + \"+ Add fixture from a recent failure\" | authoring + \"+ Add fixture for new contract\" |\n| More expander | scripts / deps / concurrency / retry (read) | hidden | editable (concurrency + retry inputs) |\n| SOP-writer banner | hidden | hidden | shown at top of detail panel |\n| Action bar | Run (PLAN) / Open in Claude Code (RUN) / EXECUTE | Save iteration / Run after save / Discard | Validate / Save draft / Publish v+1 (gated) / Discard |\n\n### Activity detail panel sections (vertical scroll, RUN mode shows all)\n\n1. **Header** \u2014 activity name + pills (owner, status, node position, avg cost in RUN)\n2. **Description** \u2014 one paragraph (editable in ITERATE / BUILD)\n3. **Composition** \u2014 Function (file path + \"View source\"), Trigger (event + \"Inspect event\"), Schemas (in/out + \"View\"), Adapters (chips), Skills (list with one row expandable inline to show SKILL.md frontmatter + body)\n4. **Provenance trail** \u2014 three-step flow: consumes \u2192 writes \u2192 downstream consumer\n5. **Embedded System view** \u2014 dashed-border block tagged `systems/<owner>` containing the OWNING SYSTEM's UI component (e.g. revops-engine's pending-lookups table). This is the absorption point.\n6. **Runs history** \u2014 last 5 runs (when / status / duration / cost / view link)\n7. **Evals** \u2014 single horizontal row: pass-rate + bar + fixtures + last-run-at\n8. **More expander** \u2014 tier-2 details: scripts, upstream deps, concurrency, retry policy\n9. **Actions** \u2014 per-mode buttons per table above\n\n### Skill chips on workflow node cards\n\nEach node card carries a small \"skills\" line: 1-2 chips visible + \"+N more\" overflow when applicable. In ITERATE mode, each chip gets a swap indicator (\u21c4). Clicking a chip would open the SKILL.md (current implementation: expansion lives inside the detail panel's Skills section).\n\n### Mode is in the URL\n\n`?mode=run|iterate|build`. Default omitted = `run`. Survives back/forward navigation. The spawn dispatcher echoes mode back via the `Open in Claude Code (RUN|ITERATE|BUILD)` button label.\n\n### Open in Claude Code is mode-aware\n\nButton label tracks the toggle. POSTs `{mode, sopId, runId, stageId, nodeId, engagementId, activityId}` to `/api/operate/open-claude`. The spawn dispatcher composes the persona payload from the manifest at `systems/operating-sop/personas/<mode>/manifest.json` + a SessionStart hook auto-loads the persona CLAUDE.md into `additionalContext`. Each mode gets its own AI persona context.\n\n## Implementation status (as of 2026-06-29 end-of-session)\n\nShipped + live:\n- Mode toggle + URL `?mode=` + per-mode feature flag table (`lib/operate/mode-features.ts`)\n- \"Open in Claude Code (RUN|ITERATE|BUILD)\" button with mode-aware payload\n- SessionStart hook auto-loads persona spec + focus envelope into spawned Claude sessions\n- Canon-backed Composition panel reading from `canon.sop_activities` + `public.skills` via `/api/operate/composition/<activityId>`\n- All three personas scaffolded (`systems/operating-sop/personas/{run,iterate,build}/`)\n- Migrations 017+018+019 applied to canon-engine; 8 SOP-spine tables live\n- 16 skills synced into `canon.public.skills` (incl. 5 new ITERATE-mode skills)\n\nNot yet shipped (next session ... see `practices/agentic-systems/scratchpad/handoff-2026-06-29.md`):\n- Composition rows become editable in ITERATE mode (currently read-only)\n- Inline skill swap panel (dropdown of candidates from `canon.skills`)\n- `/api/operate/iterate` save-iteration route\n- BUILD-mode affordances (drag/drop spine + workflow, \"+ Add\" buttons, Publish v+1)\n- Embedded SystemView registry pattern + per-tab absorption (slice 2D)\n\n## For the designer (handoff brief)\n\nIf you are a designer landing on this folder cold, read this section before anything else. Locked rules above are immutable for this engagement \u2014 the design has shipped and is in production. Your job is the polish.\n\n### This engagement's scope\n\nYou are scoped to TWO work items:\n\n1. **Typography refinement.** Audit the current type system (Anthropic Sans + ui-monospace; sizes 11/12/13/14/16/22) and propose a tighter scale. Deliverable: a `typography.md` spec listing token names, sizes, line-heights, weights, and intended usage, PLUS one redlined HTML showing the new scale applied to `operate-run.html`. Goal: hierarchy should be obvious without color cues.\n\n2. **Empty / loading / error states.** Today the wireframes only show the populated happy path. Every surface needs a defined state for empty (no data yet), loading (data fetching), and error (fetch failed / not-permitted / not-found). Deliverable: per-surface state mocks (HTML or Figma frames, your call) for every entry in the \"State inventory\" appendix below. Use the existing accent palette for affordance, not new colors.\n\nAnything not on this list is OUT OF SCOPE for this engagement. The \"Future work (out of scope)\" subsection below is for context only \u2014 do not work on those items without asking.\n\n### Locked (do not change)\n\n- Layout grid: 4-tab top nav, header, mode toggle, 300px left spine, right column with workflow-top + detail-bottom\n- The per-mode feature flag table above\n- The accent rotation (blue / amber / purple) and what each color means\n- The 9 detail-panel sections in their vertical order\n- The mode-in-URL pattern\n- Operate as the universal cockpit (no separate Outreach/Targeting/etc. tabs)\n- The two font families (Anthropic Sans for UI, ui-monospace for code/IDs). Within those families you can change anything.\n\n### State inventory (for the empty / loading / error work item)\n\nEvery surface in the table below needs three states drawn: EMPTY, LOADING, ERROR. Cross-mode behavior is noted where it differs.\n\n| Surface | Empty state trigger | Loading state trigger | Error state trigger |\n|---|---|---|---|\n| Engagement picker (top header) | No engagement selected yet | Loading engagements list | Engagement fetch failed |\n| SOP spine (left, 15 stages) | SOP has no stages defined yet (BUILD mode only) | Stages loading | Stage fetch failed |\n| Workflow grid (right-top, node cards) | Stage has no activities yet (BUILD: \"+ Add activity\" empty state; RUN/ITERATE: \"no activities defined for this stage\") | Activities loading | Activities fetch failed |\n| Activity detail panel \u2014 Composition | Activity has no skills bound yet | Composition data loading | `/api/operate/composition/<id>` 4xx/5xx |\n| Activity detail panel \u2014 Provenance | No upstream consumer wired | Provenance loading | Provenance fetch failed |\n| Activity detail panel \u2014 Embedded System view | Owning system has no row for this activity yet | System view loading | System view component throw |\n| Activity detail panel \u2014 Runs history (RUN/ITERATE only) | No runs recorded yet | Runs loading | Runs fetch failed |\n| Activity detail panel \u2014 Evals | No fixtures bound yet | Evals loading | Eval run errored |\n| Skill chips on node card | Node has 0 skills bound | (chips render synchronously; no loading needed) | (n/a unless SKILL.md fetch fails on click) |\n| Skill swap panel (ITERATE only) | No candidate skills match the contract | Candidates loading | Candidate fetch failed |\n| Action bar \u2014 Run / Validate / Save | (n/a \u2014 buttons always render) | Button disabled + spinner during async action | Toast / inline error after failure |\n| SOP-writer banner (BUILD only) | (always present in BUILD) | (n/a) | (n/a) |\n\nFor each row \u00d7 state, the mock should show: the placeholder copy, the iconography (if any), the affordance (CTA button if the empty state should drive an action like \"+ Add stage\"), and how the surrounding layout collapses (does the panel shrink, or hold its height with the placeholder centered?).\n\n### Future work (out of scope for this engagement \u2014 for context only)\n\nThese are flagged for future engagements; do not work on them now:\n\n- Whitespace + density tuning (RUN vs ITERATE comparison)\n- Status badge / pill design refinement\n- Workflow grid column count (4-col vs 3-col for BUILD)\n- Skill swap panel interaction model (inline accordion vs slideout vs modal)\n- Dark-surface tone audit\n- Embedded SystemView visual signature (dashed border + tag pill alternatives)\n- Mobile / narrow-viewport behavior\n\nIf a typography or state-design decision forces you into one of these, flag it back to Nick rather than freelancing the call.\n\n### Reference points\n\n- The machine-readable feature table at `/Users/nplmini/code/work/systems/projection-ui/lib/operate/mode-features.ts` is the **TypeScript source of truth**. If your design changes a feature flag (it shouldn't, given your scope), update that file. If it adds a feature, add a flag.\n- The live shipping code at `/Users/nplmini/code/work/systems/projection-ui/components/operate/` (`ModeToggle.tsx`, `CompositionPanel.tsx`) and `components/operate-inspector.tsx` shows what's currently rendered. Diffing wireframe \u2192 live code reveals what's not yet wired.\n- Full plan at `/Users/nplmini/.claude/plans/yes-lock-in-the-iridescent-book.md`.\n\n### Deliverables checklist\n\nWhen you hand the engagement back, the following should land in this folder (or `_designer-handoff-<date>/` if you prefer to namespace):\n\n- [ ] `typography.md` \u2014 token names, scale, weights, line-heights, usage notes\n- [ ] `operate-run.html` (redlined or replaced) showing the new type scale applied\n- [ ] State mocks covering every cell in the State inventory table above (12 surfaces \u00d7 3 states minus the explicitly n/a cells)\n- [ ] Short README addition or note describing any edge case or open question you ran into\n\n## Historical / superseded\n\nThe `_historical/` subfolder holds earlier renderings kept for reference:\n\n- `operate-run-v1.html` \u2014 first ship-quality RUN render from the design workflow. Pre-dates mode toggle, skill chips on nodes, composition panel, runs history, evals, more expander. Do NOT treat as canonical.\n- `operate-run-variant-a.html` / `operate-run-variant-b.html` \u2014 density variants from the same workflow. The judge picked v1 over these; they sit here for visual diff.\n\n## When to regenerate\n\nRe-render the canonical files if:\n- The feature flag table in `mode-features.ts` changes (the table here must match)\n- The detail-panel section order changes\n- The accent palette shifts\n- A new mode is added (unlikely)\n\nUse the chat session of 2026-06-29 as the reference render. Or have the designer produce a higher-fidelity set from this spec.\n"}], "grading": {"eval_id": 2, "eval_name": "designer-handoff-prep", "config": "with_skill", "expectations": [{"text": "Outputs contain a markdown file (CHANGES.md, audit.md, or similar) reporting the audit findings of the real wireframes folder.", "passed": true, "evidence": "CHANGES.md exists with full 8-step audit findings + proposed augmentation rationale + 'What was NOT changed' section"}, {"text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder.", "passed": true, "evidence": "Audit step 1 + step 8: 'Three canonical HTMLs (run / iterate / build, dated 2026-06-29). Top level: 3 HTMLs + README'"}, {"text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level).", "passed": true, "evidence": "Audit step 4: '_historical/ subfolder is real, contains exactly the 3 superseded files, and is named in the README. CLEAN.'"}, {"text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts) as part of the triangulation.", "passed": true, "evidence": "Audit step 6: explicit reference to lib/operate/mode-features.ts at /Users/nplmini/code/work/systems/projection-ui/lib/operate/mode-features.ts with absolute path. Also flagged duplicate mode-features.ts in wireframes folder as drift risk."}, {"text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer.", "passed": true, "evidence": "Audit verdict: 'Folder is already handoff-ready against all 8 steps.' + 'Why augment despite cleanliness' section proposes specific improvement: designer's 2 scoped items are buried as items 1 and 9 of a 9-bullet list. Proposed PROPOSED-README.md restructures the brief."}, {"text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory.", "passed": true, "evidence": "Agent explicitly states 'I did NOT touch the real folder (constraint #3)'. Output files (CHANGES.md, PROPOSED-README.md) live under outputs/."}], "summary": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6}, "timing": {"total_tokens": 105212, "duration_ms": 184508, "total_duration_seconds": 184.5}}}, {"id": "eval-2-designer-handoff-prep-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "HANDOFF-NOTES.md", "type": "text", "content": "# Handoff prep \u2014 notes for Nick\n\n## What I did\n\nBuilt a self-contained handoff package at:\n`outputs/wireframes-handoff/`\n\nThe package is what you send to the designer. The source folder at\n`/Users/nplmini/code/work/systems/operating-sop/reference/wireframes/` is\nunchanged.\n\n## Why I didn't just zip the source folder\n\nThree problems would have shipped:\n\n1. **The HTML doesn't render in a standalone browser.** Every wireframe uses\n   `var(--surface-1)` etc. tokens that resolve to nothing outside the original\n   chat-widget host. The README admits this (\"renders as near-defaults in a\n   plain browser\") but the designer is going to open `operate-run.html`,\n   see washed-out gray boxes, and email asking what they're looking at.\n2. **The existing README leaks internal context.** It references\n   `~/.claude/plans/yes-lock-in-the-iridescent-book.md`, the live shipping\n   code at `systems/projection-ui/components/operate/`, and the Anthropic\n   chat-widget rendering quirk. None of that is useful to a cold freelancer\n   and some of it shouldn't be shared at all.\n3. **There's no engagement scope.** The README's \"Open for craft input\" is a\n   bullet list, not a brief. A freelance designer needs a primary deliverable,\n   a secondary deliverable, an out-of-scope list, and a format-of-delivery\n   note. Otherwise you get a Figma file that reshapes the section order.\n\n## What's in the package\n\n- `README-for-designer.md` \u2014 written cold for someone who's never seen the\n  product. Explains what /operate is, the 3-mode model, and how to open the\n  files.\n- `ENGAGEMENT-SCOPE.md` \u2014 primary deliverable (typography refinement),\n  secondary deliverable (empty/loading/error states), explicit out-of-scope\n  list, format of delivery, async timeline with one mid-point check-in.\n- `GLOSSARY.md` \u2014 every term in the wireframes (SOP, stage, activity, skill,\n  composition, provenance, SystemView, etc.) in plain English.\n- `design-tokens.md` \u2014 current color and type values lifted directly from\n  markup, presented as concrete values the designer can paste into Figma.\n- `rendered/_tokens.css` \u2014 shim that resolves the host CSS variables so the\n  wireframes render correctly when opened in a browser. The original HTML is\n  not edited; the shim is loaded via a `<link>` tag wrapper.\n- `rendered/operate-run.html`, `operate-iterate.html`, `operate-build.html` \u2014\n  the canonical wireframes, wrapped to load `_tokens.css`. Markup identical\n  to source.\n- `_originals/` \u2014 verbatim copies of the source files (HTML, mode-features.ts,\n  the _historical subfolder). Reference only.\n\n## What the designer will NOT receive\n\n- Path references to your local filesystem\n- Reference to your `~/.claude/plans/` directory\n- The \"Visual rendering note\" about the chat-widget host (resolved by the\n  shim, no longer needs explaining)\n- The `mode-features.ts` file is included in `_originals/` but the README\n  frames it as TypeScript source-of-truth they can read, not a file they\n  edit.\n\n## Open questions for you before sending\n\n1. **Designer name and contact** \u2014 neither is in the package. You'll add a\n   cover email.\n2. **Compensation / contract** \u2014 out of scope for this folder; assume you're\n   handling separately.\n3. **Tools / fonts they have access to** \u2014 the package assumes they own\n   licensed Anthropic Sans or will substitute. If they don't, flag a fallback.\n4. **Whether to share `_historical/`** \u2014 included as reference for the design\n   evolution. If you'd rather they not see the variant-a/variant-b dead ends,\n   delete `_originals/_historical/` before sending.\n"}], "grading": {"eval_id": 2, "eval_name": "designer-handoff-prep", "config": "without_skill", "expectations": [{"text": "Outputs contain a markdown file (CHANGES.md, audit.md, or similar) reporting the audit findings of the real wireframes folder.", "passed": true, "evidence": "HANDOFF-NOTES.md exists with explicit Findings, What I did, and Open questions sections"}, {"text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder.", "passed": true, "evidence": "Built wireframes-handoff package containing _originals/operate-run.html, operate-iterate.html, operate-build.html \u2014 confirms their existence via copy"}, {"text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level).", "passed": true, "evidence": "Copied _originals/_historical/ with v1 + variant-a + variant-b \u2014 confirms quarantine via mirror. Not explicitly stated as a finding but structurally preserved."}, {"text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts) as part of the triangulation.", "passed": false, "evidence": "_originals/mode-features.ts is copied but the agent didn't explicitly call out its role as triangulation source. The READMEs and HANDOFF-NOTES focus on what's missing for the designer (CSS rendering, paths, scope) rather than what exists structurally."}, {"text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer.", "passed": true, "evidence": "HANDOFF-NOTES.md 'Findings' section explicitly identifies 3 blockers: won't render in browser, README leaks internal context (absolute paths, internal plan refs), no engagement scope. Built ENGAGEMENT-SCOPE.md to address."}, {"text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory.", "passed": true, "evidence": "Agent built 'wireframes-handoff/' package under outputs/. The real source folder is untouched per the report."}], "summary": {"pass_rate": 0.8333, "passed": 5, "failed": 1, "total": 6}, "timing": {"total_tokens": 98562, "duration_ms": 227007, "total_duration_seconds": 227.0}}}, {"id": "eval-3-negative-test-non-ui-design-with_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "020_activity_runs.sql", "type": "text", "content": "-- 020_activity_runs.sql\n-- canon.activity_runs: one row per execution of an activity.\n-- Captures lifecycle, retry, cost, and error categorization for observability and replay.\n\nbegin;\n\ncreate table if not exists canon.activity_runs (\n  id                  uuid        primary key default gen_random_uuid(),\n\n  -- lineage\n  activity_id         uuid        not null references canon.activities(id) on delete restrict,\n  workflow_id         uuid        null     references canon.workflows(id)  on delete set null,\n  sop_run_id          uuid        null,\n  parent_run_id       uuid        null     references canon.activity_runs(id) on delete set null,\n  idempotency_key     text        null,\n\n  -- lifecycle\n  status              text        not null default 'queued'\n    check (status in ('queued','running','succeeded','failed','cancelled','timed_out')),\n  started_at          timestamptz null,\n  finished_at         timestamptz null,\n  duration_ms         integer     generated always as\n    (case\n       when started_at is not null and finished_at is not null\n       then (extract(epoch from (finished_at - started_at)) * 1000)::int\n       else null\n     end) stored,\n\n  -- retry\n  attempt             integer     not null default 1 check (attempt >= 1),\n  max_attempts        integer     not null default 1 check (max_attempts >= 1),\n  retry_of_run_id     uuid        null references canon.activity_runs(id) on delete set null,\n  next_retry_at       timestamptz null,\n\n  -- cost\n  cost_usd            numeric(12,6) null,\n  cost_breakdown      jsonb         null,\n  token_input         integer       null,\n  token_output        integer       null,\n  model               text          null,\n\n  -- error\n  error_class         text        null\n    check (error_class is null or error_class in\n      ('transient','rate_limit','timeout','auth','validation','dependency','permanent','unknown')),\n  error_code          text        null,\n  error_message       text        null,\n  error_detail        jsonb       null,\n  is_retriable        boolean     null,\n\n  -- provenance\n  input               jsonb       null,\n  output              jsonb       null,\n  output_artifact_ids uuid[]      null,\n\n  -- attribution\n  actor_id            uuid        null references canon.actors(id) on delete set null,\n  session_id          text        null,\n  trace_id            text        null,\n\n  created_at          timestamptz not null default now(),\n\n  -- sanity: terminal states must have finished_at\n  constraint activity_runs_terminal_finished_at_chk\n    check (\n      status in ('queued','running')\n      or finished_at is not null\n    )\n);\n\n-- indexes\ncreate index if not exists activity_runs_activity_started_idx\n  on canon.activity_runs (activity_id, started_at desc);\n\ncreate index if not exists activity_runs_workflow_idx\n  on canon.activity_runs (workflow_id)\n  where workflow_id is not null;\n\ncreate index if not exists activity_runs_retry_scheduler_idx\n  on canon.activity_runs (next_retry_at)\n  where status = 'failed' and next_retry_at is not null;\n\ncreate unique index if not exists activity_runs_idempotency_uq\n  on canon.activity_runs (idempotency_key)\n  where idempotency_key is not null;\n\ncreate index if not exists activity_runs_error_class_idx\n  on canon.activity_runs (error_class)\n  where status = 'failed';\n\ncreate index if not exists activity_runs_created_at_idx\n  on canon.activity_runs (created_at desc);\n\n-- comments (kept terse; doc lives in schema-design.md)\ncomment on table  canon.activity_runs                    is 'One row per activity execution. See schema-design.md.';\ncomment on column canon.activity_runs.cost_breakdown    is 'Structured per-provider cost detail; scalar cost_usd is the rollup.';\ncomment on column canon.activity_runs.error_class       is 'Coarse error bucket for routing/alerts. Provider-specific code in error_code.';\ncomment on column canon.activity_runs.retry_of_run_id   is 'Predecessor attempt. Distinct from parent_run_id (which is for sub-runs/fan-outs).';\n\ncommit;\n"}, {"name": "schema-design.md", "type": "text", "content": "# canon.activity_runs \u2014 schema design\n\n## Purpose\n\nOne row per execution of an activity (the L3 unit in the work model). Captures cost, retry, timing, error, and provenance so the system can be observed, re-run, billed, and learned from.\n\n## Column choices\n\n### Identity + lineage\n- `id` (uuid, PK) \u2014 stable run id; generated server-side.\n- `activity_id` (uuid, FK -> `canon.activities.id`, not null) \u2014 which activity definition was executed.\n- `workflow_id` (uuid, FK -> `canon.workflows.id`, null) \u2014 parent workflow run, if invoked inside one. Null for direct activity calls.\n- `sop_run_id` (uuid, null) \u2014 parent SOP execution, if any. Lets us roll runs up to SOP-level cost/reliability.\n- `parent_run_id` (uuid, FK self, null) \u2014 when a run spawns sub-runs (retries, fan-outs). Enables tree-walk for audit.\n- `idempotency_key` (text, unique nullable) \u2014 caller-supplied; prevents duplicate execution on retry storms.\n\n### Status + lifecycle\n- `status` (text, not null, check in `'queued','running','succeeded','failed','cancelled','timed_out'`) \u2014 coarse lifecycle state. Constrained enum so projections/queries are safe.\n- `started_at` (timestamptz, null) \u2014 null until status leaves `queued`.\n- `finished_at` (timestamptz, null) \u2014 set on terminal states.\n- `duration_ms` (int, generated as `extract(epoch from finished_at - started_at) * 1000`) \u2014 denormalized for cheap analytics.\n\n### Retry tracking\n- `attempt` (int, not null, default 1) \u2014 1-indexed attempt number within the logical operation.\n- `max_attempts` (int, not null, default 1) \u2014 policy snapshot at run time; lets us tell \"gave up\" vs \"still has budget\".\n- `retry_of_run_id` (uuid, FK self, null) \u2014 links this attempt to its predecessor. Forms a chain you can walk to count escalations.\n- `next_retry_at` (timestamptz, null) \u2014 scheduler hint; null when no retry pending.\n\nRationale: split `attempt` + `retry_of_run_id` rather than overloading `parent_run_id`. Retries are a distinct relationship from sub-runs (fan-out children), and conflating them ruins reliability queries.\n\n### Cost tracking\n- `cost_usd` (numeric(12,6), null) \u2014 total realized cost in USD. Six decimals because LLM calls land in the millicent range.\n- `cost_breakdown` (jsonb, null) \u2014 structured detail, e.g. `{\"llm\": {...per-model tokens + $}, \"tools\": [...], \"infra\": 0.0001}`. Keeps the hot column scalar while preserving auditability.\n- `token_input` (int, null) / `token_output` (int, null) \u2014 denormalized from breakdown for fast aggregation. Nulls for non-LLM activities.\n- `model` (text, null) \u2014 primary model used, if any. Pulled out for grouping; full per-call list stays in breakdown.\n\nRationale: scalar `cost_usd` + jsonb `cost_breakdown` is the standard split \u2014 cheap rollups, no schema churn when a new provider lands.\n\n### Error categorization\n- `error_class` (text, null, check in enum below) \u2014 coarse category for routing/alerts.\n- `error_code` (text, null) \u2014 provider-specific code, e.g. `rate_limit_exceeded`, `invalid_api_key`. Free text but stable per provider.\n- `error_message` (text, null) \u2014 human-readable message. Truncated to ~4KB at write time.\n- `error_detail` (jsonb, null) \u2014 full structured payload (stack, provider response, request id).\n- `is_retriable` (bool, null) \u2014 classifier decision at failure time; lets the retry scheduler key off a single column.\n\n`error_class` enum: `'transient','rate_limit','timeout','auth','validation','dependency','permanent','unknown'`. Eight buckets cover the actionable cases without sliding into noise.\n\n### Inputs/outputs (provenance)\n- `input` (jsonb, null) \u2014 what the activity was called with. Required for replay.\n- `output` (jsonb, null) \u2014 what it returned on success. Null on failure.\n- `output_artifact_ids` (uuid[], null) \u2014 FKs to `canon.artifacts` for any persisted outputs.\n\n### Observability / actor attribution\n- `actor_id` (uuid, FK -> `canon.actors.id`, null) \u2014 who/what triggered the run (operator persona, scheduled job, webhook).\n- `session_id` (text, null) \u2014 Claude Code session id when initiated from a session.\n- `trace_id` (text, null) \u2014 distributed-trace correlation across systems.\n- `created_at` (timestamptz, not null, default now()) \u2014 row insertion time.\n\n## Indexes\n\n- PK on `id`\n- `(activity_id, started_at desc)` \u2014 \"show recent runs of this activity\"\n- `(workflow_id) where workflow_id is not null` \u2014 workflow rollups\n- `(status, next_retry_at) where status = 'failed' and next_retry_at is not null` \u2014 retry scheduler hot path\n- `(idempotency_key) unique where idempotency_key is not null` \u2014 dedup\n- `(error_class) where status = 'failed'` \u2014 error-rate dashboards\n- `(created_at desc)` \u2014 recency feed\n\n## What I deliberately did NOT add\n\n- No `worker_id` / `hostname` \u2014 premature; add when we have >1 runner.\n- No materialized cost-per-day rollup \u2014 start with a view; promote if it gets slow.\n- No `tags` jsonb \u2014 overloaded escape hatches rot fast. Add named columns when a real query needs them.\n- No `priority` \u2014 scheduler concern, not run-history concern.\n"}], "grading": {"eval_id": 3, "eval_name": "negative-test-non-ui-design", "config": "with_skill", "expectations": [{"text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work.", "passed": true, "evidence": "Agent report (a): 'Skill applied: NO. The ui-surface-discipline skill is for preserving/handing off chat-rendered UI work; its description explicitly excludes database schemas. This task is schema design, not UI design.'"}, {"text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files.", "passed": true, "evidence": "Outputs folder contains only schema-design.md + 020_activity_runs.sql. No wireframes/, no HTML, no UI artifacts."}, {"text": "Outputs contain a schema design \u2014 column list with justifications for cost_usd / retry_count / error_category. Addresses all three concerns named in the user's prompt.", "passed": true, "evidence": "schema-design.md covers all three: Cost group (cost_usd numeric(12,6) + cost_breakdown jsonb + tokens), Retry group (attempt, max_attempts, retry_of_run_id, next_retry_at), Error group (error_class 8-bucket enum, error_code, error_message, error_detail, is_retriable)"}, {"text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs) with the proposed columns.", "passed": true, "evidence": "020_activity_runs.sql begins 'create table if not exists canon.activity_runs (' with full column definitions, check constraints, FKs, generated duration_ms, and standard SQL syntax."}], "summary": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4}, "timing": {"total_tokens": 79051, "duration_ms": 90003, "total_duration_seconds": 90.0}}}, {"id": "eval-3-negative-test-non-ui-design-without_skill-run-1", "prompt": "(No prompt found)", "eval_id": null, "outputs": [{"name": "020_canon_activity_runs.sql", "type": "text", "content": "-- Migration: 020_canon_activity_runs.sql\n-- Purpose:   Create canon.activity_runs ... per-execution ledger for any system's activity.\n-- Project:   canon-engine (mzzjvoiwughcnmmqzbxv)\n-- Posture:   service-role only; RLS deferred to a follow-up migration.\n\nbegin;\n\n-- ---------------------------------------------------------------------------\n-- Schema + extensions\n-- ---------------------------------------------------------------------------\ncreate schema if not exists canon;\ncreate extension if not exists pgcrypto;  -- gen_random_uuid()\n\n-- ---------------------------------------------------------------------------\n-- Enums (declared as CHECK constraints, not pg enums, so we can evolve cheaply)\n-- ---------------------------------------------------------------------------\n-- status, triggered_by, error_class are validated via CHECK below.\n\n-- ---------------------------------------------------------------------------\n-- Table\n-- ---------------------------------------------------------------------------\ncreate table canon.activity_runs (\n    -- identity + lineage\n    run_id            uuid        primary key default gen_random_uuid(),\n    activity_id       text        not null,\n    system_id         text        not null,\n    parent_run_id     uuid        null references canon.activity_runs(run_id) on delete set null,\n    correlation_id    uuid        not null,\n    triggered_by      text        not null,\n    actor_id          text        null,\n\n    -- lifecycle\n    status            text        not null default 'queued',\n    started_at        timestamptz not null default now(),\n    finished_at       timestamptz null,\n    duration_ms       int         generated always as (\n                          case\n                              when finished_at is null then null\n                              else (extract(epoch from (finished_at - started_at)) * 1000)::int\n                          end\n                      ) stored,\n\n    -- cost\n    cost_usd          numeric(12,6) null,\n    cost_breakdown    jsonb         null,\n    tokens_input      int           null,\n    tokens_output     int           null,\n\n    -- retries\n    attempt           int         not null default 1,\n    max_attempts      int         not null default 1,\n    retry_of_run_id   uuid        null references canon.activity_runs(run_id) on delete set null,\n    next_retry_at     timestamptz null,\n    retry_reason      text        null,\n\n    -- error categorization\n    error_class       text        null,\n    error_code        text        null,\n    error_message     text        null,\n    error_payload     jsonb       null,\n    is_retryable      boolean     null,\n\n    -- inputs / outputs (pointers, not payloads)\n    input_ref         text        null,\n    output_ref        text        null,\n    metadata          jsonb       not null default '{}'::jsonb,\n\n    -- audit\n    created_at        timestamptz not null default now(),\n    updated_at        timestamptz not null default now(),\n\n    -- ---- constraints ----\n    constraint activity_runs_status_chk check (\n        status in ('queued','running','succeeded','failed','cancelled','timed_out')\n    ),\n    constraint activity_runs_triggered_by_chk check (\n        triggered_by in ('operator','schedule','event','system','retry')\n    ),\n    constraint activity_runs_error_class_chk check (\n        error_class is null or error_class in (\n            'none','validation','auth','rate_limit','provider_timeout',\n            'provider_5xx','provider_4xx','quota_exhausted','dependency_missing',\n            'data_quality','logic_bug','infra','cancelled','unknown'\n        )\n    ),\n    constraint activity_runs_attempt_positive_chk check (attempt >= 1),\n    constraint activity_runs_max_attempts_chk check (max_attempts >= attempt),\n    constraint activity_runs_finished_after_started_chk check (\n        finished_at is null or finished_at >= started_at\n    ),\n    constraint activity_runs_terminal_has_finish_chk check (\n        (status in ('queued','running')) = (finished_at is null)\n    ),\n    constraint activity_runs_failed_has_error_chk check (\n        status <> 'failed' or error_class is not null\n    ),\n    constraint activity_runs_cost_nonnegative_chk check (\n        cost_usd is null or cost_usd >= 0\n    )\n);\n\ncomment on table  canon.activity_runs is 'Per-execution ledger for any system activity. One row per attempt; retries chain via retry_of_run_id.';\ncomment on column canon.activity_runs.correlation_id is 'Groups runs from one operator intent across systems. Defaults to run_id at root via trigger.';\ncomment on column canon.activity_runs.cost_breakdown is 'JSONB: { llm:{model,input_tokens,output_tokens,usd}, providers:[{name,units,usd}], infra_usd }';\ncomment on column canon.activity_runs.error_class  is 'Coarse failure bucket. Drives the reliability dashboard. Backfills are expensive ... add categories only when truly new.';\n\n-- ---------------------------------------------------------------------------\n-- Foreign keys to canon registry (deferred ... assumes tables exist)\n-- ---------------------------------------------------------------------------\ndo $$\nbegin\n    if exists (select 1 from information_schema.tables where table_schema='canon' and table_name='activities') then\n        alter table canon.activity_runs\n            add constraint activity_runs_activity_fk\n            foreign key (activity_id) references canon.activities(activity_id)\n            on update cascade on delete restrict;\n    end if;\n\n    if exists (select 1 from information_schema.tables where table_schema='public' and table_name='systems') then\n        alter table canon.activity_runs\n            add constraint activity_runs_system_fk\n            foreign key (system_id) references public.systems(system_id)\n            on update cascade on delete restrict;\n    end if;\nend$$;\n\n-- ---------------------------------------------------------------------------\n-- Indexes\n-- ---------------------------------------------------------------------------\ncreate index activity_runs_system_started_idx\n    on canon.activity_runs (system_id, started_at desc);\n\ncreate index activity_runs_activity_started_idx\n    on canon.activity_runs (activity_id, started_at desc);\n\ncreate index activity_runs_active_status_idx\n    on canon.activity_runs (status)\n    where status in ('queued','running');\n\ncreate index activity_runs_failed_class_idx\n    on canon.activity_runs (error_class)\n    where status = 'failed';\n\ncreate index activity_runs_correlation_idx\n    on canon.activity_runs (correlation_id);\n\ncreate index activity_runs_parent_idx\n    on canon.activity_runs (parent_run_id)\n    where parent_run_id is not null;\n\ncreate index activity_runs_next_retry_idx\n    on canon.activity_runs (next_retry_at)\n    where next_retry_at is not null;\n\ncreate index activity_runs_cost_breakdown_gin\n    on canon.activity_runs using gin (cost_breakdown jsonb_path_ops);\n\ncreate index activity_runs_metadata_gin\n    on canon.activity_runs using gin (metadata jsonb_path_ops);\n\n-- ---------------------------------------------------------------------------\n-- Triggers\n-- ---------------------------------------------------------------------------\ncreate or replace function canon.activity_runs_touch_updated_at()\nreturns trigger language plpgsql as $$\nbegin\n    new.updated_at := now();\n    return new;\nend$$;\n\ncreate trigger activity_runs_touch_updated_at\n    before update on canon.activity_runs\n    for each row execute function canon.activity_runs_touch_updated_at();\n\ncreate or replace function canon.activity_runs_default_correlation()\nreturns trigger language plpgsql as $$\nbegin\n    if new.correlation_id is null then\n        new.correlation_id := new.run_id;\n    end if;\n    return new;\nend$$;\n\ncreate trigger activity_runs_default_correlation\n    before insert on canon.activity_runs\n    for each row execute function canon.activity_runs_default_correlation();\n\n-- ---------------------------------------------------------------------------\n-- Grants (service-role only; mirrors revops-engine posture)\n-- ---------------------------------------------------------------------------\nrevoke all on canon.activity_runs from public;\nrevoke all on canon.activity_runs from anon, authenticated;\ngrant  all on canon.activity_runs to service_role;\n\ncommit;\n"}, {"name": "schema-design.md", "type": "text", "content": "# canon.activity_runs schema design\n\n## Purpose\n\nOne row per execution attempt of an activity (any system's deterministic step or agent call). Tracks lifecycle, cost, retries, and error shape so we can: bill/budget, debug failures by category, and feed the work spine's reliability metrics.\n\n## Column choices + justification\n\n### Identity + lineage\n- `run_id uuid PK default gen_random_uuid()` ... stable handle for joins (observability, artifacts, projection-ui links).\n- `activity_id text not null` ... fk to `canon.activities.activity_id`. Text because activity ids are slugged (`revops.enrich.bettercontact`), not synthetic.\n- `system_id text not null` ... fk to `public.systems.system_id`. Denormalized from activity for cheap filtering (\"all runs by canon-engine today\").\n- `parent_run_id uuid null` ... self-fk for nested/composed activities (workflow calling activity calling sub-activity). Null = root call.\n- `correlation_id uuid not null` ... groups all runs from one operator intent across systems. Survives across parent boundaries. Default = `run_id` if root, inherited otherwise.\n- `triggered_by text not null` ... enum: `operator | schedule | event | system | retry`. Cheap to filter; explains the row's existence.\n- `actor_id text null` ... operator/agent id when `triggered_by='operator'` or `'system'`. Null otherwise.\n\n### Lifecycle\n- `status text not null` ... enum: `queued | running | succeeded | failed | cancelled | timed_out`. Indexed.\n- `started_at timestamptz not null default now()` ... wall-clock start.\n- `finished_at timestamptz null` ... null while running. Filled on terminal status.\n- `duration_ms int generated always as (extract(epoch from (finished_at - started_at)) * 1000)::int stored` ... computed; saves repeat math in projection-ui.\n\n### Cost tracking\n- `cost_usd numeric(12,6) null` ... total $ spent in this run. Nullable because not every activity has cost (pure logic). 6 decimals because LLM tokens land in micro-dollars.\n- `cost_breakdown jsonb null` ... `{ \"llm\": {\"model\":\"opus-4-7\",\"input_tokens\":..,\"output_tokens\":..,\"usd\":..}, \"providers\": [{\"name\":\"bettercontact\",\"units\":1,\"usd\":..}], \"infra_usd\": .. }`. JSONB so we don't pin the schema to today's providers. Indexed via GIN on `cost_breakdown jsonb_path_ops` for cost-by-provider queries.\n- `tokens_input int null` / `tokens_output int null` ... promoted out of jsonb because they're queried constantly (rate-limit forecasting, model picks). Sum across all LLM calls in the run.\n\n### Retries\n- `attempt int not null default 1` ... 1-indexed. Increments only on retry, not on cold start.\n- `max_attempts int not null default 1` ... policy snapshot at submit time so we don't have to re-resolve later if policy changes.\n- `retry_of_run_id uuid null` ... self-fk to the immediately previous failed attempt. Chain reconstructs full retry history; the root attempt's `run_id` becomes the chain's natural key when joined with `correlation_id`.\n- `next_retry_at timestamptz null` ... scheduler reads this; null when no retry pending.\n- `retry_reason text null` ... compact phrase (\"provider 429\", \"transient db\", \"operator forced\"). Free-text; not enum because reasons evolve.\n\n### Error categorization\n- `error_class text null` ... enum: `none | validation | auth | rate_limit | provider_timeout | provider_5xx | provider_4xx | quota_exhausted | dependency_missing | data_quality | logic_bug | infra | cancelled | unknown`. Indexed. This is the primary grouping for reliability dashboards ... decided up-front because adding categories later forces backfills.\n- `error_code text null` ... provider/system specific code (`P0001`, `ETIMEDOUT`, `HTTP_429`). For drilldown.\n- `error_message text null` ... human-readable; truncated at insert to 2000 chars (anything bigger goes to `error_payload`).\n- `error_payload jsonb null` ... full provider response / stack trace / context. Big; not indexed.\n- `is_retryable boolean null` ... computed by the runner at failure time based on `error_class`. Snapshotted so retry policy can change without re-classifying historic rows.\n\n### Inputs / outputs (lightweight)\n- `input_ref text null` ... pointer (storage path or canon artifact id) to the input payload. We do NOT store the payload here ... rows stay narrow.\n- `output_ref text null` ... same shape; pointer to output artifact.\n- `metadata jsonb not null default '{}'::jsonb` ... per-activity extra fields (model id, play slug, batch id, anything the activity wants surfaced without a schema migration).\n\n### Audit\n- `created_at timestamptz not null default now()` ... row insert time (\u2248 started_at but separated for clock skew).\n- `updated_at timestamptz not null default now()` ... touched on every status change. Trigger maintains.\n\n## Indexes\n\n- `(system_id, started_at desc)` ... primary projection-ui query (\"recent runs for system X\").\n- `(activity_id, started_at desc)` ... per-activity reliability.\n- `(status) where status in ('queued','running')` ... partial index; the hot operational set.\n- `(error_class) where status='failed'` ... partial; powers the failure-mix dashboard.\n- `(correlation_id)` ... trace assembly.\n- `(parent_run_id) where parent_run_id is not null` ... partial; child lookups.\n- `(next_retry_at) where next_retry_at is not null` ... scheduler scan.\n- GIN on `cost_breakdown jsonb_path_ops` and on `metadata jsonb_path_ops`.\n\n## Things I deliberately did NOT add\n\n- No `engagement_id` / `play_slug` column ... those live in `metadata`. Putting them top-level would tie this table to revops-engine's vocabulary, and canon.activity_runs is studio-wide.\n- No `outcome_score` ... eval scoring belongs in a sibling table that joins on `run_id`. Keeps the hot-path insert cheap.\n- No partitioning yet ... add native time partitioning when row count crosses ~5M; premature now.\n- No RLS policies in this migration ... follows revops-engine posture (service-role-only); RLS gets a separate, deliberate migration.\n"}], "grading": {"eval_id": 3, "eval_name": "negative-test-non-ui-design", "config": "without_skill", "expectations": [{"text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work.", "passed": true, "evidence": "[N/A \u2014 baseline run has no skill to consult; auto-passes since the agent correctly proceeded with schema design without invoking any UI skill]"}, {"text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files.", "passed": true, "evidence": "Outputs folder contains only schema-design.md + 020_canon_activity_runs.sql. No wireframes/, no HTML, no UI artifacts."}, {"text": "Outputs contain a schema design \u2014 column list with justifications for cost_usd / retry_count / error_category.", "passed": true, "evidence": "schema-design.md (TL;DR) covers Cost (cost_usd numeric(12,6) + cost_breakdown jsonb + tokens), Retries (attempt, max_attempts, retry_of_run_id, next_retry_at, retry_reason), Errors (error_class CHECK enum + indexed partial on failed, error_code, error_message, error_payload, is_retryable)"}, {"text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs).", "passed": true, "evidence": "020_canon_activity_runs.sql includes 'create schema if not exists canon', 'create extension if not exists pgcrypto', CHECK constraints, FKs, partial indexes, comments. Idempotent with begin/commit."}], "summary": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4}, "timing": {"total_tokens": 75933, "duration_ms": 104131, "total_duration_seconds": 104.1}}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "ui-surface-discipline", "skill_path": "<path/to/skill>", "executor_model": "<model-name>", "analyzer_model": "<model-name>", "timestamp": "2026-06-30T14:49:38Z", "evals_run": [1, 2, 3], "runs_per_configuration": 1}, "runs": [{"eval_id": 1, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 8, "failed": 0, "total": 8, "time_seconds": 162.2, "tokens": 85511, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.", "passed": true, "evidence": "admin-dashboard-v3-canonical.html at outputs/systems/admin-console/reference/wireframes/ top level"}, {"text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.", "passed": true, "evidence": "_historical/ contains admin-dashboard-v1-baseline.html and admin-dashboard-v2-collapsed-sidebar.html"}, {"text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.", "passed": true, "evidence": "README.md exists with 14 distinct sections (canonical files index, locked rules, feature flag table, accents, sections, URL, status, handoff brief, reference points, lineage)"}, {"text": "The README has a section titled 'Locked design rules' or similar.", "passed": true, "evidence": "Explicit '## Locked design rules' section present"}, {"text": "The README has a section listing/indexing the canonical files.", "passed": true, "evidence": "Explicit '## Canonical files index' section present"}, {"text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.", "passed": true, "evidence": "## For the designer (handoff brief) section with ### Locked \u2014 do not change without re-discussion + ### Open for craft input subsections"}, {"text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).", "passed": true, "evidence": "v3 HTML header: 'CANONICAL \u2014 admin-console dashboard, v3 / Status: LOCKED / Variant: v3 \u2014 combined activity log into right rail'; _historical files also have explicit SUPERSEDED headers"}, {"text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.", "passed": true, "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"}], "notes": []}, {"eval_id": 2, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6, "time_seconds": 184.5, "tokens": 105212, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Outputs contain a markdown file (CHANGES.md, audit.md, or similar) reporting the audit findings of the real wireframes folder.", "passed": true, "evidence": "CHANGES.md exists with full 8-step audit findings + proposed augmentation rationale + 'What was NOT changed' section"}, {"text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder.", "passed": true, "evidence": "Audit step 1 + step 8: 'Three canonical HTMLs (run / iterate / build, dated 2026-06-29). Top level: 3 HTMLs + README'"}, {"text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level).", "passed": true, "evidence": "Audit step 4: '_historical/ subfolder is real, contains exactly the 3 superseded files, and is named in the README. CLEAN.'"}, {"text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts) as part of the triangulation.", "passed": true, "evidence": "Audit step 6: explicit reference to lib/operate/mode-features.ts at /Users/nplmini/code/work/systems/projection-ui/lib/operate/mode-features.ts with absolute path. Also flagged duplicate mode-features.ts in wireframes folder as drift risk."}, {"text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer.", "passed": true, "evidence": "Audit verdict: 'Folder is already handoff-ready against all 8 steps.' + 'Why augment despite cleanliness' section proposes specific improvement: designer's 2 scoped items are buried as items 1 and 9 of a 9-bullet list. Proposed PROPOSED-README.md restructures the brief."}, {"text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory.", "passed": true, "evidence": "Agent explicitly states 'I did NOT touch the real folder (constraint #3)'. Output files (CHANGES.md, PROPOSED-README.md) live under outputs/."}], "notes": []}, {"eval_id": 3, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 90.0, "tokens": 79051, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work.", "passed": true, "evidence": "Agent report (a): 'Skill applied: NO. The ui-surface-discipline skill is for preserving/handing off chat-rendered UI work; its description explicitly excludes database schemas. This task is schema design, not UI design.'"}, {"text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files.", "passed": true, "evidence": "Outputs folder contains only schema-design.md + 020_activity_runs.sql. No wireframes/, no HTML, no UI artifacts."}, {"text": "Outputs contain a schema design \u2014 column list with justifications for cost_usd / retry_count / error_category. Addresses all three concerns named in the user's prompt.", "passed": true, "evidence": "schema-design.md covers all three: Cost group (cost_usd numeric(12,6) + cost_breakdown jsonb + tokens), Retry group (attempt, max_attempts, retry_of_run_id, next_retry_at), Error group (error_class 8-bucket enum, error_code, error_message, error_detail, is_retriable)"}, {"text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs) with the proposed columns.", "passed": true, "evidence": "020_activity_runs.sql begins 'create table if not exists canon.activity_runs (' with full column definitions, check constraints, FKs, generated duration_ms, and standard SQL syntax."}], "notes": []}, {"eval_id": 1, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.5, "passed": 4, "failed": 4, "total": 8, "time_seconds": 76.9, "tokens": 74376, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.", "passed": true, "evidence": "admin-dashboard-v3.html at outputs/systems/admin-console/reference/wireframes/ top level"}, {"text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.", "passed": false, "evidence": "Used 'archive/' not '_historical/'. The skill's prescribed quarantine naming was not followed; any reader expecting _historical/ won't find it. This is exactly the failure mode the skill prevents (ambiguity between canonical and superseded artifact naming)."}, {"text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.", "passed": true, "evidence": "README.md exists with sections: Selected, Iteration history, Recovery note, Process gap surfaced"}, {"text": "The README has a section titled 'Locked design rules' or similar.", "passed": false, "evidence": "No section names locked rules. README focuses on iteration history + recovery, not on what's immutable about the design."}, {"text": "The README has a section listing/indexing the canonical files.", "passed": false, "evidence": "No explicit 'Canonical files index' section. 'Selected: v3' implies it but doesn't list/index all files at the wireframes root."}, {"text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.", "passed": false, "evidence": "No designer handoff section. README is internal-facing (notes on the process gap, recovery), not designer-facing."}, {"text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).", "passed": true, "evidence": "v3 HTML header: 'PLACEHOLDER \u2014 admin-dashboard-v3 (SELECTED)' with design intent block. Clear about what it represents and that visuals were lost."}, {"text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.", "passed": true, "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"}], "notes": []}, {"eval_id": 2, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8333, "passed": 5, "failed": 1, "total": 6, "time_seconds": 227.0, "tokens": 98562, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "Outputs contain a markdown file (CHANGES.md, audit.md, or similar) reporting the audit findings of the real wireframes folder.", "passed": true, "evidence": "HANDOFF-NOTES.md exists with explicit Findings, What I did, and Open questions sections"}, {"text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder.", "passed": true, "evidence": "Built wireframes-handoff package containing _originals/operate-run.html, operate-iterate.html, operate-build.html \u2014 confirms their existence via copy"}, {"text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level).", "passed": true, "evidence": "Copied _originals/_historical/ with v1 + variant-a + variant-b \u2014 confirms quarantine via mirror. Not explicitly stated as a finding but structurally preserved."}, {"text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts) as part of the triangulation.", "passed": false, "evidence": "_originals/mode-features.ts is copied but the agent didn't explicitly call out its role as triangulation source. The READMEs and HANDOFF-NOTES focus on what's missing for the designer (CSS rendering, paths, scope) rather than what exists structurally."}, {"text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer.", "passed": true, "evidence": "HANDOFF-NOTES.md 'Findings' section explicitly identifies 3 blockers: won't render in browser, README leaks internal context (absolute paths, internal plan refs), no engagement scope. Built ENGAGEMENT-SCOPE.md to address."}, {"text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory.", "passed": true, "evidence": "Agent built 'wireframes-handoff/' package under outputs/. The real source folder is untouched per the report."}], "notes": []}, {"eval_id": 3, "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4, "time_seconds": 104.1, "tokens": 75933, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work.", "passed": true, "evidence": "[N/A \u2014 baseline run has no skill to consult; auto-passes since the agent correctly proceeded with schema design without invoking any UI skill]"}, {"text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files.", "passed": true, "evidence": "Outputs folder contains only schema-design.md + 020_canon_activity_runs.sql. No wireframes/, no HTML, no UI artifacts."}, {"text": "Outputs contain a schema design \u2014 column list with justifications for cost_usd / retry_count / error_category.", "passed": true, "evidence": "schema-design.md (TL;DR) covers Cost (cost_usd numeric(12,6) + cost_breakdown jsonb + tokens), Retries (attempt, max_attempts, retry_of_run_id, next_retry_at, retry_reason), Errors (error_class CHECK enum + indexed partial on failed, error_code, error_message, error_payload, is_retryable)"}, {"text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs).", "passed": true, "evidence": "020_canon_activity_runs.sql includes 'create schema if not exists canon', 'create extension if not exists pgcrypto', CHECK constraints, FKs, partial indexes, comments. Idempotent with begin/commit."}], "notes": []}], "run_summary": {"with_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 145.5667, "stddev": 49.397, "min": 90.0, "max": 184.5}, "tokens": {"mean": 89924.6667, "stddev": 13627.539, "min": 79051.0, "max": 105212.0}}, "without_skill": {"pass_rate": {"mean": 0.7778, "stddev": 0.2546, "min": 0.5, "max": 1.0}, "time_seconds": {"mean": 136.0, "stddev": 79.9732, "min": 76.9, "max": 227.0}, "tokens": {"mean": 82957.0, "stddev": 13536.7308, "min": 74376.0, "max": 98562.0}}, "delta": {"pass_rate": "+0.22", "time_seconds": "+9.6", "tokens": "+6968"}}, "notes": []}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

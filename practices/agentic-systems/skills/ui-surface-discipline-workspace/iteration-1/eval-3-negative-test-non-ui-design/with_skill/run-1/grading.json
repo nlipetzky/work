@@ -1,0 +1,38 @@
+{
+  "eval_id": 3,
+  "eval_name": "negative-test-non-ui-design",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work.",
+      "passed": true,
+      "evidence": "Agent report (a): 'Skill applied: NO. The ui-surface-discipline skill is for preserving/handing off chat-rendered UI work; its description explicitly excludes database schemas. This task is schema design, not UI design.'"
+    },
+    {
+      "text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files.",
+      "passed": true,
+      "evidence": "Outputs folder contains only schema-design.md + 020_activity_runs.sql. No wireframes/, no HTML, no UI artifacts."
+    },
+    {
+      "text": "Outputs contain a schema design \u2014 column list with justifications for cost_usd / retry_count / error_category. Addresses all three concerns named in the user's prompt.",
+      "passed": true,
+      "evidence": "schema-design.md covers all three: Cost group (cost_usd numeric(12,6) + cost_breakdown jsonb + tokens), Retry group (attempt, max_attempts, retry_of_run_id, next_retry_at), Error group (error_class 8-bucket enum, error_code, error_message, error_detail, is_retriable)"
+    },
+    {
+      "text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs) with the proposed columns.",
+      "passed": true,
+      "evidence": "020_activity_runs.sql begins 'create table if not exists canon.activity_runs (' with full column definitions, check constraints, FKs, generated duration_ms, and standard SQL syntax."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 4,
+    "failed": 0,
+    "total": 4
+  },
+  "timing": {
+    "total_tokens": 79051,
+    "duration_ms": 90003,
+    "total_duration_seconds": 90.0
+  }
+}

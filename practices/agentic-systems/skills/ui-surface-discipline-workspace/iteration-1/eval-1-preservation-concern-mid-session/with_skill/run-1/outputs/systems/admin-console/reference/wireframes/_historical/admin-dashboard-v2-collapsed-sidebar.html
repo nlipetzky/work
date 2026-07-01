@@ -1,0 +1,41 @@
+<!--
+  HISTORICAL — admin-console dashboard, v2 (collapsed sidebar)
+  Rendered: 2026-06-30 (mid-session, via show_widget)
+  Status: SUPERSEDED. Iteration between v1 and v3.
+  Variant: v2 — sidebar collapsed to a thin icon rail (carried forward into v3),
+                BUT activity log still a separate panel under the main table.
+                v3 folded the activity log into a right rail.
+
+  Do NOT treat this as canonical. The canonical layout is ../admin-dashboard-v3-canonical.html.
+  See ../README.md for the design intent and what's locked.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>admin-console — dashboard v2 (HISTORICAL)</title>
+<style>
+  :root { --bg:#0b0d10; --fg:#e6e8eb; --muted:#8a9099; --panel:#14171c; --border:#1e232a; }
+  body { margin:0; font:14px/1.45 system-ui,sans-serif; background:var(--bg); color:var(--fg); }
+  .app { display:grid; grid-template-columns:56px 1fr; grid-template-rows:48px 1fr; height:100vh; }
+  .topnav { grid-column:1/-1; padding:0 16px; border-bottom:1px solid var(--border); background:var(--panel); display:flex; align-items:center; }
+  .sidebar { border-right:1px solid var(--border); background:var(--panel); padding:12px 8px; display:flex; flex-direction:column; gap:8px; align-items:center; }
+  .sidebar .icon { width:32px; height:32px; border-radius:6px; background:var(--border); }
+  .main { padding:20px; overflow:auto; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:16px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="topnav">admin-console (v2 collapsed sidebar)</div>
+    <div class="sidebar">
+      <div class="icon"></div><div class="icon"></div><div class="icon"></div><div class="icon"></div>
+    </div>
+    <div class="main">
+      <div class="panel"><strong>Metrics</strong><div>Active 1284 · Pending 17 · Health OK</div></div>
+      <div class="panel"><strong>Systems table</strong><div>4 rows...</div></div>
+      <div class="panel"><strong>Activity log</strong><div>Still a separate full-width panel. v3 moves this to a right rail.</div></div>
+    </div>
+  </div>
+</body>
+</html>

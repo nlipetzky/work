@@ -1,0 +1,624 @@
+<style>
+  .operate-wf {
+    font-family: "Anthropic Sans", system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  .operate-wf * { box-sizing: border-box; }
+
+  /* Top nav */
+  .op-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 0.5px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .op-nav-tab {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .op-nav-tab.active {
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    font-weight: 500;
+  }
+
+  /* Header strip */
+  .op-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .op-header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+  .op-header .op-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .op-header .op-sub code {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 12px;
+    color: var(--text-primary);
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+  .op-counter {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 999px;
+  }
+  .op-counter strong { color: var(--text-primary); font-weight: 500; }
+  .op-counter .op-blocked-count { color: rgb(190,40,40); font-weight: 500; }
+
+  /* Main grid */
+  .op-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+  }
+
+  /* LEFT: SOP spine */
+  .op-spine {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+  }
+  .op-spine-head {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 8px 12px 8px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .op-spine-head .op-spine-count {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+  .op-stage {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+  }
+  .op-stage:hover { background: var(--surface-1); }
+  .op-stage.selected {
+    background: var(--bg-accent);
+    border-color: var(--border-accent);
+  }
+  .op-stage.selected .op-stage-name { color: var(--text-accent); font-weight: 500; }
+  .op-stage-idx {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 18px;
+    flex-shrink: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .op-stage-name {
+    font-size: 14px;
+    color: var(--text-primary);
+    flex: 1;
+    font-weight: 400;
+  }
+  .op-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .op-dot.pending { background: var(--border-strong); }
+  .op-dot.blocked { background: rgb(190,40,40); box-shadow: 0 0 0 3px rgba(220,80,80,0.18); }
+  .op-dot.running { background: var(--text-accent); }
+  .op-dot.done { background: #2a9d5a; }
+  .op-stage.blocked .op-stage-name { color: rgb(190,40,40); }
+
+  /* RIGHT column */
+  .op-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  /* Workflow view */
+  .op-workflow {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .op-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .op-section-head h2 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .op-section-head .op-section-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .op-nodes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .op-node {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+  .op-node:hover { border-color: var(--border-strong); }
+  .op-node.selected {
+    background: var(--bg-accent);
+    border: 1px solid var(--border-accent);
+    padding: 15px;
+  }
+  .op-node-idx {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .op-node.selected .op-node-idx { color: var(--text-accent); }
+  .op-node-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+  .op-node.selected .op-node-name { color: var(--text-accent); }
+  .op-node-owner {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+
+  /* Node detail panel */
+  .op-detail {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .op-detail h2 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+  }
+  .op-detail-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .op-detail-meta .op-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    color: var(--text-secondary);
+    margin-left: 6px;
+    font-size: 12px;
+  }
+  .op-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+  .op-detail-section h3 {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin: 0 0 12px 0;
+  }
+  .op-detail-desc {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .op-detail-desc code {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+  }
+
+  /* Embedded system view -- dashed border emphasizes it's borrowed UI */
+  .op-embed {
+    background: var(--surface-1);
+    border: 0.5px dashed var(--border-strong);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .op-embed-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .op-embed-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .op-embed-title .op-embed-kind {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .op-embed-tag {
+    font-size: 11px;
+    color: var(--text-accent);
+    background: var(--bg-accent);
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .op-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .op-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .op-table td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text-primary);
+  }
+  .op-table tr:last-child td { border-bottom: none; }
+  .op-table .op-num { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .op-embed-footer {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* Action controls */
+  .op-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .op-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-1);
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+  .op-btn.primary {
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
+  }
+  .op-btn.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background: rgba(220,80,80,0.10);
+    color: rgb(190,40,40);
+    border-color: rgba(220,80,80,0.25);
+  }
+  .op-actions-note {
+    font-size: 12px;
+    color: rgb(190,40,40);
+    margin-left: 4px;
+  }
+</style>
+
+<div class="operate-wf">
+
+  <!-- Top nav -->
+  <div class="op-nav">
+    <div class="op-nav-tab">Work</div>
+    <div class="op-nav-tab active">Operate</div>
+    <div class="op-nav-tab">System</div>
+    <div class="op-nav-tab">Records</div>
+  </div>
+
+  <!-- Header strip -->
+  <div class="op-header">
+    <div>
+      <h1>Launch outbound for a venture</h1>
+      <div class="op-sub">SopRun <code>konstellation-cipo</code></div>
+    </div>
+    <div class="op-counter">
+      <strong>0 / 15</strong> done &middot; <span class="op-blocked-count">1 blocked</span>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="op-grid">
+
+    <!-- LEFT: SOP spine -->
+    <div class="op-spine">
+      <div class="op-spine-head">
+        <span>SOP spine</span>
+        <span class="op-spine-count">15 stages</span>
+      </div>
+
+      <div class="op-stage">
+        <div class="op-stage-idx">1</div>
+        <div class="op-stage-name">confirm-venture-active</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage blocked">
+        <div class="op-stage-idx">2</div>
+        <div class="op-stage-name">verify-work-email</div>
+        <div class="op-dot blocked"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">3</div>
+        <div class="op-stage-name">confirm-offer-doctrine</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">4</div>
+        <div class="op-stage-name">approve-offer-ladder</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">5</div>
+        <div class="op-stage-name">produce-channel-copy</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">6</div>
+        <div class="op-stage-name">approve-channel-copy</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">7</div>
+        <div class="op-stage-name">confirm-sender-identity</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">8</div>
+        <div class="op-stage-name">set-targeting-criteria</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage selected">
+        <div class="op-stage-idx">9</div>
+        <div class="op-stage-name">build-the-list</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">10</div>
+        <div class="op-stage-name">enrich-contacts</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">11</div>
+        <div class="op-stage-name">score-and-rank</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">12</div>
+        <div class="op-stage-name">dedupe-against-crm</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">13</div>
+        <div class="op-stage-name">schedule-sends</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">14</div>
+        <div class="op-stage-name">monitor-deliverability</div>
+        <div class="op-dot pending"></div>
+      </div>
+      <div class="op-stage">
+        <div class="op-stage-idx">15</div>
+        <div class="op-stage-name">classify-replies</div>
+        <div class="op-dot pending"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT column -->
+    <div class="op-right">
+
+      <!-- Workflow view -->
+      <div class="op-workflow">
+        <div class="op-section-head">
+          <h2>build-the-list</h2>
+          <div class="op-section-meta">workflow &middot; 8 activities &middot; stage 09 / 15</div>
+        </div>
+
+        <div class="op-nodes">
+          <div class="op-node">
+            <div class="op-node-idx">01</div>
+            <div class="op-node-name">fetch-signal-feed</div>
+            <div class="op-node-owner">signal-monitoring</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">02</div>
+            <div class="op-node-name">apply-targeting-criteria</div>
+            <div class="op-node-owner">signal-targeting</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">03</div>
+            <div class="op-node-name">fetch-candidate-companies</div>
+            <div class="op-node-owner">signal-prospecting</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">04</div>
+            <div class="op-node-name">enrich-companies</div>
+            <div class="op-node-owner">revops-engine</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">05</div>
+            <div class="op-node-name">classify-tier</div>
+            <div class="op-node-owner">revops-engine</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">06</div>
+            <div class="op-node-name">score-fit</div>
+            <div class="op-node-owner">revops-engine</div>
+          </div>
+          <div class="op-node selected">
+            <div class="op-node-idx">07</div>
+            <div class="op-node-name">lookup-contacts</div>
+            <div class="op-node-owner">revops-engine</div>
+          </div>
+          <div class="op-node">
+            <div class="op-node-idx">08</div>
+            <div class="op-node-name">promote-to-staging</div>
+            <div class="op-node-owner">revops-engine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node detail panel -->
+      <div class="op-detail">
+        <div class="op-section-head">
+          <div>
+            <h2>lookup-contacts</h2>
+            <div class="op-detail-meta">
+              owner <span class="op-pill">revops-engine</span>
+              status <span class="op-pill">pending</span>
+              node <span class="op-pill">7 / 8</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="op-detail-section">
+          <h3>Description</h3>
+          <p class="op-detail-desc">
+            For each qualified company in the staging set, resolve 1-3 contact candidates by role + seniority filter. Writes to <code>revops.staging_contacts</code>.
+          </p>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>System view</h3>
+          <div class="op-embed">
+            <div class="op-embed-head">
+              <div class="op-embed-title">
+                <span class="op-embed-kind">embedded</span>
+                <span>staging_contacts &middot; pending lookups</span>
+              </div>
+              <div class="op-embed-tag">systems/revops-engine</div>
+            </div>
+            <table class="op-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role filter</th>
+                  <th>Candidates</th>
+                  <th>Last attempted</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Acme Bio</td>
+                  <td>VP RevOps</td>
+                  <td class="op-num">0</td>
+                  <td class="op-num">never</td>
+                </tr>
+                <tr>
+                  <td>Helix Therapeutics</td>
+                  <td>Director GTM</td>
+                  <td class="op-num">2</td>
+                  <td class="op-num">2026-06-28</td>
+                </tr>
+                <tr>
+                  <td>Mycroft Labs</td>
+                  <td>Head of Ops</td>
+                  <td class="op-num">1</td>
+                  <td class="op-num">2026-06-29</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="op-embed-footer">
+              Live view from systems/revops-engine ... this is the system's own surface, composed into operate.
+            </div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Actions</h3>
+          <div class="op-actions">
+            <button class="op-btn primary">Run (PLAN)</button>
+            <button class="op-btn">Open in Claude Code</button>
+            <button class="op-btn disabled">EXECUTE ...</button>
+            <span class="op-actions-note">501 ... not yet wired</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

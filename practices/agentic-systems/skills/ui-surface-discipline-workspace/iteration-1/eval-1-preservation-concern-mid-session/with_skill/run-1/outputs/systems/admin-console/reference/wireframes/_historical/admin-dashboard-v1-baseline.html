@@ -1,0 +1,46 @@
+<!--
+  HISTORICAL — admin-console dashboard, v1 (baseline)
+  Rendered: 2026-06-30 (mid-session, via show_widget)
+  Status: SUPERSEDED. First exploratory layout. Kept for lineage / "why did we move".
+  Variant: v1 — full sidebar, separate activity log panel below the main table,
+                no right rail. Superseded by v2 (collapsed sidebar) and v3 (activity
+                folded into right rail).
+
+  Do NOT treat this as canonical. The canonical layout is ../admin-dashboard-v3-canonical.html.
+  See ../README.md for the design intent and what's locked.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>admin-console — dashboard v1 (HISTORICAL)</title>
+<style>
+  :root { --bg:#0b0d10; --fg:#e6e8eb; --muted:#8a9099; --panel:#14171c; --border:#1e232a; }
+  body { margin:0; font:14px/1.45 system-ui,sans-serif; background:var(--bg); color:var(--fg); }
+  .app { display:grid; grid-template-columns:220px 1fr; grid-template-rows:48px 1fr; height:100vh; }
+  .topnav { grid-column:1/-1; padding:0 16px; border-bottom:1px solid var(--border); background:var(--panel); display:flex; align-items:center; }
+  .sidebar { border-right:1px solid var(--border); background:var(--panel); padding:12px; }
+  .sidebar .nav-item { padding:8px; color:var(--muted); }
+  .sidebar .nav-item.active { color:var(--fg); }
+  .main { padding:20px; overflow:auto; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:16px; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="topnav">admin-console (v1 baseline)</div>
+    <div class="sidebar">
+      <div class="nav-item active">Dashboard</div>
+      <div class="nav-item">Users</div>
+      <div class="nav-item">Systems</div>
+      <div class="nav-item">Logs</div>
+      <div class="nav-item">Settings</div>
+    </div>
+    <div class="main">
+      <div class="panel"><strong>Metrics</strong><div>Active 1284 · Pending 17 · Health OK</div></div>
+      <div class="panel"><strong>Systems</strong><div>canon-engine · revops-engine · projection-ui · operating-sop</div></div>
+      <div class="panel"><strong>Activity log</strong><div>Separate full-width panel below the main table. Folded into right rail in v3.</div></div>
+    </div>
+  </div>
+</body>
+</html>

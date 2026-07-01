@@ -1,0 +1,23 @@
+{
+  "eval_id": 3,
+  "eval_name": "negative-test-non-ui-design",
+  "prompt": "I'm designing the new canon.activity_runs table schema. We need columns for cost tracking, retry counts, and error categorization. Walk me through the column choices and propose the migration SQL.",
+  "assertions": [
+    {
+      "name": "skill-correctly-did-not-trigger",
+      "text": "[with_skill only] The agent's report explicitly states the skill did NOT apply (out of scope per the description's 'Do NOT use for' list). The reasoning correctly identifies schema/data-model design as non-UI work."
+    },
+    {
+      "name": "no-wireframes-folder-created",
+      "text": "The outputs do NOT contain a wireframes/ folder, a design-intent README for UI, or any HTML mockup files. The skill should not have produced any of its standard artifacts."
+    },
+    {
+      "name": "schema-design-delivered",
+      "text": "Outputs contain a schema design — column list with justifications for cost_usd / retry_count / error_category (or equivalent names). Addresses all three concerns named in the user's prompt."
+    },
+    {
+      "name": "migration-sql-delivered",
+      "text": "Outputs contain valid PostgreSQL migration SQL (CREATE TABLE or ALTER TABLE for canon.activity_runs) with the proposed columns. The SQL is syntactically reasonable (semicolons, valid column types)."
+    }
+  ]
+}

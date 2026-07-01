@@ -1,0 +1,58 @@
+{
+  "eval_id": 1,
+  "eval_name": "preservation-concern-mid-session",
+  "config": "without_skill",
+  "expectations": [
+    {
+      "text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.",
+      "passed": true,
+      "evidence": "admin-dashboard-v3.html at outputs/systems/admin-console/reference/wireframes/ top level"
+    },
+    {
+      "text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.",
+      "passed": false,
+      "evidence": "Used 'archive/' not '_historical/'. The skill's prescribed quarantine naming was not followed; any reader expecting _historical/ won't find it. This is exactly the failure mode the skill prevents (ambiguity between canonical and superseded artifact naming)."
+    },
+    {
+      "text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.",
+      "passed": true,
+      "evidence": "README.md exists with sections: Selected, Iteration history, Recovery note, Process gap surfaced"
+    },
+    {
+      "text": "The README has a section titled 'Locked design rules' or similar.",
+      "passed": false,
+      "evidence": "No section names locked rules. README focuses on iteration history + recovery, not on what's immutable about the design."
+    },
+    {
+      "text": "The README has a section listing/indexing the canonical files.",
+      "passed": false,
+      "evidence": "No explicit 'Canonical files index' section. 'Selected: v3' implies it but doesn't list/index all files at the wireframes root."
+    },
+    {
+      "text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.",
+      "passed": false,
+      "evidence": "No designer handoff section. README is internal-facing (notes on the process gap, recovery), not designer-facing."
+    },
+    {
+      "text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).",
+      "passed": true,
+      "evidence": "v3 HTML header: 'PLACEHOLDER \u2014 admin-dashboard-v3 (SELECTED)' with design intent block. Clear about what it represents and that visuals were lost."
+    },
+    {
+      "text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.",
+      "passed": true,
+      "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.5,
+    "passed": 4,
+    "failed": 4,
+    "total": 8
+  },
+  "timing": {
+    "total_tokens": 74376,
+    "duration_ms": 76853,
+    "total_duration_seconds": 76.9
+  }
+}

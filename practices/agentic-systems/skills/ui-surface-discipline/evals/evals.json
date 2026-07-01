@@ -1,0 +1,26 @@
+{
+  "skill_name": "ui-surface-discipline",
+  "evals": [
+    {
+      "id": 1,
+      "name": "preservation-concern-mid-session",
+      "prompt": "We've been mocking up the new admin dashboard for the past hour using show_widget — we've got a v1, a v2 with the sidebar collapsed, and a v3 that combined the activity log into the right rail. The user has settled on v3. I'm worried we'll lose the visual work when this session ends. Make sure we don't lose any of this. The owning system is `systems/admin-console/`. The wireframes should land somewhere durable in the repo.",
+      "expected_output": "Skill triggers. Three HTML files persisted (canonical v3 at top level; v1 and v2 quarantined into _historical/). README.md authored covering: canonical files index, locked design rules, per-state feature flag table, accent palette, layout structure, implementation status, and a 'For [Designer] (handoff brief)' section naming locked vs open for craft input. Header comments inside each HTML file. Triangulation references (paths to any machine-readable encoding if present, live shipping code, related plans). Final folder listing reported to user.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "designer-handoff-prep",
+      "prompt": "I want to share the /operate cockpit design with a freelance designer next week to refine the typography and add proper empty/loading states. Get the wireframes folder ready for handoff. They live at /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. The designer will work cold — no context from our chat sessions.",
+      "expected_output": "Skill triggers (handoff is one of the listed trigger conditions). Reads existing wireframes folder. Reviews the README to confirm the 'For [Designer] (handoff brief)' section exists and clearly names Locked vs Open for craft input. If the brief is thin or missing, augments it. Confirms top-level files are canonical only (historical quarantined). Identifies the machine-readable encoding path (lib/operate/mode-features.ts) and confirms it's referenced from the README. Reports the folder state and what the designer will receive.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "negative-test-non-ui-design",
+      "prompt": "I'm designing the new canon.activity_runs table schema. We need columns for cost tracking, retry counts, and error categorization. Walk me through the column choices and propose the migration SQL.",
+      "expected_output": "Skill does NOT trigger. This is schema/data-model design work, explicitly out of scope per the description's 'Do NOT use for' section. A different discipline (schema review / migration authoring) applies. The session should proceed without invoking ui-surface-discipline at all.",
+      "files": []
+    }
+  ]
+}

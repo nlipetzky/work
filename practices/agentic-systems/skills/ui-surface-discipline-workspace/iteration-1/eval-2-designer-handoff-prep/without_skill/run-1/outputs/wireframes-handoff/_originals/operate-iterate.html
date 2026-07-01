@@ -1,0 +1,284 @@
+<!--
+  ITERATE-mode wireframe (canonical) — rendered 2026-06-29.
+
+  Same overall layout as RUN; the affordances differ per the locked feature
+  table in lib/operate/mode-features.ts. ITERATE mode:
+  - Amber accent (rgb(180,110,0)) on toggle + selected stage + selected node + skill-swap panel + actions
+  - SOP spine LOCKED (structure read-only; no drag handles)
+  - Workflow grid LOCKED (no add/remove; skill chips become editable)
+  - Composition rows become editable (select/input)
+  - One skill row mid-swap (panel open with candidate replacements)
+  - Provenance is read-only with a note "structural change requires BUILD mode"
+  - Runs history adds Diff/Learn affordances per row
+  - Evals add "+ Add fixture from a recent failure"
+  - Actions: Save iteration / Run after save / Discard
+  - Open-in-Claude button: "Open in Claude Code (ITERATE persona) ›"
+-->
+<style>
+  .operate-wf { font-family: "Anthropic Sans", system-ui, -apple-system, sans-serif; color: var(--text-primary); font-size: 16px; line-height: 1.7; font-weight: 400; }
+  .operate-wf * { box-sizing: border-box; }
+  .op-nav { display: flex; align-items: center; gap: 4px; border-bottom: 0.5px solid var(--border); padding-bottom: 12px; margin-bottom: 1.5rem; }
+  .op-nav-tab { padding: 8px 16px; font-size: 14px; color: var(--text-secondary); border-radius: 8px; cursor: pointer; }
+  .op-nav-tab.active { background: var(--bg-accent); color: var(--text-accent); font-weight: 500; }
+  .op-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap; }
+  .op-header h1 { font-size: 22px; font-weight: 500; margin: 0 0 4px 0; line-height: 1.3; }
+  .op-header .op-sub { font-size: 13px; color: var(--text-secondary); }
+  .op-header .op-sub code { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 6px; padding: 2px 6px; font-size: 12px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, monospace; }
+  .op-header .op-iter-pill { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: rgba(220,150,0,0.12); color: rgb(180,110,0); border: 0.5px solid rgba(220,150,0,0.4); font-weight: 500; letter-spacing: 0.04em; margin-left: 8px; }
+  .op-counter { font-size: 13px; color: var(--text-secondary); padding: 6px 12px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 999px; }
+  .op-counter strong { color: var(--text-primary); font-weight: 500; }
+  .op-mode-row { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; padding: 12px 14px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; flex-wrap: wrap; }
+  .op-mode-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .op-mode-toggle { display: inline-flex; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 999px; padding: 3px; }
+  .op-mode-seg { padding: 6px 16px; font-size: 13px; color: var(--text-secondary); border-radius: 999px; cursor: pointer; font-weight: 500; }
+  .op-mode-seg.active { background: rgba(220,150,0,0.15); color: rgb(180,110,0); }
+  .op-mode-hint { font-size: 12px; color: var(--text-muted); }
+  .op-grid { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+  .op-spine { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 0.75rem; opacity: 0.75; }
+  .op-spine-head { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 8px 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .op-spine-head .op-locked { font-size: 10px; color: var(--text-muted); padding: 2px 6px; border: 0.5px solid var(--border); border-radius: 4px; letter-spacing: 0; text-transform: none; }
+  .op-stage { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; margin-bottom: 2px; }
+  .op-stage.selected { background: rgba(220,150,0,0.10); border: 0.5px solid rgba(220,150,0,0.3); }
+  .op-stage.selected .op-stage-name { color: rgb(180,110,0); font-weight: 500; }
+  .op-stage-idx { font-size: 12px; color: var(--text-muted); width: 18px; flex-shrink: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  .op-stage-name { font-size: 14px; color: var(--text-primary); flex: 1; }
+  .op-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--border-strong); }
+  .op-right { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  .op-workflow { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; opacity: 0.9; }
+  .op-section-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; gap: 12px; flex-wrap: wrap; }
+  .op-section-head h2 { font-size: 18px; font-weight: 500; margin: 0; }
+  .op-section-head .op-section-meta { font-size: 13px; color: var(--text-secondary); }
+  .op-nodes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .op-node { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .op-node.selected { background: rgba(220,150,0,0.08); border: 1px solid rgba(220,150,0,0.4); padding: 11px; }
+  .op-node-idx { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .op-node-name { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+  .op-node.selected .op-node-name { color: rgb(180,110,0); }
+  .op-node-owner { font-size: 11px; color: var(--text-secondary); font-family: ui-monospace, SFMono-Regular, monospace; margin-bottom: 2px; }
+  .op-node-skills { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 6px; border-top: 0.5px solid var(--border); }
+  .op-node-skills-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; width: 100%; margin-bottom: 2px; }
+  .op-skill-chip { font-size: 11px; color: var(--text-secondary); background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 999px; padding: 2px 8px; font-family: ui-monospace, SFMono-Regular, monospace; display: inline-flex; align-items: center; gap: 4px; }
+  .op-node.selected .op-skill-chip { background: rgba(255,255,255,0.55); }
+  .op-skill-chip .op-chip-edit { color: rgb(180,110,0); font-size: 10px; cursor: pointer; }
+  .op-skill-chip.more { background: transparent; border-style: dashed; color: var(--text-muted); }
+  .op-detail { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .op-detail h2 { font-size: 18px; font-weight: 500; margin: 0 0 4px 0; }
+  .op-detail-meta { font-size: 13px; color: var(--text-secondary); }
+  .op-detail-meta .op-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--surface-1); border: 0.5px solid var(--border); color: var(--text-secondary); margin-left: 6px; font-size: 12px; }
+  .op-detail-meta .op-pill.draft { background: rgba(220,150,0,0.12); color: rgb(180,110,0); border-color: rgba(220,150,0,0.4); }
+  .op-divider { height: 0.5px; background: var(--border); margin: 1.5rem 0; }
+  .op-detail-section h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin: 0 0 12px 0; }
+  .op-mono { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 12px; font-family: ui-monospace, SFMono-Regular, monospace; }
+  .op-comp-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+  .op-comp-row:last-child { border-bottom: none; }
+  .op-comp-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .op-input { width: 100%; background: var(--surface-1); border: 0.5px solid var(--border-strong); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); }
+  .op-select { width: 100%; background: var(--surface-1); border: 0.5px solid var(--border-strong); border-radius: 6px; padding: 6px 10px; font-size: 12.5px; font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); appearance: none; }
+  .op-input-row { display: grid; grid-template-columns: 60px 1fr; gap: 8px; align-items: center; }
+  .op-input-row + .op-input-row { margin-top: 6px; }
+  .op-input-row label { font-size: 11px; color: var(--text-muted); }
+  .op-skill-edit-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 8px; font-size: 13px; gap: 12px; }
+  .op-skill-edit-name { font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); font-weight: 500; flex: 1; }
+  .op-skill-edit-actions { display: flex; gap: 6px; }
+  .op-mini-btn { font-size: 11px; padding: 3px 8px; border: 0.5px solid var(--border-strong); background: var(--surface-2); color: var(--text-secondary); border-radius: 6px; cursor: pointer; }
+  .op-mini-btn.danger { color: rgb(190,40,40); border-color: rgba(190,40,40,0.3); }
+  .op-mini-btn.primary { color: rgb(180,110,0); border-color: rgba(220,150,0,0.5); background: rgba(220,150,0,0.10); }
+  .op-skill-swap-panel { background: var(--surface-1); border: 1px solid rgba(220,150,0,0.45); border-radius: 8px; padding: 14px; }
+  .op-skill-swap-head { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .op-skill-swap-candidates { display: flex; flex-direction: column; gap: 4px; }
+  .op-swap-candidate { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 6px; font-size: 12.5px; cursor: pointer; }
+  .op-swap-candidate.selected { background: rgba(220,150,0,0.10); border-color: rgba(220,150,0,0.5); }
+  .op-swap-candidate-name { font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-primary); }
+  .op-swap-candidate-meta { font-size: 11px; color: var(--text-muted); }
+  .op-add-skill-btn { width: 100%; padding: 10px; font-size: 12.5px; background: var(--surface-1); border: 0.5px dashed var(--border-strong); color: var(--text-secondary); border-radius: 8px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+  .op-prov-note { font-size: 12px; color: var(--text-muted); font-style: italic; padding: 10px; background: var(--surface-1); border: 0.5px dashed var(--border); border-radius: 8px; }
+  .op-embed { background: var(--surface-1); border: 0.5px dashed var(--border-strong); border-radius: 10px; padding: 1rem 1.25rem; }
+  .op-embed-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+  .op-embed-title { font-size: 13px; font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .op-embed-title .op-embed-kind { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 500; }
+  .op-embed-tag { font-size: 11px; color: var(--text-accent); background: var(--bg-accent); padding: 2px 8px; border-radius: 999px; letter-spacing: 0.04em; font-weight: 500; }
+  .op-embed-footer { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+  .op-runs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .op-runs-table th { text-align: left; font-weight: 500; color: var(--text-muted); padding: 8px 10px; border-bottom: 0.5px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .op-runs-table td { padding: 10px; border-bottom: 0.5px solid var(--border); color: var(--text-primary); font-size: 13px; }
+  .op-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+  .op-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .op-status.ok::before { background: #2a9d5a; } .op-status.ok { color: #1f7d44; }
+  .op-status.failed::before { background: rgb(190,40,40); } .op-status.failed { color: rgb(190,40,40); }
+  .op-runs-mono { font-family: ui-monospace, SFMono-Regular, monospace; color: var(--text-secondary); font-size: 12px; }
+  .op-learn-link { font-size: 11px; color: rgb(180,110,0); cursor: pointer; font-weight: 500; }
+  .op-evals-row { display: flex; align-items: center; gap: 16px; padding: 12px 14px; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 10px; flex-wrap: wrap; }
+  .op-evals-rate { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .op-evals-rate-sub { color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
+  .op-evals-meta { font-size: 12px; color: var(--text-secondary); flex: 1; }
+  .op-add-fixture-btn { font-size: 11px; padding: 5px 10px; background: rgba(220,150,0,0.10); color: rgb(180,110,0); border: 0.5px solid rgba(220,150,0,0.4); border-radius: 6px; cursor: pointer; font-weight: 500; }
+  .op-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .op-btn { padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border-strong); background: var(--surface-1); color: var(--text-primary); font-family: inherit; }
+  .op-btn.primary { background: rgba(220,150,0,0.15); color: rgb(180,110,0); border-color: rgba(220,150,0,0.5); }
+  .op-btn.discard { color: rgb(190,40,40); border-color: rgba(190,40,40,0.3); }
+  .op-claude-btn { padding: 8px 14px; font-size: 13px; background: rgba(220,150,0,0.10); color: rgb(180,110,0); border: 0.5px solid rgba(220,150,0,0.4); border-radius: 8px; cursor: pointer; font-weight: 500; }
+</style>
+
+<div class="operate-wf">
+  <div class="op-nav">
+    <div class="op-nav-tab">Work</div>
+    <div class="op-nav-tab active">Operate</div>
+    <div class="op-nav-tab">System</div>
+    <div class="op-nav-tab">Records</div>
+  </div>
+
+  <div class="op-header">
+    <div>
+      <h1>Launch outbound for a venture<span class="op-iter-pill">ITERATING</span></h1>
+      <div class="op-sub">SopRun <code>konstellation-cipo</code> &middot; activity <code>lookup-contacts</code></div>
+    </div>
+    <button class="op-claude-btn">Open in Claude Code (ITERATE persona) &rsaquo;</button>
+  </div>
+
+  <div class="op-mode-row">
+    <div class="op-mode-label">Mode</div>
+    <div class="op-mode-toggle">
+      <div class="op-mode-seg">RUN</div>
+      <div class="op-mode-seg active">ITERATE</div>
+      <div class="op-mode-seg">BUILD</div>
+    </div>
+    <div class="op-mode-hint">single-activity edit &middot; swap skills / tweak prompts / change schemas &middot; no structural change</div>
+  </div>
+
+  <div class="op-grid">
+    <div class="op-spine">
+      <div class="op-spine-head"><span>SOP spine</span><span class="op-locked">structure locked</span></div>
+      <div class="op-stage"><div class="op-stage-idx">1</div><div class="op-stage-name">confirm-venture-active</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">2</div><div class="op-stage-name">verify-work-email</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">3</div><div class="op-stage-name">confirm-offer-doctrine</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">4</div><div class="op-stage-name">approve-offer-ladder</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">5</div><div class="op-stage-name">produce-channel-copy</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">6</div><div class="op-stage-name">approve-channel-copy</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">7</div><div class="op-stage-name">confirm-sender-identity</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">8</div><div class="op-stage-name">set-targeting-criteria</div><div class="op-dot"></div></div>
+      <div class="op-stage selected"><div class="op-stage-idx">9</div><div class="op-stage-name">build-the-list</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">10</div><div class="op-stage-name">enrich-contacts</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">11</div><div class="op-stage-name">score-and-rank</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">12</div><div class="op-stage-name">dedupe-against-crm</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">13</div><div class="op-stage-name">schedule-sends</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">14</div><div class="op-stage-name">monitor-deliverability</div><div class="op-dot"></div></div>
+      <div class="op-stage"><div class="op-stage-idx">15</div><div class="op-stage-name">classify-replies</div><div class="op-dot"></div></div>
+    </div>
+
+    <div class="op-right">
+      <div class="op-workflow">
+        <div class="op-section-head"><h2>build-the-list</h2><div class="op-section-meta">workflow &middot; 8 activities &middot; structure locked</div></div>
+        <div class="op-nodes">
+          <div class="op-node"><div class="op-node-idx">01</div><div class="op-node-name">fetch-signal-feed</div><div class="op-node-owner">signal-monitoring</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">parse-trial-feed</div></div></div>
+          <div class="op-node"><div class="op-node-idx">02</div><div class="op-node-name">apply-targeting-criteria</div><div class="op-node-owner">signal-targeting</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">segment-criteria</div></div></div>
+          <div class="op-node"><div class="op-node-idx">03</div><div class="op-node-name">fetch-candidate-companies</div><div class="op-node-owner">signal-prospecting</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">build-tam</div></div></div>
+          <div class="op-node"><div class="op-node-idx">04</div><div class="op-node-name">enrich-companies</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">enrich-business</div></div></div>
+          <div class="op-node"><div class="op-node-idx">05</div><div class="op-node-name">classify-tier</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">classify-tier</div></div></div>
+          <div class="op-node"><div class="op-node-idx">06</div><div class="op-node-name">score-fit</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">score-fit-against-icp</div></div></div>
+          <div class="op-node selected"><div class="op-node-idx">07</div><div class="op-node-name">lookup-contacts</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills (editable)</div><div class="op-skill-chip">find-qualified-titles<span class="op-chip-edit">&#8646;</span></div><div class="op-skill-chip">classify-contact-seniority<span class="op-chip-edit">&#8646;</span></div><div class="op-skill-chip more">+1</div></div></div>
+          <div class="op-node"><div class="op-node-idx">08</div><div class="op-node-name">promote-to-staging</div><div class="op-node-owner">revops-engine</div><div class="op-node-skills"><div class="op-node-skills-label">skills</div><div class="op-skill-chip">dedupe-against-canon</div></div></div>
+        </div>
+      </div>
+
+      <div class="op-detail">
+        <div class="op-section-head">
+          <div>
+            <h2>lookup-contacts</h2>
+            <div class="op-detail-meta">
+              owner <span class="op-pill">revops-engine</span>
+              status <span class="op-pill">pending</span>
+              <span class="op-pill draft">unsaved iteration</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="op-detail-section">
+          <h3>Description (editable)</h3>
+          <input class="op-input" style="font-family: inherit; font-size: 14px; padding: 10px 14px;" value="For each qualified company in the staging set, resolve 1-3 contact candidates by role + seniority filter. Writes to revops.staging_contacts."/>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Composition (editable)</h3>
+          <div class="op-comp-row"><div class="op-comp-label">Function</div><div><input class="op-input" value="lookupContacts" readonly style="opacity:0.7;"/><div style="font-size:11px;color:var(--text-muted);margin-top:6px;">file: systems/revops-engine/workflows/lookup-contacts.ts &middot; <span style="color:rgb(180,110,0); cursor:pointer; font-weight:500;">Open in editor &rsaquo;</span></div></div></div>
+          <div class="op-comp-row"><div class="op-comp-label">Trigger</div><select class="op-select"><option>revops/list.build.step</option><option>revops/list.build.retry</option></select></div>
+          <div class="op-comp-row"><div class="op-comp-label">Schemas</div><div><div class="op-input-row"><label>in:</label><select class="op-select"><option>candidate-company.schema.json</option></select></div><div class="op-input-row"><label>out:</label><select class="op-select"><option>contact-candidate.schema.json</option></select></div></div></div>
+          <div class="op-comp-row"><div class="op-comp-label">Adapters</div><div><span class="op-skill-chip">findymail <span class="op-chip-edit" style="color:rgb(190,40,40);">&times;</span></span> <span class="op-skill-chip">supabase <span class="op-chip-edit" style="color:rgb(190,40,40);">&times;</span></span> <span class="op-skill-chip more">+ add</span></div></div>
+          <div class="op-comp-row" style="display:block;">
+            <div style="display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:baseline;margin-bottom:12px;">
+              <div class="op-comp-label">Skills</div>
+              <div style="font-size:12px;color:var(--text-muted);">3 skills called. Swap, remove, or add.</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="op-skill-edit-row"><div class="op-skill-edit-name">find-qualified-titles</div><div class="op-skill-edit-actions"><span class="op-mini-btn">swap</span><span class="op-mini-btn">edit</span><span class="op-mini-btn danger">remove</span></div></div>
+              <div class="op-skill-swap-panel">
+                <div class="op-skill-swap-head">Swap: classify-contact-seniority &nbsp; &#8646; &nbsp; pick replacement</div>
+                <div class="op-skill-swap-candidates">
+                  <div class="op-swap-candidate selected"><div><div class="op-swap-candidate-name">classify-contact-seniority-v2</div><div class="op-swap-candidate-meta">draft &middot; systems/revops-engine/skills/ &middot; uses tighter rubric</div></div><span class="op-mini-btn primary">use this</span></div>
+                  <div class="op-swap-candidate"><div><div class="op-swap-candidate-name">classify-by-seniority-band</div><div class="op-swap-candidate-meta">production &middot; capabilities/skills/ &middot; band-based instead of rubric</div></div><span class="op-mini-btn">preview</span></div>
+                  <div class="op-swap-candidate"><div><div class="op-swap-candidate-name">title-rank-llm-judge</div><div class="op-swap-candidate-meta">experimental &middot; systems/revops-engine/skills/</div></div><span class="op-mini-btn">preview</span></div>
+                </div>
+              </div>
+              <div class="op-skill-edit-row"><div class="op-skill-edit-name">pick-best-candidate</div><div class="op-skill-edit-actions"><span class="op-mini-btn">swap</span><span class="op-mini-btn">edit</span><span class="op-mini-btn danger">remove</span></div></div>
+              <button class="op-add-skill-btn">+ Add existing skill</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Provenance trail</h3>
+          <div class="op-prov-note">read-only in ITERATE &middot; changing what an activity consumes / writes is structural &middot; switch to BUILD mode</div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>System view</h3>
+          <div class="op-embed">
+            <div class="op-embed-head"><div class="op-embed-title"><span class="op-embed-kind">embedded</span><span>staging_contacts &middot; pending lookups</span></div><div class="op-embed-tag">systems/revops-engine</div></div>
+            <div class="op-embed-footer">Read-only here. Live data view from systems/revops-engine.</div>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Runs history &middot; learn from past</h3>
+          <table class="op-runs-table">
+            <thead><tr><th>Run</th><th>When</th><th>Status</th><th>Duration</th><th>Cost</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="op-runs-mono">run_01KVZH9B</td><td>2026-06-28 09:41</td><td><span class="op-status ok">done</span></td><td class="op-runs-mono">2.4s</td><td class="op-runs-mono">$0.011</td><td><span class="op-learn-link">Diff &middot; Learn &rsaquo;</span></td></tr>
+              <tr><td class="op-runs-mono">run_01KVY7CK</td><td>2026-06-28 09:17</td><td><span class="op-status failed">failed</span></td><td class="op-runs-mono">0.8s</td><td class="op-runs-mono">$0.002</td><td><span class="op-learn-link">Why failed? &rsaquo;</span></td></tr>
+              <tr><td class="op-runs-mono">run_01KVR3JP</td><td>2026-06-27 16:55</td><td><span class="op-status ok">done</span></td><td class="op-runs-mono">2.1s</td><td class="op-runs-mono">$0.013</td><td><span class="op-learn-link">Diff &middot; Learn &rsaquo;</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Evals</h3>
+          <div class="op-evals-row">
+            <div class="op-evals-rate">92% <span class="op-evals-rate-sub">pass rate</span></div>
+            <div class="op-evals-meta">23 / 25 fixtures &middot; last run 2026-06-28 &middot; 2 stale (re-run after iteration)</div>
+            <button class="op-add-fixture-btn">+ Add fixture from a recent failure</button>
+          </div>
+        </div>
+
+        <div class="op-divider"></div>
+
+        <div class="op-detail-section">
+          <h3>Actions</h3>
+          <div class="op-actions">
+            <button class="op-btn primary">Save iteration</button>
+            <button class="op-btn">Run after save (PLAN)</button>
+            <button class="op-btn discard">Discard changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

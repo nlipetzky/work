@@ -1,0 +1,39 @@
+{
+  "eval_id": 1,
+  "eval_name": "preservation-concern-mid-session",
+  "prompt": "We've been mocking up the new admin dashboard for the past hour using show_widget — we've got a v1, a v2 with the sidebar collapsed, and a v3 that combined the activity log into the right rail. The user has settled on v3. I'm worried we'll lose the visual work when this session ends. Make sure we don't lose any of this. The owning system is `systems/admin-console/`. The wireframes should land somewhere durable in the repo.",
+  "assertions": [
+    {
+      "name": "canonical-v3-html-at-top-level",
+      "text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version (e.g., admin-dashboard.html, dashboard-v3.html, or similar without 'v1', 'v2' in the name)."
+    },
+    {
+      "name": "historical-quarantine-exists",
+      "text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs (or placeholders documenting them)."
+    },
+    {
+      "name": "readme-design-spec-authored",
+      "text": "A README.md exists at the wireframes folder root that functions as a design-intent spec (not just a one-line description)."
+    },
+    {
+      "name": "readme-has-locked-rules-section",
+      "text": "The README has a section titled 'Locked design rules' or similar (e.g., 'Locked', 'Design rules', 'Immutable rules') that names what cannot be changed without re-discussion."
+    },
+    {
+      "name": "readme-has-canonical-file-index",
+      "text": "The README has a section listing/indexing the canonical files with a one-line purpose each."
+    },
+    {
+      "name": "readme-has-handoff-brief",
+      "text": "The README has a designer-handoff section titled something like 'For [Designer] (handoff brief)', 'Handoff brief', or 'Locked vs Open for craft input' that distinguishes immutable rules from areas open for design refinement."
+    },
+    {
+      "name": "html-files-have-header-comments",
+      "text": "Each canonical HTML file at the top level contains an HTML comment near the top documenting what the file represents (mode/state/version)."
+    },
+    {
+      "name": "wireframes-folder-under-owning-system",
+      "text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ (matches the skill's default location pattern given the user-supplied owning system)."
+    }
+  ]
+}

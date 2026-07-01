@@ -1,0 +1,58 @@
+{
+  "eval_id": 1,
+  "eval_name": "preservation-concern-mid-session",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "text": "A canonical v3 HTML file exists at the top level of the wireframes folder (not inside _historical/). Filename suggests it's the v3/canonical version.",
+      "passed": true,
+      "evidence": "admin-dashboard-v3-canonical.html at outputs/systems/admin-console/reference/wireframes/ top level"
+    },
+    {
+      "text": "A _historical/ subfolder exists at the wireframes folder root and contains the superseded v1 and v2 HTMLs.",
+      "passed": true,
+      "evidence": "_historical/ contains admin-dashboard-v1-baseline.html and admin-dashboard-v2-collapsed-sidebar.html"
+    },
+    {
+      "text": "A README.md exists at the wireframes folder root that functions as a design-intent spec.",
+      "passed": true,
+      "evidence": "README.md exists with 14 distinct sections (canonical files index, locked rules, feature flag table, accents, sections, URL, status, handoff brief, reference points, lineage)"
+    },
+    {
+      "text": "The README has a section titled 'Locked design rules' or similar.",
+      "passed": true,
+      "evidence": "Explicit '## Locked design rules' section present"
+    },
+    {
+      "text": "The README has a section listing/indexing the canonical files.",
+      "passed": true,
+      "evidence": "Explicit '## Canonical files index' section present"
+    },
+    {
+      "text": "The README has a designer-handoff section distinguishing Locked vs Open for craft input.",
+      "passed": true,
+      "evidence": "## For the designer (handoff brief) section with ### Locked \u2014 do not change without re-discussion + ### Open for craft input subsections"
+    },
+    {
+      "text": "Each canonical HTML file contains an HTML comment near the top documenting what the file represents (mode/state/version).",
+      "passed": true,
+      "evidence": "v3 HTML header: 'CANONICAL \u2014 admin-console dashboard, v3 / Status: LOCKED / Variant: v3 \u2014 combined activity log into right rail'; _historical files also have explicit SUPERSEDED headers"
+    },
+    {
+      "text": "The wireframes folder is located under outputs/systems/admin-console/reference/wireframes/ matching the skill's location pattern.",
+      "passed": true,
+      "evidence": "Exact path: outputs/systems/admin-console/reference/wireframes/"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 8,
+    "failed": 0,
+    "total": 8
+  },
+  "timing": {
+    "total_tokens": 85511,
+    "duration_ms": 162196,
+    "total_duration_seconds": 162.2
+  }
+}

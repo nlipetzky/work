@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "designer-handoff-prep",
+  "prompt": "I want to share the /operate cockpit design with a freelance designer next week to refine the typography and add proper empty/loading states. Get the wireframes folder ready for handoff. They live at /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. The designer will work cold — no context from our chat sessions.",
+  "assertions": [
+    {
+      "name": "outputs-contain-audit-or-changes-doc",
+      "text": "Outputs contain a markdown file (CHANGES.md, audit.md, AUDIT.md, or similar) reporting the audit findings of the real wireframes folder."
+    },
+    {
+      "name": "audit-confirms-canonical-files-present",
+      "text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder."
+    },
+    {
+      "name": "audit-confirms-historical-quarantine",
+      "text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level)."
+    },
+    {
+      "name": "audit-references-machine-readable-encoding",
+      "text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts in systems/projection-ui) as part of the triangulation."
+    },
+    {
+      "name": "audit-assesses-handoff-brief-quality",
+      "text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer (states the brief IS sufficient OR proposes specific augmentations)."
+    },
+    {
+      "name": "no-modifications-to-real-wireframes-folder",
+      "text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory."
+    }
+  ]
+}

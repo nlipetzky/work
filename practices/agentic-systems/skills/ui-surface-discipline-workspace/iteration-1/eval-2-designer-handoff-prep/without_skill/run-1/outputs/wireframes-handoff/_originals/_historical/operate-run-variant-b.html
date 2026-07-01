@@ -1,0 +1,570 @@
+<style>
+  .operate-wf-b {
+    font-family: "Anthropic Sans", system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  .operate-wf-b * { box-sizing: border-box; }
+
+  /* Top nav */
+  .opb-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 0.5px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .opb-nav-tab {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .opb-nav-tab.active {
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    font-weight: 500;
+  }
+
+  /* Header strip */
+  .opb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  .opb-header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+  .opb-header .opb-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .opb-counter {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 999px;
+  }
+  .opb-counter strong { color: var(--text-primary); font-weight: 500; }
+  .opb-counter .opb-blocked-count { color: rgb(190,40,40); font-weight: 500; }
+
+  /* Main grid */
+  .opb-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+  }
+
+  /* LEFT: SOP spine */
+  .opb-spine {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+  }
+  .opb-spine-head {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 8px 12px 8px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .opb-stage {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2px;
+  }
+  .opb-stage:hover { background: var(--surface-1); }
+  .opb-stage.selected {
+    background: var(--bg-accent);
+    border: 1px solid var(--border-accent);
+    padding: 11px 11px;
+  }
+  .opb-stage.selected .opb-stage-name { color: var(--text-accent); font-weight: 500; }
+  .opb-stage-idx {
+    font-size: 12px;
+    color: var(--text-muted);
+    width: 18px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .opb-stage-name {
+    font-size: 14px;
+    color: var(--text-primary);
+    flex: 1;
+    font-weight: 400;
+  }
+  .opb-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .opb-dot.pending { background: var(--border-strong); }
+  .opb-dot.blocked { background: rgb(190,40,40); box-shadow: 0 0 0 3px rgba(220,80,80,0.18); }
+  .opb-dot.running { background: var(--text-accent); }
+  .opb-dot.done { background: #2a9d5a; }
+  .opb-stage.blocked .opb-stage-name { color: rgb(190,40,40); }
+
+  /* RIGHT column */
+  .opb-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Workflow view */
+  .opb-workflow {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .opb-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  .opb-section-head h2 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .opb-section-head .opb-section-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .opb-nodes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .opb-node {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+  .opb-node:hover { border-color: var(--border-strong); }
+  .opb-node.selected {
+    background: var(--bg-accent);
+    border: 1px solid var(--border-accent);
+    padding: 15px;
+  }
+  .opb-node-idx {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .opb-node.selected .opb-node-idx { color: var(--text-accent); }
+  .opb-node-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .opb-node.selected .opb-node-name { color: var(--text-accent); }
+  .opb-node-owner {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* Node detail panel */
+  .opb-detail {
+    background: var(--surface-2);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .opb-detail h2 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+  }
+  .opb-detail-meta {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+  .opb-detail-meta .opb-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    color: var(--text-secondary);
+    margin-left: 6px;
+    font-size: 12px;
+  }
+  .opb-divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+  .opb-detail-section h3 {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin: 0 0 12px 0;
+  }
+  .opb-detail-desc {
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Embedded system view */
+  .opb-embed {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .opb-embed-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .opb-embed-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .opb-embed-tag {
+    font-size: 11px;
+    color: var(--text-accent);
+    background: var(--bg-accent);
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  .opb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .opb-table th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .opb-table td {
+    padding: 10px 12px;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text-primary);
+  }
+  .opb-table tr:last-child td { border-bottom: none; }
+  .opb-table .opb-num { color: var(--text-secondary); }
+  .opb-embed-footer {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* Action controls */
+  .opb-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .opb-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-1);
+    color: var(--text-primary);
+    font-family: inherit;
+  }
+  .opb-btn.primary {
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    border-color: var(--border-accent);
+  }
+  .opb-btn.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: rgba(220,80,80,0.10);
+    color: rgb(190,40,40);
+    border-color: rgba(220,80,80,0.25);
+  }
+  .opb-actions-note {
+    font-size: 12px;
+    color: rgb(190,40,40);
+    margin-left: 4px;
+  }
+</style>
+
+<div class="operate-wf-b">
+
+  <!-- Top nav -->
+  <div class="opb-nav">
+    <div class="opb-nav-tab">Work</div>
+    <div class="opb-nav-tab active">Operate</div>
+    <div class="opb-nav-tab">System</div>
+    <div class="opb-nav-tab">Records</div>
+  </div>
+
+  <!-- Header strip -->
+  <div class="opb-header">
+    <div>
+      <h1>Launch outbound for a venture</h1>
+      <div class="opb-sub">SopRun &middot; konstellation-cipo</div>
+    </div>
+    <div class="opb-counter">
+      <strong>0 / 15</strong> done &middot; <span class="opb-blocked-count">1 blocked</span>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="opb-grid">
+
+    <!-- LEFT: SOP spine -->
+    <div class="opb-spine">
+      <div class="opb-spine-head">SOP spine</div>
+
+      <div class="opb-stage">
+        <div class="opb-stage-idx">1</div>
+        <div class="opb-stage-name">confirm-venture-active</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage blocked">
+        <div class="opb-stage-idx">2</div>
+        <div class="opb-stage-name">verify-work-email</div>
+        <div class="opb-dot blocked"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">3</div>
+        <div class="opb-stage-name">confirm-offer-doctrine</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">4</div>
+        <div class="opb-stage-name">approve-offer-ladder</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">5</div>
+        <div class="opb-stage-name">produce-channel-copy</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">6</div>
+        <div class="opb-stage-name">approve-channel-copy</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">7</div>
+        <div class="opb-stage-name">confirm-sender-identity</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">8</div>
+        <div class="opb-stage-name">set-targeting-criteria</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage selected">
+        <div class="opb-stage-idx">9</div>
+        <div class="opb-stage-name">build-the-list</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">10</div>
+        <div class="opb-stage-name">enrich-contacts</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">11</div>
+        <div class="opb-stage-name">score-and-rank</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">12</div>
+        <div class="opb-stage-name">dedupe-against-crm</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">13</div>
+        <div class="opb-stage-name">schedule-sends</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">14</div>
+        <div class="opb-stage-name">monitor-deliverability</div>
+        <div class="opb-dot pending"></div>
+      </div>
+      <div class="opb-stage">
+        <div class="opb-stage-idx">15</div>
+        <div class="opb-stage-name">classify-replies</div>
+        <div class="opb-dot pending"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT column -->
+    <div class="opb-right">
+
+      <!-- Workflow view -->
+      <div class="opb-workflow">
+        <div class="opb-section-head">
+          <h2>build-the-list</h2>
+          <div class="opb-section-meta">workflow &middot; 8 activities</div>
+        </div>
+
+        <div class="opb-nodes">
+          <div class="opb-node">
+            <div class="opb-node-idx">01</div>
+            <div class="opb-node-name">fetch-signal-feed</div>
+            <div class="opb-node-owner">signal-monitoring</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">02</div>
+            <div class="opb-node-name">apply-targeting-criteria</div>
+            <div class="opb-node-owner">signal-targeting</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">03</div>
+            <div class="opb-node-name">fetch-candidate-companies</div>
+            <div class="opb-node-owner">signal-prospecting</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">04</div>
+            <div class="opb-node-name">enrich-companies</div>
+            <div class="opb-node-owner">revops-engine</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">05</div>
+            <div class="opb-node-name">classify-tier</div>
+            <div class="opb-node-owner">revops-engine</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">06</div>
+            <div class="opb-node-name">score-fit</div>
+            <div class="opb-node-owner">revops-engine</div>
+          </div>
+          <div class="opb-node selected">
+            <div class="opb-node-idx">07</div>
+            <div class="opb-node-name">lookup-contacts</div>
+            <div class="opb-node-owner">revops-engine</div>
+          </div>
+          <div class="opb-node">
+            <div class="opb-node-idx">08</div>
+            <div class="opb-node-name">promote-to-staging</div>
+            <div class="opb-node-owner">revops-engine</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node detail panel -->
+      <div class="opb-detail">
+        <div class="opb-section-head">
+          <div>
+            <h2>lookup-contacts</h2>
+            <div class="opb-detail-meta">
+              owner <span class="opb-pill">revops-engine</span>
+              status <span class="opb-pill">pending</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="opb-detail-section">
+          <h3>Description</h3>
+          <p class="opb-detail-desc">
+            For each qualified company in the staging set, resolve 1-3 contact candidates by role + seniority filter. Writes to <code>revops.staging_contacts</code>.
+          </p>
+        </div>
+
+        <div class="opb-divider"></div>
+
+        <div class="opb-detail-section">
+          <h3>System view</h3>
+          <div class="opb-embed">
+            <div class="opb-embed-head">
+              <div class="opb-embed-title">staging_contacts &middot; pending lookups</div>
+              <div class="opb-embed-tag">revops-engine</div>
+            </div>
+            <table class="opb-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role filter</th>
+                  <th>Candidates</th>
+                  <th>Last attempted</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Acme Bio</td>
+                  <td>VP RevOps</td>
+                  <td class="opb-num">0</td>
+                  <td class="opb-num">never</td>
+                </tr>
+                <tr>
+                  <td>Helix Therapeutics</td>
+                  <td>Director GTM</td>
+                  <td class="opb-num">2</td>
+                  <td class="opb-num">2026-06-28</td>
+                </tr>
+                <tr>
+                  <td>Mycroft Labs</td>
+                  <td>Head of Ops</td>
+                  <td class="opb-num">1</td>
+                  <td class="opb-num">2026-06-29</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="opb-embed-footer">
+              Live view from systems/revops-engine -- this is the system's own surface, embedded here.
+            </div>
+          </div>
+        </div>
+
+        <div class="opb-divider"></div>
+
+        <div class="opb-detail-section">
+          <h3>Actions</h3>
+          <div class="opb-actions">
+            <button class="opb-btn primary">Run (PLAN)</button>
+            <button class="opb-btn">Open in Claude Code</button>
+            <button class="opb-btn disabled">EXECUTE ...</button>
+            <span class="opb-actions-note">501 -- not yet wired</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

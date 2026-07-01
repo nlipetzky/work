@@ -1,0 +1,48 @@
+{
+  "eval_id": 2,
+  "eval_name": "designer-handoff-prep",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "text": "Outputs contain a markdown file (CHANGES.md, audit.md, or similar) reporting the audit findings of the real wireframes folder.",
+      "passed": true,
+      "evidence": "CHANGES.md exists with full 8-step audit findings + proposed augmentation rationale + 'What was NOT changed' section"
+    },
+    {
+      "text": "The audit confirms that operate-run.html, operate-iterate.html, and operate-build.html exist at the top level of the real wireframes folder.",
+      "passed": true,
+      "evidence": "Audit step 1 + step 8: 'Three canonical HTMLs (run / iterate / build, dated 2026-06-29). Top level: 3 HTMLs + README'"
+    },
+    {
+      "text": "The audit confirms that historical/superseded files are quarantined under _historical/ (not mixed at top level).",
+      "passed": true,
+      "evidence": "Audit step 4: '_historical/ subfolder is real, contains exactly the 3 superseded files, and is named in the README. CLEAN.'"
+    },
+    {
+      "text": "The audit identifies and names the machine-readable encoding file (lib/operate/mode-features.ts) as part of the triangulation.",
+      "passed": true,
+      "evidence": "Audit step 6: explicit reference to lib/operate/mode-features.ts at /Users/nplmini/code/work/systems/projection-ui/lib/operate/mode-features.ts with absolute path. Also flagged duplicate mode-features.ts in wireframes folder as drift risk."
+    },
+    {
+      "text": "The audit explicitly assesses whether the existing README's designer handoff section is sufficient for a cold-read designer.",
+      "passed": true,
+      "evidence": "Audit verdict: 'Folder is already handoff-ready against all 8 steps.' + 'Why augment despite cleanliness' section proposes specific improvement: designer's 2 scoped items are buried as items 1 and 9 of a 9-bullet list. Proposed PROPOSED-README.md restructures the brief."
+    },
+    {
+      "text": "The agent did NOT modify any files inside /Users/nplmini/code/work/systems/operating-sop/reference/wireframes/. All proposed changes live under the outputs/ directory.",
+      "passed": true,
+      "evidence": "Agent explicitly states 'I did NOT touch the real folder (constraint #3)'. Output files (CHANGES.md, PROPOSED-README.md) live under outputs/."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "timing": {
+    "total_tokens": 105212,
+    "duration_ms": 184508,
+    "total_duration_seconds": 184.5
+  }
+}
