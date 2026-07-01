@@ -20,7 +20,6 @@ export interface AccountConfig {
 
 export const ACCOUNTS: AccountConfig[] = [
   { email: 'nick@konstellationai.com', org: 'konstellationai', pipelines: ['transcripts', 'emails', 'calendar'] },
-  { email: 'agent_8@konstellationai.com', org: 'konstellationai', pipelines: ['transcripts', 'emails'] },
   { email: 'nick@instig8.ai', org: 'instig8', pipelines: ['transcripts', 'emails', 'calendar'] },
   { email: 'agent_8@instig8.ai', org: 'instig8', pipelines: ['transcripts', 'emails'] },
   // Will's dedicated Konstellation mailbox — partner + prospect comms only,
