@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { GovernedArtifacts, GovernedEngagement, GovernedItem } from "@/lib/queries/governedArtifacts";
 import type { SourceAssessmentLedger } from "@/lib/queries/sourceAssessments";
 import type { Expert, Exchange, ExpertRequest, Motion } from "@/lib/queries/expertLiaison-shared";
@@ -12,14 +12,26 @@ import MotionsBoard from "./MotionsBoard";
 
 type Tab = "inbound" | "motions" | "asks" | "packets" | "ledger" | "experts";
 const SELF_SLUG = "nick-lipetzky";
+const TABS: Tab[] = ["inbound", "motions", "asks", "packets", "ledger", "experts"];
 
 export default function ExpertLiaisonSurface({
-  governed, ledger, experts, exchanges, packets, requests, motions,
+  governed, ledger, experts, exchanges, packets, requests: allRequests, motions: allMotions,
 }: {
   governed: GovernedArtifacts; ledger: SourceAssessmentLedger; experts: Expert[]; exchanges: Exchange[]; packets: PacketView[];
   requests: ExpertRequest[]; motions: Motion[];
 }) {
-  const [tab, setTab] = useState<Tab>("inbound");
+  // Deep-link support: /expert-liaison?engagement=<id>&tab=<tab>. When an
+  // engagement is passed (e.g. from the /operate embedded panel), scope motions
+  // and inbound requests to it; ?tab preselects the lane (default: inbound).
+  const sp = useSearchParams();
+  const engagementFilter = sp.get("engagement");
+  const tabParam = sp.get("tab");
+  const initialTab: Tab = tabParam && (TABS as string[]).includes(tabParam) ? (tabParam as Tab) : "inbound";
+  const [tab, setTab] = useState<Tab>(initialTab);
+
+  const motions = engagementFilter ? allMotions.filter((m) => m.engagement_id === engagementFilter) : allMotions;
+  const requests = engagementFilter ? allRequests.filter((r) => r.engagement_id === engagementFilter) : allRequests;
+
   const totalGaps = governed.engagements.reduce((n, e) => n + e.items.filter((i) => i.state === "gap").length, 0);
   const packetsPending = packets.filter((p) => p.pending.length > 0 || p.packet).length;
   const overdueMotions = motions.filter((m) => m.overdue).length;

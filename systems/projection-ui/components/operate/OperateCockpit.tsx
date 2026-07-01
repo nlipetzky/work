@@ -169,6 +169,8 @@ export function OperateCockpit({ data, sopId }: { data: SopDetail; sopId: string
                 nodeCount={nodeCount}
                 notify={notify}
                 onView={() => notify("Opening in source viewer (editor wiring is a later slice)")}
+                expertLiaison={data.expert_liaison_summary}
+                engagementId={active_run?.target_engagement ?? null}
               />
             ) : (
               <div className="rounded-xl border border-dashed border-ink-700 p-4 text-xs text-muted">

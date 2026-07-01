@@ -15,6 +15,7 @@
 
 import "server-only";
 import { db } from "@/lib/supabase";
+import { canonDb } from "@/lib/canon";
 import {
   SOPS,
   SOPS_BY_ID,
@@ -24,12 +25,12 @@ import {
   type StageStatus,
 } from "@/lib/sops";
 
-import type { ActivityLive, LiveSource, SopDetail } from "@/lib/operate/sop-types";
+import type { ActivityLive, ExpertLiaisonSummary, LiveSource, SopDetail } from "@/lib/operate/sop-types";
 
 export { SOPS, SOPS_BY_ID };
 export type { SopBundle, SopRun, ActivityStatus, StageStatus };
 // Re-export the shared (non-server-only) types so existing importers keep working.
-export type { ActivityLive, LiveSource, SopDetail };
+export type { ActivityLive, ExpertLiaisonSummary, LiveSource, SopDetail };
 
 // Slice 1: each SOP has zero-or-one hand-authored run in its bundle. When the
 // canon schema lands, `sop_runs` will be a real table; this helper centralizes
@@ -134,6 +135,101 @@ async function readPromotedContacts(_engagementId: string): Promise<{ status: Ac
   }
 }
 
+// ─── Expert Liaison read (canon, engagement-scoped) ────────────────────────
+// Reads expert_motions for the run's engagement and rolls them up. Keyed ONLY
+// on engagement_id (the run's target_engagement) — never on canon
+// sop_activities rows, so it can't drift when the SOP definition changes.
+// Soft-fails: any canon hiccup returns nulls and the panel/send-gate degrade.
+
+const SIGNOFF_GOAL_KEYS = ["send-signoff", "send_signoff", "copy-signoff", "copy-approval", "expert-signoff"];
+
+type ExpertLiaisonRead = {
+  summary: ExpertLiaisonSummary | null;
+  // Send-unblock signal, derived from the same engagement-scoped motions/requests.
+  sendGate: {
+    signedOff: boolean; // an achieved sign-off motion exists → send-sequence can go
+    blocked: boolean; // an open/active blocking motion or pending copy request exists
+    reason: string | null;
+  };
+};
+
+function isSignoffMotion(m: { goal_key: string | null; goal: string | null; target_type: string | null }): boolean {
+  const key = (m.goal_key ?? "").toLowerCase();
+  if (SIGNOFF_GOAL_KEYS.some((k) => key.includes(k))) return true;
+  const goal = (m.goal ?? "").toLowerCase();
+  return /sign.?off|approv.*(copy|sequence|outreach)|copy.*approv/.test(goal);
+}
+
+async function readExpertLiaison(engagementId: string): Promise<ExpertLiaisonRead> {
+  const empty: ExpertLiaisonRead = { summary: null, sendGate: { signedOff: false, blocked: false, reason: null } };
+  try {
+    const { data, error } = await canonDb()
+      .from("expert_motions")
+      .select("id, expert_slug, goal, goal_key, target_type, status, ball_in_court, next_action_due")
+      .eq("engagement_id", engagementId);
+    if (error) throw error;
+    const rows = (data ?? []) as Array<{
+      id: string;
+      expert_slug: string | null;
+      goal: string | null;
+      goal_key: string | null;
+      target_type: string | null;
+      status: string;
+      ball_in_court: string | null;
+      next_action_due: string | null;
+    }>;
+    const now = Date.now();
+
+    const open_count = rows.filter((m) => m.status === "open").length;
+    const active_count = rows.filter((m) => m.status === "active").length;
+    const achieved_count = rows.filter((m) => m.status === "achieved").length;
+
+    const blocking = rows.filter((m) => m.status === "open" || m.status === "active");
+    const blocking_motions = blocking.map((m) => ({
+      motion_id: m.id,
+      expert_slug: m.expert_slug ?? null,
+      goal: m.goal ?? null,
+      status: m.status,
+      ball_in_court: m.ball_in_court ?? null,
+      next_action_due: m.next_action_due ?? null,
+      overdue: m.next_action_due != null && new Date(m.next_action_due).getTime() < now,
+    }));
+
+    const summary: ExpertLiaisonSummary = { open_count, active_count, achieved_count, blocking_motions };
+
+    // Send-unblock: an achieved sign-off motion clears the gate; an open/active
+    // sign-off motion (or, below, a pending copy request) holds it.
+    const signedOff = rows.some((m) => m.status === "achieved" && isSignoffMotion(m));
+    const openSignoff = rows.find((m) => (m.status === "open" || m.status === "active") && isSignoffMotion(m));
+
+    // A pending copy request is an open expert_request of type approval/direction
+    // concerning outreach copy for this engagement.
+    let pendingCopyRequest = false;
+    try {
+      const { count } = await canonDb()
+        .from("expert_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("engagement_id", engagementId)
+        .eq("status", "open")
+        .in("request_type", ["approval", "direction"]);
+      pendingCopyRequest = (count ?? 0) > 0;
+    } catch {
+      // Soft-fail on the requests probe — motions alone still drive the gate.
+    }
+
+    const blocked = Boolean(openSignoff) || (!signedOff && pendingCopyRequest);
+    const reason = openSignoff
+      ? "blocked pending expert sign-off"
+      : !signedOff && pendingCopyRequest
+        ? "blocked pending expert copy approval"
+        : null;
+
+    return { summary, sendGate: { signedOff, blocked, reason } };
+  } catch {
+    return empty;
+  }
+}
+
 // ─── Last-run enrichment from prep_run_status ──────────────────────────────
 // prep_run_status's `stage` column is a revops-pipeline stage name. Map our
 // activity_ids to those stage names so the inspector can show "last run at …".
@@ -175,6 +271,7 @@ async function readLastRun(activityId: string): Promise<Partial<ActivityLive>> {
 async function computeActivity(
   bundle: SopBundle,
   activityId: string,
+  elRead?: ExpertLiaisonRead,
 ): Promise<{ status: ActivityStatus; live: ActivityLive }> {
   const a = bundle.activities.find((x) => x.activity_id === activityId);
 
@@ -207,6 +304,36 @@ async function computeActivity(
         break;
       case "promote-contacts":
         computed = await readPromotedContacts(engagementId);
+        break;
+      case "send-sequence":
+        // Send-unblock: reflect the engagement's expert sign-off (Part B).
+        // Achieved sign-off → ok/ready; open/active blocking motion or pending
+        // copy request → blocked with a reason. Engagement-keyed; no live
+        // send-volume source is wired yet, so we report the gate itself.
+        if (elRead) {
+          if (elRead.sendGate.signedOff && !elRead.sendGate.blocked) {
+            computed = {
+              status: "ok",
+              live: {
+                source: "live",
+                count: elRead.summary?.achieved_count ?? 0,
+                count_label: "expert sign-offs achieved",
+                count_query: `canon expert_motions where engagement_id='${engagementId}' and status='achieved' (sign-off)`,
+              },
+            };
+          } else if (elRead.sendGate.blocked) {
+            computed = {
+              status: "unset",
+              live: {
+                source: "live",
+                count: elRead.summary?.blocking_motions.length ?? 0,
+                count_label: "open expert motions",
+                count_query: `canon expert_motions where engagement_id='${engagementId}' and status in (open, active)`,
+                reason: elRead.sendGate.reason ?? "blocked pending expert sign-off",
+              },
+            };
+          }
+        }
         break;
     }
   }
@@ -257,10 +384,16 @@ function rollupStage(
 // SopDetail type lives in @/lib/operate/sop-types (re-exported above).
 
 export async function detail(bundle: SopBundle): Promise<SopDetail> {
+  // Engagement-scoped Expert Liaison read, computed ONCE per detail (keyed on the
+  // run's engagement, not on any activity). Feeds both the send-unblock gate and
+  // the embedded EL panel. Absent when there's no active run.
+  const engagementId = activeRun(bundle)?.target_engagement ?? null;
+  const elRead = engagementId !== null ? await readExpertLiaison(engagementId) : null;
+
   // Compute every activity in parallel.
   const results = await Promise.all(
     bundle.activities.map(async (a) => {
-      const r = await computeActivity(bundle, a.activity_id);
+      const r = await computeActivity(bundle, a.activity_id, elRead ?? undefined);
       return [a.activity_id, r] as const;
     }),
   );
@@ -282,6 +415,7 @@ export async function detail(bundle: SopBundle): Promise<SopDetail> {
     activity_status,
     activity_live,
     stage_status,
+    ...(elRead?.summary ? { expert_liaison_summary: elRead.summary } : {}),
   };
 }
 

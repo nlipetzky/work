@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ActivityLive } from "@/lib/operate/sop-types";
+import type { ActivityLive, SopDetail } from "@/lib/operate/sop-types";
 import type { Activity, ActivityStatus } from "@/lib/sops";
 import { ACCENT_TOKENS, FEATURES, type OperateMode } from "@/lib/operate/mode-features";
 import {
@@ -41,6 +41,8 @@ export function ActivityDetail({
   nodeCount,
   notify,
   onView,
+  expertLiaison,
+  engagementId,
 }: {
   activity: Activity;
   status: ActivityStatus;
@@ -50,6 +52,8 @@ export function ActivityDetail({
   nodeCount: number;
   notify: (msg: string) => void;
   onView: () => void;
+  expertLiaison?: SopDetail["expert_liaison_summary"];
+  engagementId?: string | null;
 }) {
   const features = FEATURES[mode];
   const accent = ACCENT_TOKENS[features.accent];
@@ -351,6 +355,8 @@ export function ActivityDetail({
           <SystemViewEmbed
             ownerSystemSlug={composition.ownerSystemSlug || activity.owning_system}
             live={live}
+            expertLiaison={expertLiaison}
+            engagementId={engagementId}
           />
         </>
       )}

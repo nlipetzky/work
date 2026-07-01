@@ -216,6 +216,24 @@ async function cmdRun(et, eid, channel, offer, maxRev) {
   if (error) fail(`record failed: ${error.message}`);
   const row = Array.isArray(data) ? data[0] : data;
   log(`  → recorded ${channel} sequence draft v${row.version} (${row.id}). ${accepted.flags?.length ? `${accepted.flags.length} flag(s).` : ""} Awaiting human approve.\n`);
+
+  // Emit the expert sign-off request through the expert-liaison-engine (soft-log; never fail the copy run).
+  // source_ref = the sequence id makes this idempotent per produced sequence. Hermes triages it into a motion.
+  try {
+    const { data: reqData, error: reqError } = await db.rpc("record_expert_request", {
+      p_request_type: "approval",
+      p_engagement_type: et,
+      p_engagement_id: eid,
+      p_expert_slug: accepted.sender_expert_slug || "will-rosellini",
+      p_concerning_system: "cold-outreach",
+      p_source_system: "produce-sequence.mjs",
+      p_source_ref: row.id,
+      p_subject: `Copy sign-off: ${channel} sequence`,
+      p_payload: { sequence_id: row.id, channel, flags: accepted.flags || [], version: row.version },
+    });
+    if (reqError) log(`  ⚠ expert-request emit soft-failed: ${reqError.message}`);
+    else { const req = Array.isArray(reqData) ? reqData[0] : reqData; log(`  → expert sign-off request emitted (${req?.id}).`); }
+  } catch (e) { log(`  ⚠ expert-request emit soft-failed: ${e.message}`); }
 }
 
 async function cmdConfirm(id, by) {
