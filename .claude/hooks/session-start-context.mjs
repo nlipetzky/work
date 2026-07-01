@@ -10,9 +10,44 @@
 
 import { readFileSync, existsSync } from 'node:fs'
 import { relative } from 'node:path'
+import { execSync } from 'node:child_process'
 
 const WORK_ROOT = '/Users/nplmini/code/work'
-const MAX_CHARS = 1800
+const MAX_CHARS = 3000
+
+function git(cwd, args) {
+  return execSync(`git ${args}`, { cwd, timeout: 3000, stdio: ['ignore', 'pipe', 'ignore'] })
+    .toString().trim()
+}
+
+// Distinguish "session runs on the shared ~/code/work checkout" from
+// "session runs in an isolated linked worktree". Root cause of the
+// 2026-07-01 63-file mess: concurrent sessions on the shared checkout.
+function gitStateSection(cwd) {
+  try {
+    const gitDir = git(cwd, 'rev-parse --git-dir')
+    const commonDir = git(cwd, 'rev-parse --git-common-dir')
+    const isWorktree = gitDir !== commonDir && gitDir !== '.git'
+    const branch = git(cwd, 'branch --show-current') || '(detached HEAD)'
+    const dirty = git(cwd, 'status --porcelain').split('\n').filter(Boolean).length
+    const lines = ['', '## Git state']
+    if (isWorktree) {
+      lines.push('', `Isolated worktree (safe). Branch \`${branch}\`, ${dirty} uncommitted file(s), all yours.`)
+      lines.push('Finish by committing on this branch and pushing; open a PR to main.')
+      lines.push('Caveat: gitignored files (.env, .secrets, node_modules) are NOT here. If you need to RUN services/scripts, say so before assuming they are broken.')
+    } else {
+      lines.push('', `**SHARED CHECKOUT** ... this session runs directly on \`~/code/work\`, NOT an isolated worktree. Other live sessions may be editing this same tree. Branch \`${branch}\`, ${dirty} uncommitted file(s)${dirty > 0 ? ' (some may belong to OTHER sessions)' : ''}.`)
+      lines.push('', 'Hard rules on the shared checkout:')
+      lines.push('- If this session will edit more than a couple of files, create an isolated worktree first (EnterWorktree) unless Nick explicitly said to work in place (live-state work: launchd jobs, dist builds, .env).')
+      lines.push('- New branches are cut from main explicitly: `git switch -c <name> main`. NEVER branch from the current HEAD.')
+      lines.push('- Stage/commit ONLY files this session touched, by explicit path. Never blind `git add -A`. NEVER `git clean -fdx` (wipes gitignored .env/.secrets).')
+      lines.push('- Do not discard or stash dirty files you did not create.')
+    }
+    return lines
+  } catch {
+    return []
+  }
+}
 
 function readStdinJson() {
   try {
@@ -63,6 +98,7 @@ function build(input) {
   }
   lines.push('')
   lines.push('Indexes regenerate via `node scripts/generate-indexes.mjs`. Run after any folder add or rename.')
+  lines.push(...gitStateSection(cwd))
   let out = lines.join('\n')
   if (out.length > MAX_CHARS) out = out.slice(0, MAX_CHARS - 60) + '\n\n...(truncated to fit injection cap)'
   return out
