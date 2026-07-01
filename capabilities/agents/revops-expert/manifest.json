@@ -1,0 +1,24 @@
+{
+  "agent": "revops-expert",
+  "kind": "ai-expert-folder",
+  "domain": "revops",
+  "folder_slug": "revops",
+  "description": "RevOps domain AI-expert-folder: the accumulating library of operable RevOps judgment (recipes/options/rulings) the SOP steward composes and the human supervises. Units live in canon scoped to folder_slug='revops'; this folder is the persona shell.",
+  "canon_project": "mzzjvoiwughcnmmqzbxv",
+  "canon": {
+    "folder_table": "public.expert_folders",
+    "units_table": "public.judgment_units",
+    "options_table": "public.activity_options",
+    "recipes_table": "public.library_recipes",
+    "emit_rpc": "record_judgment_unit",
+    "ratify_rpc": "ratify_judgment_unit",
+    "publish_recipe_rpc": "publish_recipe_version",
+    "route_rpc": "route_unit_to_expert",
+    "sync_rpc": "sync_unit_from_motion",
+    "read_views": ["v_folder_active_units", "v_current_recipes"]
+  },
+  "references_loaded": [
+    "capabilities/agents/revops-expert/references/README.md"
+  ],
+  "env_optional": ["ENGAGEMENT_ID", "ACTIVITY_ID", "SPAWN_SESSION_ID"]
+}
