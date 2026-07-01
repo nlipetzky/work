@@ -201,3 +201,26 @@ export function extractMessageIdsFromHistory(
   }
   return Array.from(ids);
 }
+
+/**
+ * Extract ALL message IDs from a Gmail history response, regardless of label
+ * or folder. Used for dedicated mailboxes (account.ingestAll) where every
+ * message is relevant — no AOS/Ingest gate, no INBOX-only filter. Every new
+ * message (received or sent) surfaces via messagesAdded, so that alone covers
+ * the whole mailbox.
+ */
+export function extractAllMessageIdsFromHistory(historyData: any): string[] {
+  const ids = new Set<string>();
+  if (historyData?.history) {
+    for (const entry of historyData.history) {
+      if (entry.messagesAdded) {
+        for (const added of entry.messagesAdded) {
+          if (added.message?.id) {
+            ids.add(added.message.id);
+          }
+        }
+      }
+    }
+  }
+  return Array.from(ids);
+}
