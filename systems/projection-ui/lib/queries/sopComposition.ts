@@ -10,6 +10,11 @@
 // inherit the canon-engine RLS posture (deny-all + service_role only).
 
 import "server-only";
+import type {
+  ActivityJudgment,
+  JudgmentRuling,
+  JudgmentOption,
+} from "@/lib/operate/composition-draft";
 import { canonDb } from "@/lib/canon";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -52,43 +57,9 @@ export type ActivityEvalsSummary = {
   staleCount: number;
 };
 
-// Active/locked judgment_units targeting an activity, surfaced in the /operate
-// cockpit as the activity's "defaults from the folder". Read from the canon view
-// v_folder_active_units (standing in (active,locked) AND retired_at is null).
-export type JudgmentRuling = {
-  id: string;
-  rulingKind: "constraint" | "disqualifier" | "default" | "entity_rule" | null;
-  assertion: string;
-  trigger: Record<string, unknown> | null;
-  reasoning: string | null;
-  standing: "proposed" | "active" | "locked";
-  gatePosture: "push_to_veto" | "pull_to_approve" | null;
-  provenance: string;
-};
-
-export type JudgmentOption = {
-  id: string; // judgment_unit id
-  assertion: string;
-  reasoning: string | null;
-  standing: "proposed" | "active" | "locked";
-  provenance: string;
-  targetOptionId: string | null;
-  // Hydrated from activity_options when target_option_id resolves.
-  option: {
-    id: string;
-    optionSlug: string;
-    kind: "source" | "tactic";
-    name: string;
-    whenToUse: string | null;
-    priority: number | null;
-  } | null;
-};
-
-export type ActivityJudgment = {
-  activityId: string;
-  rulings: JudgmentRuling[];
-  options: JudgmentOption[];
-};
+// Judgment types moved to the client-safe composition-draft module (avoids the
+// server-only-in-client-bundle trap); re-exported here for server-side callers.
+export type { ActivityJudgment, JudgmentRuling, JudgmentOption };
 
 // ─── Error helpers ─────────────────────────────────────────────────────────
 

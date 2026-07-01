@@ -3,6 +3,7 @@ import {
   getActivityComposition,
   getActivityRuns,
   getActivityEvals,
+  getActivityJudgment,
 } from "@/lib/queries/sopComposition";
 
 export const runtime = "nodejs";
@@ -21,10 +22,11 @@ export async function GET(
     return NextResponse.json({ error: "activityId missing" }, { status: 400 });
   }
   try {
-    const [composition, runs, evals] = await Promise.all([
+    const [composition, runs, evals, judgment] = await Promise.all([
       getActivityComposition(activityId),
       getActivityRuns(activityId, 5),
       getActivityEvals(activityId),
+      getActivityJudgment(activityId),
     ]);
     if (!composition) {
       return NextResponse.json(
@@ -32,7 +34,7 @@ export async function GET(
         { status: 404 },
       );
     }
-    return NextResponse.json({ composition, runs, evals });
+    return NextResponse.json({ composition, runs, evals, judgment });
   } catch (e) {
     // Serialize all known shapes: Error, PostgrestError ({code, message, details, hint}), plain.
     const detail =

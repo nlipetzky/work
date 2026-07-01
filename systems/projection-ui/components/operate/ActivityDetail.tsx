@@ -22,6 +22,7 @@ import { RunsHistory } from "@/components/operate/RunsHistory";
 import { EvalsBlock } from "@/components/operate/EvalsBlock";
 import { MoreExpander } from "@/components/operate/MoreExpander";
 import { ActionBar } from "@/components/operate/ActionBar";
+import { FolderDefaults } from "@/components/operate/FolderDefaults";
 
 type RunState = {
   run_id: string;
@@ -267,7 +268,7 @@ export function ActivityDetail({
     );
   }
 
-  const { composition, runs, evals } = payload;
+  const { composition, runs, evals, judgment } = payload;
 
   return (
     <div className="rounded-xl border border-ink-700 bg-ink-800 p-5">
@@ -331,6 +332,9 @@ export function ActivityDetail({
           onView={onView}
         />
       </div>
+
+      <Divider />
+      <FolderDefaults judgment={judgment} />
 
       <Divider />
       <ProvenanceBlock
