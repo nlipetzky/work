@@ -18,6 +18,7 @@ import {
   listLabels,
   parseGmailMessage,
   extractMessageIdsFromHistory,
+  extractAllMessageIdsFromHistory,
 } from './gmail.js';
 import { getEmailState, saveEmailState } from './ingestion-state.js';
 import { ACCOUNTS } from './accounts.js';
@@ -84,10 +85,18 @@ export async function fetchEmails(
     let newHistoryId: string | null = null;
 
     if (!state.lastHistoryId) {
-      // No history ID saved — fetch recent INBOX messages
-      log(`  No saved historyId — fetching recent INBOX messages`);
+      // No history ID saved — seed from recent messages to establish the cursor.
+      // ingestAll mailboxes seed across all folders (INBOX + SENT + archived);
+      // gated mailboxes seed from INBOX only.
+      log(
+        account.ingestAll
+          ? `  No saved historyId — seeding recent mail (all folders)`
+          : `  No saved historyId — fetching recent INBOX messages`,
+      );
       try {
-        messageIds = await listRecentMessages(auth, ['INBOX'], 10);
+        messageIds = account.ingestAll
+          ? await listRecentMessages(auth, [], 100)
+          : await listRecentMessages(auth, ['INBOX'], 10);
       } catch (err: any) {
         const msg = `Error listing messages for ${account.email}: ${err.message}`;
         log(`  ${msg}`);
@@ -98,7 +107,9 @@ export async function fetchEmails(
       // Incremental fetch via history
       try {
         const historyData = await listHistory(auth, state.lastHistoryId);
-        messageIds = extractMessageIdsFromHistory(historyData, aosLabelId);
+        messageIds = account.ingestAll
+          ? extractAllMessageIdsFromHistory(historyData)
+          : extractMessageIdsFromHistory(historyData, aosLabelId);
 
         if (historyData?.historyId) {
           newHistoryId = historyData.historyId;
@@ -106,9 +117,11 @@ export async function fetchEmails(
       } catch (err: any) {
         if (err.message?.includes('404') || err.message?.includes('notFound') || err.code === 404) {
           // History expired — fall back to recent messages
-          log(`  History expired, fetching recent INBOX`);
+          log(`  History expired, fetching recent mail`);
           try {
-            messageIds = await listRecentMessages(auth, ['INBOX'], 5);
+            messageIds = account.ingestAll
+              ? await listRecentMessages(auth, [], 25)
+              : await listRecentMessages(auth, ['INBOX'], 5);
           } catch (listErr: any) {
             errors.push(`Error listing messages for ${account.email}: ${listErr.message}`);
             continue;

@@ -19,6 +19,7 @@ export const GMAIL_READONLY = 'https://www.googleapis.com/auth/gmail.readonly';
 export const GMAIL_SEND = 'https://www.googleapis.com/auth/gmail.send';
 export const DRIVE_READONLY = 'https://www.googleapis.com/auth/drive.readonly';
 export const MEET_READONLY = 'https://www.googleapis.com/auth/meetings.space.readonly';
+export const CALENDAR_READONLY = 'https://www.googleapis.com/auth/calendar.readonly';
 
 // ---------------------------------------------------------------------------
 // Auth
