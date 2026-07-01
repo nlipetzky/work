@@ -5,11 +5,16 @@
  * Queries FREE authoritative sources for FRESH signals in CIPO's segment and lands the surfaced
  * companies in the prospects spine. Idempotent (dedup on source + source_ref), so it can run on a
  * cron / launchd as a standing watch. No deepline, no provider credits ... this is the free front.
- *   - ClinicalTrials.gov v2 (no key): recent INDUSTRY-sponsored device/biotech trials -> sponsor company.
- *   - USPTO PatentsView (needs a free PATENTSVIEW_API_KEY in env): recent filings -> assignee company.
+ *   - NIH RePORTER (no key): recent SBIR/STTR awardees (R41/R42/R43/R44) -> small biotech/medtech businesses. PRIMARY.
+ *   - USPTO Open Data Portal (needs USPTO_API key): recent A61 filings, SMALL/MICRO-entity only -> small filers.
+ *   - ClinicalTrials.gov v2 (no key): industry trial sponsors. OFF by default (--include-trials); sponsor field skews big-pharma.
  *
  * Usage: node scripts/watch-signals.mjs [engagement_type] [engagement_id] [--since-days N] [--recipe NAME]
- * Env: CANON_SUPABASE_URL, CANON_SUPABASE_SERVICE_KEY (+ optional PATENTSVIEW_API_KEY)
+ * Env: REVOPS_SUPABASE_URL, REVOPS_SUPABASE_SERVICE_KEY (+ optional PATENTSVIEW_API_KEY)
+ *
+ * Writes to revops-engine.public.prospects (the collapsed signal-landing table).
+ * The earlier canon-engine.public.prospects table is deprecated — the canon→revops
+ * bridge it forced was unbuilt for months, so we collapsed it.
  */
 import { createClient } from "@supabase/supabase-js";
 import { readFile } from "node:fs/promises";
@@ -20,7 +25,7 @@ for (const line of (await readFile(path.join(WORK_ROOT, ".env"), "utf8")).split(
   const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/);
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
 }
-const db = createClient(process.env.CANON_SUPABASE_URL, process.env.CANON_SUPABASE_SERVICE_KEY, { auth: { persistSession: false } });
+const db = createClient(process.env.REVOPS_SUPABASE_URL, process.env.REVOPS_SUPABASE_SERVICE_KEY, { auth: { persistSession: false } });
 
 const argv = process.argv.slice(2);
 const flag = (n, d) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : d; };
@@ -28,7 +33,9 @@ const ET = argv[0] && !argv[0].startsWith("--") ? argv[0] : "venture";
 const EID = argv[1] && !argv[1].startsWith("--") ? argv[1] : "konstellation-cipo";
 const SINCE_DAYS = Number(flag("since-days", 30));
 const RECIPE = flag("recipe", null);
+const INCLUDE_TRIALS = argv.includes("--include-trials"); // CT.gov sponsor field skews big-pharma; opt-in only
 const sinceDate = new Date(Date.now() - SINCE_DAYS * 864e5).toISOString().slice(0, 10);
+const todayDate = new Date().toISOString().slice(0, 10);
 
 async function land(source, source_ref, company_name, signal) {
   if (!company_name || !source_ref) return false;
@@ -86,16 +93,68 @@ async function watchPatents() {
       const company = md.firstApplicantName || md.applicantBag?.[0]?.applicantNameText;
       const ref = rec.applicationNumberText;
       if (!company || !ref) continue;
-      const signal = { type: "patent", application: ref, filingDate: md.filingDate, title: md.inventionTitle, cpc: md.class || null };
+      // keep only small/micro-entity filers — big pharma files as "Undiscounted" (the same big-company bias we're avoiding)
+      const ent = md.entityStatusData || {};
+      const isSmall = ent.smallEntityStatusIndicator === true || /small|micro/i.test(ent.businessEntityStatusCategory || "");
+      if (!isSmall) continue;
+      // USPTO small-entity status also covers universities / hospitals / nonprofits — NOT the ICP (they have tech-transfer offices, not a CIPO need)
+      if (/\b(univers|institut|college|foundation|hospital|regents|trustees|board of|medical center|health system|research council)\b/i.test(company) || /r&db/i.test(company)) continue;
+      const signal = { type: "patent", application: ref, filingDate: md.filingDate, title: md.inventionTitle, cpc: md.class || null, entity: ent.businessEntityStatusCategory || null };
       fetched++;
       if (await land("uspto", ref, company, signal)) inserted++;
     }
   } catch (e) { console.error(`  uspto error: ${e.message}`); }
-  console.log(`uspto (patents): ${fetched} fresh A61 filings, ${inserted} new companies landed`);
+  console.log(`uspto (patents): ${fetched} fresh small/micro-entity A61 filings, ${inserted} new companies landed`);
+}
+
+// ---- NIH RePORTER: SBIR/STTR awardees (free, reliable) — small biotech/medtech businesses, the CIPO ICP bullseye ----
+async function watchNihSbir() {
+  const ACT = ["R43", "R44", "R41", "R42"]; // SBIR Phase I/II, STTR Phase I/II — all small-business-only mechanisms
+  const phaseOf = (a) => (a === "R43" || a === "R41") ? "I" : "II";
+  const progOf = (a) => (a === "R43" || a === "R44") ? "SBIR" : "STTR";
+  const PAGE = 100, MAX = 300; // cap companies landed per run
+  let fetched = 0, inserted = 0, offset = 0;
+  try {
+    while (offset < MAX) {
+      const body = {
+        criteria: { activity_codes: ACT, award_notice_date: { from_date: sinceDate, to_date: todayDate } },
+        include_fields: ["ApplId", "CoreProjectNum", "FiscalYear", "ActivityCode", "Organization", "ProjectTitle", "AwardAmount", "AgencyIcAdmin", "ContactPiName", "AwardNoticeDate"],
+        offset, limit: PAGE, sort_field: "award_notice_date", sort_order: "desc",
+      };
+      const r = await fetch("https://api.reporter.nih.gov/v2/projects/search", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body),
+      });
+      if (!r.ok) { console.error(`  nih-reporter http ${r.status}: ${(await r.text()).slice(0, 160)}`); break; }
+      const j = await r.json();
+      const results = j.results || [];
+      if (!results.length) break;
+      for (const rec of results) {
+        const org = rec.organization || {};
+        const company = org.org_name;
+        const uei = org.org_ueis?.[0] || org.primary_uei || org.org_duns?.[0] || rec.appl_id;
+        if (!company || !uei) continue;
+        const act = rec.activity_code;
+        const signal = {
+          type: "sbir-award", program: progOf(act), phase: phaseOf(act), activityCode: act,
+          agency: "NIH", ic: rec.agency_ic_admin?.abbreviation || null,
+          fiscalYear: rec.fiscal_year, awardAmount: rec.award_amount, awardNoticeDate: rec.award_notice_date || null,
+          projectTitle: rec.project_title || null, pi: rec.contact_pi_name?.trim() || null,
+          orgCity: org.org_city || null, orgState: org.org_state || null, uei: org.org_ueis?.[0] || org.primary_uei || null,
+        };
+        fetched++;
+        if (await land("nih-reporter", uei, company, signal)) inserted++;
+      }
+      if (results.length < PAGE) break;
+      offset += PAGE;
+    }
+  } catch (e) { console.error(`  nih-reporter error: ${e.message}`); }
+  console.log(`nih-reporter (SBIR/STTR): ${fetched} fresh awards, ${inserted} new companies landed (since ${sinceDate})`);
 }
 
 console.log(`\n▸ signal watch for ${ET}/${EID} (window: last ${SINCE_DAYS}d)\n`);
-await watchClinicalTrials();
-await watchPatents();
+await watchNihSbir();   // PRIMARY: SBIR/STTR awardees — small biotech/medtech businesses
+await watchPatents();   // SECONDARY: small/micro-entity USPTO A61 filings
+if (INCLUDE_TRIALS) await watchClinicalTrials();
+else console.log("clinicaltrials: skipped (lead-sponsor field skews big-pharma; pass --include-trials to re-enable)");
 const { count } = await db.from("prospects").select("*", { count: "exact", head: true }).eq("engagement_type", ET).eq("engagement_id", EID);
 console.log(`\nprospects spine now holds ${count} companies for ${ET}/${EID}.\n`);
