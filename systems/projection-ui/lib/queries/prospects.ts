@@ -1,9 +1,9 @@
 import "server-only";
-import { canonDb } from "@/lib/canon";
+import { db } from "@/lib/supabase";
 
 // The Prospect spine — signal-sourced companies moving signal -> qualified. Filled by the free signal
 // watch (ClinicalTrials.gov now; USPTO PatentsView with a key); advanced by the (credit-gated)
-// enrichment step. Pure-canon reads; mutations go through the watch/enrich routes.
+// enrichment step. Reads from revops-engine.public.prospects (collapsed from canon in slice-2 refactor).
 
 export type ProspectStage = "signal" | "resolved" | "screened" | "enriched" | "qualified" | "disqualified";
 const STAGES: ProspectStage[] = ["signal", "resolved", "screened", "enriched", "qualified", "disqualified"];
@@ -32,7 +32,6 @@ export interface ProspectEngagement {
 export interface ProspectsSystem { engagements: ProspectEngagement[] }
 
 export async function getProspects(): Promise<ProspectsSystem> {
-  const db = canonDb();
   const { data, error } = await db.from("prospects")
     .select("id, engagement_type, engagement_id, company_name, domain, source, source_ref, recipe_name, stage, verdict, signal, created_at")
     .order("created_at", { ascending: false }).limit(500);

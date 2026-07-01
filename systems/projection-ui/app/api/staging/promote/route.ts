@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { promoteBatch } from "@/lib/queries/staging";
-import { inngest } from "@/lib/inngest/client";
+import { inngest } from "../../../../../../capabilities/inngest/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

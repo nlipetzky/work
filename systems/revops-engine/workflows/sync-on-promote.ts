@@ -1,16 +1,19 @@
 import "server-only";
-import { inngest } from "./client";
-import { db } from "@/lib/supabase";
-import { COMPANIES_TABLE_ID, CONTACTS_TABLE_ID } from "@/lib/airtable/config";
-import { buildFields } from "@/lib/airtable/fieldmaps";
-import { upsertChunk } from "@/lib/airtable/client";
+import { inngest } from "../../../capabilities/inngest/client";
+import { db } from "../../projection-ui/lib/supabase";
+import {
+  COMPANIES_TABLE_ID,
+  CONTACTS_TABLE_ID,
+} from "../../projection-ui/lib/airtable/config";
+import { buildFields } from "../../projection-ui/lib/airtable/fieldmaps";
+import { upsertChunk } from "../../projection-ui/lib/airtable/client";
 import {
   promotedRecords,
   companiesByIds,
   contactsByIds,
   companyNamesByIds,
   type PromotionRef,
-} from "@/lib/queries/staging";
+} from "../../projection-ui/lib/queries/staging";
 
 const CHUNK_SIZE = 10;
 
@@ -43,14 +46,14 @@ export const syncCompaniesOnPromote = inngest.createFunction(
     if (data.entity !== "companies") return { skipped: true };
     const { batchId } = data;
 
-    const promotions = await step.run("load-promoted", () =>
+    const promotions = (await step.run("load-promoted", () =>
       promotedRecords(batchId, "staging_company"),
-    ) as PromotionRef[];
+    )) as PromotionRef[];
 
     const ids = promotions.map((p) => p.canonical_record_id);
-    const rows = await step.run("load-rows", () =>
+    const rows = (await step.run("load-rows", () =>
       companiesByIds(ids),
-    ) as Record<string, unknown>[];
+    )) as Record<string, unknown>[];
 
     const verdictMap = new Map<string, PromotionRef>(
       promotions.map((p) => [p.canonical_record_id, p]),
@@ -97,23 +100,23 @@ export const syncContactsOnPromote = inngest.createFunction(
     if (data.entity !== "contacts") return { skipped: true };
     const { batchId } = data;
 
-    const promotions = await step.run("load-promoted", () =>
+    const promotions = (await step.run("load-promoted", () =>
       promotedRecords(batchId, "staging_contact"),
-    ) as PromotionRef[];
+    )) as PromotionRef[];
 
     const ids = promotions.map((p) => p.canonical_record_id);
-    const rows = await step.run("load-rows", () =>
+    const rows = (await step.run("load-rows", () =>
       contactsByIds(ids),
-    ) as Record<string, unknown>[];
+    )) as Record<string, unknown>[];
 
     // Resolve company names from company_id so the Airtable Company link populates
     // (public.contacts has company_id but no company_name).
     const companyIds = rows
       .map((r) => r.company_id as string | null)
       .filter((v): v is string => !!v);
-    const companyNames = await step.run("load-company-names", () =>
+    const companyNames = (await step.run("load-company-names", () =>
       companyNamesByIds(companyIds),
-    ) as Record<string, string>;
+    )) as Record<string, string>;
 
     const verdictMap = new Map<string, PromotionRef>(
       promotions.map((p) => [p.canonical_record_id, p]),
